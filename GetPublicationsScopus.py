@@ -1,4 +1,4 @@
-import pyscopus # Import library that will help us in the search
+from pyscopus import Scopus # Import library that will help us in the search
 
 key ='a3ddc2b8df64bc16774266fb842c0365' # Key gived by Elsevier to acces their api 
 scopus = Scopus(key)

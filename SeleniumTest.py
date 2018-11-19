@@ -12,12 +12,28 @@ if actualUrl == logginUrl:
     browser.find_element_by_class_name("select2-selection__rendered").click()
     browser.find_elements_by_class_name('select2-results__option')[15].click()
     browser.find_element_by_class_name('no-underline').click()
-    
+# Insert name of the author    
 time.sleep(5)
 elem =  browser.find_element_by_id('value(input1)')
 elem.send_keys(author)
 
+# Select author in dropdown 
 browser.find_element_by_id("select2-select1-container").click()
 browser.find_elements_by_class_name('select2-results__option')[2].click()
 browser.find_element_by_id('searchCell1').click()
 
+## Select *show 50 per page*
+browser.find_element_by_id('select2-selectPageSize_bottom-container').click()
+browser.find_elements_by_class_name('select2-results__option')[2].click()
+
+# Save results
+browser.find_elements_by_class_name('select2-selection__arrow')[1].click()
+browser.find_elements_by_class_name('select2-results__option')[5].click()
+# Select register content
+browser.find_element_by_id('select2-bib_fields-container').click()
+browser.find_elements_by_class_name('select2-results__option')[3].click()
+# Select file format (BibText format)
+browser.find_element_by_id('select2-saveOptions-container').click()
+browser.find_elements_by_class_name('select2-results__option')[1].click()
+# Save
+browser.find_element_by_class_name('quickoutput-action').click()

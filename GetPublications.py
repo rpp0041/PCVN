@@ -1,23 +1,32 @@
 import scholarly # Non official Api for Google Scholar
-import codecs
+from bibtexparser.bwriter import BibTexWriter
+from bibtexparser.bibdatabase import BibDatabase
 
 authorInput= input('Nombre del Autor: ')
 
-search_query = scholarly.search_author('Cesar Garcia-Osorio')
+search_query = scholarly.search_author(authorInput)
 author = next(search_query).fill()
 author_pub = author.publications
 
-pubs={}							# Dict where we have Title´s publication and number of cites
-for i in author_pub:
-    title=i.bib['title']
-    if hasattr(i,'citedby'):    # Check it has or not citations , in case it has, it will be add to the list
-        citations=i.citedby
-    else:
-        citations=0
-    pubs[title]=citations
+db = BibDatabase()
 
-# Write information retrieved to txt file
-file=codecs.open('testfile.txt','w',"utf8")
-for i in pubs.items():
-    file.write(i[0]+' , '+str(i[1]))
-file.close()
+cont =0
+writer = BibTexWriter()
+for i in author_pub	:
+	i.fill()
+
+for i in author_pub:
+	## Need modifications for BibTextWriter 
+    if 'journal' in i.bib.keys():
+        i.bib['ENTRYTYPE']='article'
+    else: 
+        i.bib['ENTRYTYPE']='book'
+    i.bib['ID']=str(cont)
+    if 'abstract' in i.bib.keys():
+        i.bib['abstract']=str(i.bib['abstract'])
+    if 'year' in i.bib.keys():
+        i.bib['year']=str(i.bib['year'])
+    db.entries=[i.bib]
+    cont+=1
+    with open('bibtex.bib', 'a' , encoding='utf-8') as bibfile:
+        bibfile.write(writer.write(db))

@@ -35,19 +35,17 @@ author_pub.pop('authors')
 author_pub['ID']=author_pub['scopus_id']
 author_pub.pop('scopus_id')
 
-author_pub['ENTRYTYPE']=author_pub['aggregation_type']
-author_pub.pop('aggregation_type')
+author_pub['ENTRYTYPE']=author_pub['subtype_description']
+author_pub.pop('subtype_description')
 
 author_pub['url']=author_pub['full_text']
 author_pub.pop('full_text')
 
-author_pub['note']=author_pub['publication_name']
-author_pub.pop('publication_name')
-
-listOfKeys=list(author_pub.keys()) # Remove some Keys that will be added later with some modifications
+listOfKeys=list(author_pub.keys())
 listOfKeys.remove('author')
 listOfKeys.remove('citation_count')
-listOfKeys.remove('affiliation')
+listOfKeys.remove('cover_date')
+listOfKeys.remove('publication_name')
 ############################################################################
 
 db = BibDatabase()
@@ -59,12 +57,20 @@ for i in range(0,numPub):
     bib=dict()
     bib['author']=GetAU(i)
     bib['citation_count']=str(author_pub['citation_count'][i])
+    bib['citation_count']= author_pub['cover_date'][i].split('-')[0]
     for x in listOfKeys:
         if author_pub[x][i] is not None:
             if x is 'affiliation':
                 bib['affiliation']=author_pub['affiliation'][i][0]['name']
             else:
-                bib[x]=author_pub[x][i]
+                if x is 'aggregation_type':
+                    if author_pub[x][i]== 'Journal':
+                        bib['journal']=author_pub['publication_name'][i]
+                        author_pub['ENTRYTYPE'][i]=author_pub['ENTRYTYPE'][i].split(' ')[0]
+                    else:
+                        author_pub['ENTRYTYPE'][i]=author_pub[x][i].split(' ')[0]
+                else:
+                    bib[x]=author_pub[x][i]
     db.entries=[bib]
 
     with open('bibtexScopus.bib', 'a' , encoding='utf-8') as bibfile:

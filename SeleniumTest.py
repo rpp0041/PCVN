@@ -1,5 +1,21 @@
 from selenium import webdriver
 import time
+
+def GetRecords():
+    browser.find_elements_by_class_name('select2-selection__arrow')[1].click()
+    browser.find_elements_by_class_name('select2-results__option')[5].click()
+    
+    
+        # Select register content
+    browser.find_element_by_id('select2-bib_fields-container').click()
+    browser.find_elements_by_class_name('select2-results__option')[3].click()
+    # Select file format
+    browser.find_element_by_id('select2-saveOptions-container').click()
+    browser.find_elements_by_class_name('select2-results__option')[1].click()
+
+
+
+
 author= input('Nombre del Autor :')
 
 browser = webdriver.Firefox()
@@ -27,13 +43,33 @@ browser.find_element_by_id('select2-selectPageSize_bottom-container').click()
 browser.find_elements_by_class_name('select2-results__option')[2].click()
 
 # Save results
-browser.find_elements_by_class_name('select2-selection__arrow')[1].click()
-browser.find_elements_by_class_name('select2-results__option')[5].click()
-# Select register content
-browser.find_element_by_id('select2-bib_fields-container').click()
-browser.find_elements_by_class_name('select2-results__option')[3].click()
-# Select file format (BibText format)
-browser.find_element_by_id('select2-saveOptions-container').click()
-browser.find_elements_by_class_name('select2-results__option')[1].click()
-# Save
-browser.find_element_by_class_name('quickoutput-action').click()
+pageCount= browser.find_element_by_id('pageCount.bottom')
+pageCount=int(pageCount.text)
+
+GetRecords()
+if pageCount>1:
+    browser.find_element_by_id('numberOfRecordsRange').click()
+    markFrom=browser.find_element_by_id('markFrom')
+    markFrom.send_keys(1)
+    markTo=browser.find_element_by_id('markTo')
+    numRegister=(pageCount-1)*50
+    markTo.send_keys(numRegister)
+    
+    
+    browser.find_element_by_class_name('quickoutput-action').click()
+    time.sleep(5)
+    browser.find_element_by_class_name('quickoutput-cancel-action').click()
+    
+    gotopage=browser.find_element_by_class_name('goToPageNumber-input')
+    gotopage.send_keys(pageCount)
+    gotopage.submit()
+    time.sleep(5)
+    GetRecords()
+    browser.find_element_by_class_name('quickoutput-action').click()
+    time.sleep(4)
+    browser.find_element_by_class_name('quickoutput-cancel-action').click()
+else:
+    browser.find_element_by_class_name('quickoutput-action').click()
+    time.sleep(4)
+    browser.find_element_by_class_name('quickoutput-cancel-action').click()
+##

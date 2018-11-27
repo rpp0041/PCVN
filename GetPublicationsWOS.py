@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 import time
 
 def GetRecords():
@@ -18,7 +19,15 @@ def GetRecords():
 
 author= input('Nombre del Autor :')
 
-browser = webdriver.Firefox()
+# Set options for webdriver (to be invisible for the user and never ask "saveToDisk" in bibTex files)
+options = Options()
+options.headless = True
+fp = webdriver.FirefoxProfile()
+fp.set_preference("browser.download.folderList", 2)
+fp.set_preference("browser.download.manager.showWhenStarting",False)
+fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/x-bibtex")
+
+browser = webdriver.Firefox(options=options,firefox_profile=fp)
 
 browser.get('https://apps.webofknowledge.com/UA_GeneralSearch_input.do?product=UA&search_mode=GeneralSearch&SID=F1QKecnLPApr37LVXSI&preferencesSaved=')
 time.sleep(5)

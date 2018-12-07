@@ -62,7 +62,7 @@ for i in range(0, numPub):
     bib = dict()
     bib['author'] = GetAU(i)
     bib['citation_count'] = str(author_pub['citation_count'][i])
-    bib['cover_date'] = author_pub['cover_date'][i].split('-')[0]
+    bib['year'] = author_pub['cover_date'][i].split('-')[0]
     for x in listOfKeys:
         if author_pub[x][i] is not None:
             if x is 'affiliation':

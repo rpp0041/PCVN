@@ -27,6 +27,17 @@ with open('bibtexScholar.bib', encoding='utf-8') as bibfile:
 # Load WOS BibTex File   
 with open('savedrecs.bib', encoding='utf-8') as bibfile:
     WOS = bibtexparser.load(bibfile)
+    
+""" If WOS had returned more than 50 publications, we will have 2 files,
+so we try to read & add to WOS bibtexparser structure to work as if only
+one exists """
+try:
+    with open('savedrecs(1).bib', encoding='utf-8') as bibfile:
+        WOS2 = bibtexparser.load(bibfile)
+    for x in WOS2.entries:
+        WOS.entries.append(x)
+except:
+    pass
 lenScopus=len(Scopus.entries)
 lenScholar=len(Scholar.entries)
 lenWos=len(WOS.entries)

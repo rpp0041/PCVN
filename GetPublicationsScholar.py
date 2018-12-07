@@ -1,6 +1,12 @@
-import scholarly  # Non official Api for Google Scholar
+""" Needed libraries to extract and write the data
+Scholarly : Is a non Official API to extract data from Google Scholar 
+bibtexparser: Is a library that allow to work with BibTex format file """
+import scholarly
 from bibtexparser.bwriter import BibTexWriter
 from bibtexparser.bibdatabase import BibDatabase
+
+""" Function that will return Abstract field parsed, without some
+html tags that in same cases the API return"""
 
 
 def ParseAbstract(i):
@@ -18,8 +24,12 @@ def ParseAbstract(i):
     return abstract
 
 
+""" Ask the user to input the name of the author to search for"""
 authorInput = input('Nombre del Autor: ')
 
+"""  Call to scholarly functions that will search for the author given 
+as a parameter and will return an iterable object with all the 
+publications found for the author given"""
 search_query = scholarly.search_author(authorInput)
 author = next(search_query).fill()
 author_pub = author.publications
@@ -28,9 +38,11 @@ db = BibDatabase()
 
 cont = 0
 writer = BibTexWriter()
+""" Go trought all the author´s publications , complete all the fields
+and parse some in order to fit BibTexWriter"""
 for i in author_pub:
     i.fill()
-    # Need modifications for BibTextWriter
+    # Need modifications for BibTextWriter ##########################
     if 'journal' in i.bib.keys():
         i.bib['ENTRYTYPE'] = 'article'
     else:
@@ -41,7 +53,10 @@ for i in author_pub:
         i.bib['abstract'] = abstract
     if 'year' in i.bib.keys():
         i.bib['year'] = str(i.bib['year'])
-    db.entries = [i.bib]
+    #################################################################
+    db.entries.append(i.bib)
     cont += 1
-    with open('bibtex.bib', 'a', encoding='utf-8') as bibfile:
-        bibfile.write(writer.write(db))
+""" Write the extracted data stored in db (BibDatabase) and save it 
+in bibtexScholar.bib for later use """
+with open('bibtexScholar.bib', 'a', encoding='utf-8') as bibfile:
+    bibfile.write(writer.write(db))

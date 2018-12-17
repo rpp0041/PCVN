@@ -52,10 +52,13 @@ for i in author_pub:
         abstract = ParseAbstract(i)
         i.bib['abstract'] = abstract
     if 'year' in i.bib.keys():
-        i.bib['year'] = str(i.bib['year'])
-    #################################################################
+        i.bib['year']=str(i.bib['year'])
+    if hasattr(i,'citedby'):
+        i.bib['cites']=str(i.citedby)
+    else:
+        i.bib['cites']='0'
     db.entries.append(i.bib)
-    cont += 1
+    cont+=1
 """ Write the extracted data stored in db (BibDatabase) and save it 
 in bibtexScholar.bib for later use """
 with open('bibtexScholar.bib', 'a', encoding='utf-8') as bibfile:

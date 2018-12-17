@@ -4,6 +4,7 @@ Selenium: we will use selenium to navegate through WOS web site
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 import time
+import os
 
 """ Function that will help in saving records process """
 
@@ -11,7 +12,7 @@ import time
 def SelectSaveOptions():
     """ Select save in other format file"""
     browser.find_elements_by_class_name('select2-selection__arrow')[1].click()
-    browser.find_elements_by_class_name('select2-results__option')[5].click()
+    browser.find_elements_by_class_name('select2-results__option')[6].click()
 
     """Select register content """
     browser.find_element_by_id('select2-bib_fields-container').click()

@@ -1,5 +1,6 @@
 from bibtexparser.bwriter import BibTexWriter
 from bibtexparser.bibdatabase import BibDatabase
+from ImpactIndexUtils import *
 import bibtexparser
 """ Function that if 2 given publications check if hass issn attribute
 and in case both have , check if are equal
@@ -51,10 +52,13 @@ def RemoveDupliates(list1, list2):
 """ Function that will parse WOS BibTex file for a correct format.
 We need to remove extra '{}' characters , but some fields has not
 this extra characters so we exclude them from parse proccess.
-parameter: list of publications (list of dicts)"""
+parameter: list of publications (list of dicts)
+		   ImpactIndexList 		(list of dicts)
+		   JournalList			(list of str)
+"""
 
 
-def ParseWOS(wos):
+def ParseWOS(wos, ImpactIndexList, JournalList):
     for pub in wos:
         listKeys = list(pub.keys())
         listKeys.remove('author')
@@ -62,6 +66,11 @@ def ParseWOS(wos):
         listKeys.remove('ID')
         for key in listKeys:
             pub[key] = pub[key].split('{')[1].split('}')[0]
+        if pub['ENTRYTYPE'] == 'article':
+            year = pub['year']
+            journal = pub['journal']
+            pub['impactIndex'] = str(CheckImpactIndex(
+                ImpactIndexList, JournalList, journal, year))
 
 
 """ Function that will parse Volume field to remove extra information
@@ -74,6 +83,19 @@ def ParseVolume(pub):
     if 'volume' in pub.keys():
         pub['volume'] = pub['volume'].split(' ')[0]
     return pub
+""" Function that will remove impactIndex key if equals 0
+becouse this will mean that during consulting progress 
+,there are not results found for this journal name
+parameter : publication (dict)
+return: publication(dict) """
+
+
+def ParseImpacIndex(pub):
+    if 'impactIndex' in pub.keys():
+        if pub['impactIndex'] == '0':
+            pub.pop('impactIndex')
+    return pub
+
 # Load BibTex files extract from Google Scholar, Scopus and WOS
 # in order to remove duplicate publications and to group them in just one file
 # so it will make easier to work with.
@@ -91,9 +113,6 @@ with open('bibtexScholar.bib', encoding='utf-8') as bibfile:
 with open('savedrecs.bib', encoding='utf-8') as bibfile:
     WOS = bibtexparser.load(bibfile)
 
-""" If WOS had returned more than 50 publications, we will have 2 files,
-so we try to read & add to WOS bibtexparser structure to work as if only
-one exists """
 try:
     with open('savedrecs(1).bib', encoding='utf-8') as bibfile:
         WOS2 = bibtexparser.load(bibfile)
@@ -101,10 +120,12 @@ try:
         WOS.entries.append(x)
 except:
     pass
-
 """ Parse WOS db in order to get same format for every bibTex db 
 this will help us in the future comparison (otherwise it will be impossible)"""
-ParseWOS(WOS.entries)
+ImpactIndexList = list()
+JournalList = list()
+ParseWOS(WOS.entries, ImpactIndexList, JournalList)
+
 
 #####################################################################
 
@@ -142,6 +163,8 @@ for i in WOS.entries:
     i.pop('number-of-cited-references')
     """ Parse Volume """
     i = ParseVolume(i)
+    """ Parse ImpactIndex"""
+    i = ParseImpacIndex(i)
     """ Add pub to write BibTex db """
     db.entries.append(i)
 """ Write db to BibTex file """

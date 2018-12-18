@@ -231,3 +231,67 @@ def fillNewInproceedings(pub, browser):
     except:
         """ Cancel publication"""
         browser.find_element_by_class_name('close').click()
+        
+def fillNewIndexArticle(pub, browser):
+    """Open new pub form """
+    browser.find_element_by_id('nuevaPublicacionNoIdxId').click()
+    time.sleep(1)
+    """ fill author"""
+    au = browser.find_element_by_id('autoresFilter')
+    addAU = browser.find_element_by_xpath('//*[@title="Añadir"]')
+    for author in pub['author'].split(' and '):
+        au.send_keys(author)
+        addAU.click()
+    """ fill Title"""
+    browser.find_element_by_id('tituloTextId').send_keys(pub['title'])
+    """ fill journal """
+    browser.find_element_by_id('nombreRevistaTextId').send_keys(pub['journal'])
+    """ fill volume """
+    if 'volume' in pub:
+        browser.find_element_by_id('volumenTextId').send_keys(pub['volume'])
+    else:
+        browser.find_element_by_id('volumenTextId').send_keys(0)
+    """fill pages"""
+    if 'pages' in pub:
+        pagefrom = browser.find_element_by_id('pagDesdeTextId')
+        pagelast = browser.find_element_by_id('pagHastaTextId')
+        pages = pub['pages'].split('-')
+        if (len(pages) > 1):
+            pagefrom.send_keys(pages[0])
+            pagelast.send_keys(pages[1])
+        else:
+            pagefrom.send_keys(0)
+            pagelast.send_keys(pages[0])
+
+    """Check if has YEAR & fill the field"""
+    if 'year' in pub:
+        browser.find_element_by_id(
+            'annioPublicacionTextId').send_keys(pub['year'])
+        browser.find_element_by_id('annioCalidadTextId').send_keys(pub['year'])
+    else:
+        browser.find_element_by_id('annioPublicacionTextId').send_keys(1900)
+    """ Check if has ISSN & fill the field"""
+    if 'issn' in pub:
+        browser.find_element_by_id('issnTextId').send_keys(pub['issn'])
+
+    """ Check if has D.O.I & fill the field """
+    if 'doi' in pub:
+        browser.find_element_by_id('doiTextId').send_keys(pub['doi'])
+
+    """ Fill Index Data Base """
+    browser.find_element_by_id('baseDatosTextId').send_keys('Web of Science')
+    """ Fill ImpactIndex """
+    browser.find_element_by_id(
+        'indiceImpactoTextId').send_keys(pub['ImpactIndex'])
+    """ Fill category """
+    broser.find_element_by_id(
+        'categoriaTextId').send_keys(pub['research-areas'])
+    """ Fill JCR cites"""
+    browser.find_element_by_id('citasJcrTextId').send_keys(pub['cites'])
+    # test
+    browser.find_element_by_id('posicionSolicitanteTextId').send_keys(1)
+    browser.find_element_by_class_name('col-sm-5').click()
+    browser.find_element_by_xpath('//*[@data-value="2"]').click()
+
+    """save"""
+    browser.find_element_by_id('saveBtn').click()

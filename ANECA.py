@@ -30,12 +30,16 @@ with open('BibFINAL.bib', encoding='utf-8') as bibfile:
 
 """ Add every publication readed from file"""
 for i in db.entries:
-    if i['ENTRYTYPE']=='book':
-        fillNewBook(i,browser)
-        time.sleep(7)
-    elif i['ENTRYTYPE']=='article':
-        fillNewArticle(i,browser)
+    if i['ENTRYTYPE'] == 'book':
+        fillNewBook(i, browser)
         time.sleep(10)
-    elif i['ENTRYTYPE']=='inproceedings':
-        fillNewArticle(i,browser)
-        time.sleep(7)
+    elif i['ENTRYTYPE'] == 'article':
+        if 'ImpactIndex' in i.keys():
+            fillNewIndexArticle(i, browser)
+            time.sleep(10)
+        else:
+            fillNewArticle(i, browser)
+            time.sleep(10)
+    elif i['ENTRYTYPE'] == 'inproceedings':
+        fillNewArticle(i, browser)
+        time.sleep(10)

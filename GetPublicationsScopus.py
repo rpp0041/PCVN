@@ -121,7 +121,7 @@ for i in range(0, numPub):
     db.entries.append(bib)
 """ Write the extracted data stored in db (BibDatabase) and save it 
 in bibtexScopus.bib for later use """
-with open('bibtexScopus.bib', 'a', encoding='utf-8') as bibfile:
+with open('bibtexScopus.bib', 'w', encoding='utf-8') as bibfile:
     bibfile.write(writer.write(db))
 
 

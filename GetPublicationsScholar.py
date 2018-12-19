@@ -61,5 +61,5 @@ for i in author_pub:
     cont+=1
 """ Write the extracted data stored in db (BibDatabase) and save it 
 in bibtexScholar.bib for later use """
-with open('bibtexScholar.bib', 'a', encoding='utf-8') as bibfile:
+with open('bibtexScholar.bib', 'w', encoding='utf-8') as bibfile:
     bibfile.write(writer.write(db))

@@ -19,11 +19,11 @@ def login(browser):
 
 def autologin(browser):
     """ Insert user"""
-    user = '71291761H'
+    user = 'asdasdasda'
     login = browser.find_element_by_id('login')
     login.send_keys(user)
     """ Insert password"""
-    pswd = '00a3f21d53'
+    pswd = 'asdasdasdasdas'
     clave = browser.find_element_by_id('clave')
     clave.send_keys(pswd)
     """ Send Information"""
@@ -256,7 +256,7 @@ def fillNewIndexArticle(pub, browser):
         pagefrom = browser.find_element_by_id('pagDesdeTextId')
         pagelast = browser.find_element_by_id('pagHastaTextId')
         pages = pub['pages'].split('-')
-        if (len(pages) > 1):
+        if len(pages) > 1:
             pagefrom.send_keys(pages[0])
             pagelast.send_keys(pages[1])
         else:
@@ -295,3 +295,4 @@ def fillNewIndexArticle(pub, browser):
 
     """save"""
     browser.find_element_by_id('saveBtn').click()
+

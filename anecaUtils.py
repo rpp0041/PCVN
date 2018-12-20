@@ -1,3 +1,4 @@
+from GroupFilesUtils import parse_string
 import getpass
 import time
 """ Function that will log user in to Aneca Academia Aplication"""
@@ -17,20 +18,9 @@ def login(browser):
     return browser
 
 
-def autologin(browser):
-    """ Insert user"""
-    user = 'asdasdasda'
-    login = browser.find_element_by_id('login')
-    login.send_keys(user)
-    """ Insert password"""
-    pswd = 'asdasdasdasdas'
-    clave = browser.find_element_by_id('clave')
-    clave.send_keys(pswd)
-    """ Send Information"""
-    browser.find_element_by_id('boton_entrar').click()
-    return browser
 """ Function that will get selenium driver to Academia application 
 asking the user to log in with the credentials"""
+
 
 def GoToAcademia(browser):
     """ go to ANECA web site"""
@@ -48,7 +38,7 @@ def GoToAcademia(browser):
     if not ask for it again """
     while True:
         # login()
-        autologin(browser)
+        login(browser)
         try:
             browser.find_element_by_id('infoError')
             print('Información introducida erronea pruebe de nuevo')
@@ -61,9 +51,12 @@ def GoToAcademia(browser):
     window_after = browser.window_handles[1]
     browser.close()
     browser.switch_to.window(window_after)
-    time.sleep(7)
+    time.sleep(8)
 
     return browser
+
+
+""" Function that will drive Selenium to Academia add Publication Area"""
 
 
 def GoToPublications(browser):
@@ -78,7 +71,10 @@ def GoToPublications(browser):
     browser.find_element_by_link_text('Acepto').click()
 
 
-def fillNewBook(pub, browser):
+""" Function tha will fill a new Book publication """
+
+
+def fillNewBook(pub, browser, authorInput):
     """Open new pub form """
     browser.find_element_by_id('nuevLibroCapituloId').click()
     time.sleep(1)
@@ -88,6 +84,9 @@ def fillNewBook(pub, browser):
     for author in pub['author'].split(' and '):
         au.send_keys(author)
         addAU.click()
+    """ fill author position"""
+    pos = author_position(pub['author'], authorInput)
+    browser.find_element_by_id('posicionSolicitanteTextId').send_keys(pos)
     """ fill Title"""
     browser.find_element_by_id('tituloLibroTextId').send_keys(pub['title'])
     """ fill volume """
@@ -116,7 +115,6 @@ def fillNewBook(pub, browser):
             'editorialTextId').send_keys(pub['publisher'])
 
     # TODO
-    browser.find_element_by_id('posicionSolicitanteTextId').send_keys(1)
     browser.find_element_by_class_name('col-sm-7').click()
     browser.find_element_by_xpath('//*[@data-value="2"]').click()
 
@@ -124,7 +122,11 @@ def fillNewBook(pub, browser):
     browser.find_element_by_id('saveBtn').click()
 
 
-def fillNewArticle(pub, browser):
+""" Function tha will fill a new not indexed
+Article publication """
+
+
+def fillNewArticle(pub, browser, authorInput):
     """Open new pub form """
     browser.find_element_by_id('nuevaPublicacionNoIdxId').click()
     time.sleep(1)
@@ -134,6 +136,9 @@ def fillNewArticle(pub, browser):
     for author in pub['author'].split(' and '):
         au.send_keys(author)
         addAU.click()
+    """ fill author position"""
+    pos = author_position(pub['author'], authorInput)
+    browser.find_element_by_id('posicionSolicitanteTextId').send_keys(pos)
     """ fill Title"""
     browser.find_element_by_id('tituloTextId').send_keys(pub['title'])
     """ fill journal """
@@ -142,7 +147,7 @@ def fillNewArticle(pub, browser):
     if 'volume' in pub:
         browser.find_element_by_id('volumenTextId').send_keys(pub['volume'])
     else:
-        browser.find_element_by_id('volumenTextId').send_keys(0) #TODO
+        browser.find_element_by_id('volumenTextId').send_keys(0)  # TODO
     """fill pages"""
     if 'pages' in pub:
         pagefrom = browser.find_element_by_id('pagDesdeTextId')
@@ -160,7 +165,8 @@ def fillNewArticle(pub, browser):
         browser.find_element_by_id(
             'annioPublicacionTextId').send_keys(pub['year'])
     else:
-        browser.find_element_by_id('annioPublicacionTextId').send_keys(1900)#TODO
+        browser.find_element_by_id(
+            'annioPublicacionTextId').send_keys(1900)  # TODO
     """ Check if has ISBN & fill the field"""
     if 'issn' in pub:
         browser.find_element_by_id('issnTextId').send_keys(pub['issn'])
@@ -170,7 +176,6 @@ def fillNewArticle(pub, browser):
         browser.find_element_by_id('doiTextId').send_keys(pub['doi'])
 
     # TODO
-    browser.find_element_by_id('posicionSolicitanteTextId').send_keys(1)
     browser.find_element_by_class_name('col-sm-5').click()
     browser.find_element_by_xpath('//*[@data-value="2"]').click()
 
@@ -178,7 +183,10 @@ def fillNewArticle(pub, browser):
     browser.find_element_by_id('saveBtn').click()
 
 
-def fillNewInproceedings(pub, browser):
+""" Function tha will fill a new Inprocedings publication """
+
+
+def fillNewInproceedings(pub, browser, authorInput):
     """Open new pub form """
     browser.find_element_by_id('nuevoCongreso').click()
     time.sleep(1)
@@ -189,6 +197,10 @@ def fillNewInproceedings(pub, browser):
         for author in pub['author'].split(' and '):
             au.send_keys(author)
             addAU.click()
+            """ fill author position"""
+            pos = author_position(pub['author'], authorInput)
+            browser.find_element_by_id(
+                'posicionSolicitanteTextId').send_keys(pos)
         """ fill Type """
         browser.find_element_by_class_name('col-sm-4').click()
         browser.find_element_by_xpath('//*[@data-value="1"]').click()
@@ -231,8 +243,12 @@ def fillNewInproceedings(pub, browser):
     except:
         """ Cancel publication"""
         browser.find_element_by_class_name('close').click()
-        
-def fillNewIndexArticle(pub, browser):
+
+
+""" Function tha will fill a new Indexed Article publication """
+
+
+def fillNewIndexArticle(pub, browser, authorInput):
     """Open new pub form """
     browser.find_element_by_id('nuevaPublicacionNoIdxId').click()
     time.sleep(1)
@@ -242,6 +258,9 @@ def fillNewIndexArticle(pub, browser):
     for author in pub['author'].split(' and '):
         au.send_keys(author)
         addAU.click()
+    """ fill author position"""
+    pos = author_position(pub['author'], authorInput)
+    browser.find_element_by_id('posicionSolicitanteTextId').send_keys(pos)
     """ fill Title"""
     browser.find_element_by_id('tituloTextId').send_keys(pub['title'])
     """ fill journal """
@@ -289,10 +308,25 @@ def fillNewIndexArticle(pub, browser):
     """ Fill JCR cites"""
     browser.find_element_by_id('citasJcrTextId').send_keys(pub['cites'])
     # test
-    browser.find_element_by_id('posicionSolicitanteTextId').send_keys(1)
     browser.find_element_by_class_name('col-sm-5').click()
     browser.find_element_by_xpath('//*[@data-value="2"]').click()
 
     """save"""
     browser.find_element_by_id('saveBtn').click()
 
+
+""" Function that will return the position of an author in a string 
+parameter : String
+return : int    
+"""
+
+
+def author_position(auth, authorInput):
+    cont = 1
+    au2 = parse_string(authorInput)
+    for author in auth.split(' and '):
+        au1 = parse_string(author)
+        if au1 == au2:
+            return cont
+        cont += 1
+    return 1

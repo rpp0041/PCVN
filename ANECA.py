@@ -14,6 +14,8 @@ from anecaUtils import *
 options = Options()
 options.headless = True
 
+authorInput='asd' #ToDO
+
 fp = webdriver.FirefoxProfile()
 fp.set_preference("browser.download.folderList", 2)
 fp.set_preference("browser.download.manager.showWhenStarting",False)
@@ -31,15 +33,15 @@ with open('BibFINAL.bib', encoding='utf-8') as bibfile:
 """ Add every publication readed from file"""
 for i in db.entries:
     if i['ENTRYTYPE'] == 'book':
-        fillNewBook(i, browser)
+        fillNewBook(i, browser, authorInput)
         time.sleep(10)
     elif i['ENTRYTYPE'] == 'article':
         if 'ImpactIndex' in i.keys():
-            fillNewIndexArticle(i, browser)
+            fillNewIndexArticle(i, browser, authorInput)
             time.sleep(10)
         else:
-            fillNewArticle(i, browser)
+            fillNewArticle(i, browser, authorInput)
             time.sleep(10)
     elif i['ENTRYTYPE'] == 'inproceedings':
-        fillNewArticle(i, browser)
+        fillNewInproceedings(i, browser, authorInput)
         time.sleep(10)

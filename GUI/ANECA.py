@@ -12,18 +12,19 @@ import time
 import bibtexparser
 from anecaUtils import *
 
-def aneca(authorInput,pbar,user,pswd):
+
+def aneca(authorInput, pbar, user, pswd):
     """ Options for Selenium driver """
     options = Options()
-    options.headless = False    
+    options.headless = False
 
     fp = webdriver.FirefoxProfile()
     fp.set_preference("browser.download.folderList", 2)
-    fp.set_preference("browser.download.manager.showWhenStarting",False)
+    fp.set_preference("browser.download.manager.showWhenStarting", False)
     browser = webdriver.Firefox(firefox_profile=fp)
 
     """ Go to Academia application """
-    GoToAcademia(browser,user,pswd)
+    GoToAcademia(browser, user, pswd)
     """ Go to add publications Area """
     GoToPublications(browser)
 
@@ -33,21 +34,23 @@ def aneca(authorInput,pbar,user,pswd):
 
     """ BibTex database for uncompleted publications"""
     db_salida = BibDatabase()
-    progressbarInc=len(db.entries)/100
+    progressbarInc = len(db.entries)/100
     """ Add every publication readed from file"""
     for i in db.entries:
         if i['ENTRYTYPE'] == 'book':
-            db_salida=fillNewBook(i, browser, authorInput,db_salida)
+            db_salida = fillNewBook(i, browser, authorInput, db_salida)
             time.sleep(10)
         elif i['ENTRYTYPE'] == 'article':
             if 'ImpactIndex' in i.keys():
-                db_salida=fillNewIndexArticle(i, browser, authorInput,db_salida)
+                db_salida = fillNewIndexArticle(
+                    i, browser, authorInput, db_salida)
                 time.sleep(10)
             else:
-                db_salida=fillNewArticle(i, browser, authorInput,db_salida)
+                db_salida = fillNewArticle(i, browser, authorInput, db_salida)
                 time.sleep(10)
         elif i['ENTRYTYPE'] == 'inproceedings':
-            db_salida=fillNewInproceedings(i, browser, authorInput,db_salida)
+            db_salida = fillNewInproceedings(
+                i, browser, authorInput, db_salida)
             time.sleep(10)
         pbar['value'] += progressbarInc
         pbar.update()

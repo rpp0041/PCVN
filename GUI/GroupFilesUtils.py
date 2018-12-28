@@ -128,7 +128,6 @@ def checkTitle(pub1, pub2):
     return False
 
 
-
 """ Function that given 2 list of publications check if their are the same
 in 2 steps first by ISSN (in case both have),second By Title
 parameter: list of publications (list of dicts)

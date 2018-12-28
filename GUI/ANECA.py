@@ -12,7 +12,7 @@ import time
 import bibtexparser
 from anecaUtils import *
 
-def aneca(authorInput,pbar):
+def aneca(authorInput,pbar,user,pswd):
     """ Options for Selenium driver """
     options = Options()
     options.headless = False    
@@ -23,7 +23,7 @@ def aneca(authorInput,pbar):
     browser = webdriver.Firefox(firefox_profile=fp)
 
     """ Go to Academia application """
-    GoToAcademia(browser)
+    GoToAcademia(browser,user,pswd)
     """ Go to add publications Area """
     GoToPublications(browser)
 

@@ -4,13 +4,11 @@ import time
 """ Function that will log user in to Aneca Academia Aplication"""
 
 
-def login(browser):
+def login(browser,user,pswd):
     """ Insert user"""
-    user = input('Introduzca el Usuarion (DNI/NIE)')
     login = browser.find_element_by_id('login')
     login.send_keys(user)
     """ Insert password"""
-    pswd = getpass.getpass('Contraseña:')
     clave = browser.find_element_by_id('clave')
     clave.send_keys(pswd)
     """ Send Information"""
@@ -22,7 +20,7 @@ def login(browser):
 asking the user to log in with the credentials"""
 
 
-def GoToAcademia(browser):
+def GoToAcademia(browser,user,pswd):
     """ go to ANECA web site"""
     browser.get(
         'https://sede.educacion.gob.es/sede/login/inicio.jjsp;jsessionid=7D33705756C3CC4DC0C46E17B7DEA3CB')
@@ -37,8 +35,7 @@ def GoToAcademia(browser):
     """ Check if the user & password given are correct 
     if not ask for it again """
     while True:
-        # login()
-        login(browser)
+        login(browser,user,pswd)
         try:
             browser.find_element_by_id('infoError')
             print('Información introducida erronea pruebe de nuevo')
@@ -90,13 +87,13 @@ def fillNewBook(pub, browser, authorInput,db):
         pos = author_position(pub['author'], authorInput)
         browser.find_element_by_id('posicionSolicitanteTextId').send_keys(pos)
     else:
-        db=save_pub(db,browser)
+        db=save_pub(db, browser,pub)
 
     """ fill Title *NECESSARY FIELD* """
     if 'title' in pub:
         browser.find_element_by_id('tituloLibroTextId').send_keys(pub['title'])
     else:
-        db=save_pub(db,browser)
+        db=save_pub(db, browser,pub)
     """ fill volume """
     if 'volume' in pub:
         browser.find_element_by_id('volumenTextId').send_keys(pub['volume'])
@@ -151,25 +148,25 @@ def fillNewArticle(pub, browser, authorInput,db):
         pos = author_position(pub['author'], authorInput)
         browser.find_element_by_id('posicionSolicitanteTextId').send_keys(pos)
     else:
-        db=save_pub(db,browser)
+        db=save_pub(db, browser,pub)
 
     """ fill Title *NECESSARY FIELD * """
     if 'title' in pub:
         browser.find_element_by_id('tituloTextId').send_keys(pub['title'])
     else:
-        db=save_pub(db,browser)
+        db=save_pub(db, browser,pub)
 
     """ fill journal *NECESSARY FIELD* """
     if 'journal' in pub:
         browser.find_element_by_id('nombreRevistaTextId').send_keys(pub['journal'])
     else:
-        db=save_pub(db,browser)
+        db=save_pub(db, browser,pub)
 
     """ fill volume *NECESSARY FIELD* """
     if 'volume' in pub:
         browser.find_element_by_id('volumenTextId').send_keys(pub['volume'])
     else:
-        db=save_pub(db,browser)
+        db=save_pub(db, browser,pub)
 
     """fill pages"""
     if 'pages' in pub:
@@ -188,7 +185,7 @@ def fillNewArticle(pub, browser, authorInput,db):
         browser.find_element_by_id(
             'annioPublicacionTextId').send_keys(pub['year'])
     else:
-        db=save_pub(db,browser)
+        db=save_pub(db, browser,pub)
         
     """ Check if has ISBN & fill the field"""
     if 'issn' in pub:

@@ -27,7 +27,6 @@ def Google():
         pbarGoogleScholar['maximum']=100
     
         GetPublicationsScholar(author,pbarGoogleScholar)
-        #time.sleep(3)
         pbarGoogleScholar.stop()
         window.destroy()
 
@@ -70,7 +69,6 @@ def Scopus():
         pbarScopus.update()
         pbarScopus['maximum']=100
         GetPublicationsScopus(author,pbarScopus)
-        #time.sleep(3)
         pbarScopus.stop()
         print('DONE')
         window.destroy()
@@ -115,7 +113,6 @@ def wos():
         pbar_wos.update()
         pbar_wos['maximum']=100
         get_publications_wos(author,pbar_wos)
-        #time.sleep(3)
         pbar_wos.stop()
         print('DONE')
         window.destroy()
@@ -153,7 +150,6 @@ def Groupfiles():
         pbar_g_files.update()
         pbar_g_files['maximum']=100
         group_files(pbar_g_files)
-        #time.sleep(3)
         pbar_g_files.stop()
         print('DONE')
         window.destroy()
@@ -183,7 +179,52 @@ def Groupfiles():
     window.mainloop()
 
 """ """ 
+def aneca_login():
+    window=Tk()
+    window.title('PCVN')
+    window.geometry('800x800')
+    
+    def get_login():
+        global user
+        global pswd
+        user=entry_user.get()
+        pswd=entry_pswd.get()
+        window.destroy()
+    # backGround
+    photo = PhotoImage(file="test.png")
+    labelbg=Label(window,image=photo)
+    labelbg.pack()
+    
+    # Label User
+    label_user = Label(window, text="Usuario")
+    font=('times', 20)
+    label_user.config(font=font)
+    label_user.place(x=220,y=320)
+    # Entry User
+    entry_user = Entry(window,width=40)
+    entry_user.place(x=360,y=325)
+    
+    # Label Password
+    label_pswd = Label(window, text="Contraseña")
+    font=('times', 20)
+    label_pswd.config(font=font)
+    label_pswd.place(x=220,y=370)
+    # Entry Password
+    entry_pswd = Entry(window,width=20)
+    entry_pswd.place(x=360,y=385)
+    entry_pswd.config(show="*");
+    
+    
+    # Button
+    bt_login=Button(window, text="Login", height=1,width=10,command=get_login)
+    bfont=('times', 17)
+    bt_login.config(font=bfont)
+    bt_login.place(x=360,y=430)
+    
+    window.mainloop()
+""" """
 def Aneca(author):
+    aneca_login()
     window=Tk()
     window.title('PCVN')
     window.geometry('800x800')
@@ -192,8 +233,7 @@ def Aneca(author):
         pbar_aneca.place(x=220,y=420)
         pbar_aneca.update()
         pbar_aneca['maximum']=100
-        aneca(author,pbar_aneca)
-        time.sleep(10)
+        aneca(author,pbar_aneca,user,pswd)
         pbar_aneca.stop()
         print('DONE')
         window.destroy()

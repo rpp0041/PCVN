@@ -24,7 +24,10 @@ def aneca(author_input, pbar, user, pswd):
     browser = webdriver.Firefox(options=options, firefox_profile=fp)
 
     """ Go to Academia application """
-    go_to_academia(browser, user, pswd)
+    if go_to_academia(browser, user, pswd):
+        browser.close()
+        return True
+
     """ Go to add publications Area """
     go_to_publications(browser)
 
@@ -40,21 +43,22 @@ def aneca(author_input, pbar, user, pswd):
     for i in db.entries:
         if i['ENTRYTYPE'] == 'book':
             db_salida = fill_new_book(i, browser, author_input, db_salida)
-            time.sleep(10)
+            time.sleep(13)
         elif i['ENTRYTYPE'] == 'article':
             if 'ImpactIndex' in i.keys():
                 db_salida = fill_new_index_article(
                     i, browser, author_input, db_salida)
-                time.sleep(10)
+                time.sleep(13)
             else:
                 db_salida = fill_new_article(i, browser, author_input, db_salida)
-                time.sleep(10)
+                time.sleep(13)
         elif i['ENTRYTYPE'] == 'inproceedings':
             db_salida = fill_new_inproceedings(
                 i, browser, author_input, db_salida)
-            time.sleep(10)
+            time.sleep(13)
         pbar['value'] += progress_bar_inc
         pbar.update()
+    browser.close()
     """ Write the uncompleted publication stored in db (BibDatabase) and save it 
     in BibTex file """
     with open('uncompleted_publications.bib', 'w', encoding='utf-8') as bibfile:

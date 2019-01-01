@@ -238,6 +238,12 @@ def aneca_login():
         # Destroy window
         window.destroy()
 
+    """ Function that make possible push enter keyboard button 
+    and it will work as search button"""
+    def func(event):
+        get_login()
+
+    window.bind('<Return>', func)
     # backGround
     photo = PhotoImage(file="background.png")
     labelbg = Label(window, image=photo)
@@ -293,7 +299,11 @@ def aneca_window(author):
         pbar_aneca.update()
         pbar_aneca['maximum'] = 100
         # Call Aneca function to start upload process
-        aneca(author, pbar_aneca, user, pswd)
+        if aneca(author, pbar_aneca, user, pswd):
+            window.destroy()
+            fail_login()
+            aneca_window(author)
+
         pbar_aneca.stop()
         # Destroy Window
         window.destroy()
@@ -337,11 +347,40 @@ def completed_window():
     label_completed.place(x=300, y=320)
 
     # Close Button
-    bt_login = Button(window, text="Close", height=1,
+    bt_close = Button(window, text="Close", height=1,
                       width=10, command=end_gui)
     bfont = ('times', 17)
+    bt_close.config(font=bfont)
+    bt_close.place(x=350, y=430)
+
+    window.mainloop()
+
+
+def fail_login():
+    window = Tk()
+    window.title('PCVN')
+    window.geometry('800x800')
+
+    def end_gui():
+        # Destroy Window
+        window.destroy()
+
+    # backGround
+    photo = PhotoImage(file="background.png")
+    labelbg = Label(window, image=photo)
+    labelbg.pack()
+    # Label
+    label_completed = Label(window, text="Login fallído", bg='red')
+    font = ('times', 25)
+    label_completed.config(font=font)
+    label_completed.place(x=300, y=320)
+
+    # Close Button
+    bt_login = Button(window, text="Intentar otra vez", height=1,
+                      width=15, command=end_gui)
+    bfont = ('times', 17)
     bt_login.config(font=bfont)
-    bt_login.place(x=350, y=430)
+    bt_login.place(x=295, y=430)
 
     window.mainloop()
 

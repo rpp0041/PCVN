@@ -1,13 +1,16 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from GroupFilesUtils import parse_string
-import getpass
+from selenium.common.exceptions import NoSuchElementException
 import time
-""" Function that will log user in to Aneca Academia Aplication"""
+
+""" Function that will log user in to Aneca Academia Application"""
 
 
 def login(browser, user, pswd):
     """ Insert user"""
-    login = browser.find_element_by_id('login')
-    login.send_keys(user)
+    log_in = browser.find_element_by_id('login')
+    log_in.send_keys(user)
     """ Insert password"""
     clave = browser.find_element_by_id('clave')
     clave.send_keys(pswd)
@@ -20,14 +23,14 @@ def login(browser, user, pswd):
 asking the user to log in with the credentials"""
 
 
-def GoToAcademia(browser, user, pswd):
+def go_to_academia(browser, user, pswd):
     """ go to ANECA web site"""
     browser.get(
         'https://sede.educacion.gob.es/sede/login/inicio.jjsp;jsessionid=7D33705756C3CC4DC0C46E17B7DEA3CB')
     """ search for Academia """
-    Academia = browser.find_element_by_id(
+    academia = browser.find_element_by_id(
         'buscadorConvocatoriasForm.descripcion.descripcion.desc')
-    Academia.send_keys('academia')
+    academia.send_keys('academia')
     browser.find_element_by_id(
         'buscarConvocatoriasInicio_boton_consulta_convocatoria').click()
     browser.find_element_by_id('listaConvocatoriaForm0').click()
@@ -39,7 +42,7 @@ def GoToAcademia(browser, user, pswd):
         try:
             browser.find_element_by_id('infoError')
             print('Información introducida erronea pruebe de nuevo')
-        except:
+        except NoSuchElementException:
             print('LogIn Correcto')
             break
     """ Access to Academia 3.0 application  and close previous windows open
@@ -56,7 +59,7 @@ def GoToAcademia(browser, user, pswd):
 """ Function that will drive Selenium to Academia add Publication Area"""
 
 
-def GoToPublications(browser):
+def go_to_publications(browser):
     """ Acces to add publications area"""
     browser.find_elements_by_class_name('has-submenu')[2].click()
     browser.find_elements_by_class_name('has-submenu')[3].click()
@@ -71,19 +74,19 @@ def GoToPublications(browser):
 """ Function tha will fill a new Book publication """
 
 
-def fillNewBook(pub, browser, authorInput, db):
+def fill_new_book(pub, browser, author_input, db):
     """Open new pub form """
     browser.find_element_by_id('nuevLibroCapituloId').click()
     time.sleep(1)
     """ fill author *NECESSARY FIELD* """
     au = browser.find_element_by_id('autoresFilter')
-    addAU = browser.find_element_by_xpath('//*[@title="Añadir"]')
+    add_au = browser.find_element_by_xpath('//*[@title="Añadir"]')
     if 'author' in pub:
         for author in pub['author'].split(' and '):
             au.send_keys(author)
-            addAU.click()
+            add_au.click()
         """ fill author position"""
-        pos = author_position(pub['author'], authorInput)
+        pos = author_position(pub['author'], author_input)
         browser.find_element_by_id('posicionSolicitanteTextId').send_keys(pos)
     else:
         db = save_pub(db, browser, pub)
@@ -132,19 +135,19 @@ def fillNewBook(pub, browser, authorInput, db):
 Article publication """
 
 
-def fillNewArticle(pub, browser, authorInput, db):
+def fill_new_article(pub, browser, author_input, db):
     """Open new pub form """
     browser.find_element_by_id('nuevaPublicacionNoIdxId').click()
     time.sleep(1)
     """ fill author *NECESSARY FIELD* """
     au = browser.find_element_by_id('autoresFilter')
-    addAU = browser.find_element_by_xpath('//*[@title="Añadir"]')
+    add_au = browser.find_element_by_xpath('//*[@title="Añadir"]')
     if 'author' in pub:
         for author in pub['author'].split(' and '):
             au.send_keys(author)
-            addAU.click()
+            add_au.click()
         """ fill author position"""
-        pos = author_position(pub['author'], authorInput)
+        pos = author_position(pub['author'], author_input)
         browser.find_element_by_id('posicionSolicitanteTextId').send_keys(pos)
     else:
         db = save_pub(db, browser, pub)
@@ -173,7 +176,7 @@ def fillNewArticle(pub, browser, authorInput, db):
         pagefrom = browser.find_element_by_id('pagDesdeTextId')
         pagelast = browser.find_element_by_id('pagHastaTextId')
         pages = pub['pages'].split('-')
-        if (len(pages) > 1):
+        if len(pages) > 1:
             pagefrom.send_keys(pages[0])
             pagelast.send_keys(pages[1])
         else:
@@ -208,7 +211,7 @@ def fillNewArticle(pub, browser, authorInput, db):
 """ Function tha will fill a new Inprocedings publication """
 
 
-def fillNewInproceedings(pub, browser, authorInput, db):
+def fill_new_inproceedings(pub, browser, author_input, db):
     """Open new pub form """
     browser.find_element_by_id('nuevoCongreso').click()
     time.sleep(1)
@@ -217,12 +220,12 @@ def fillNewInproceedings(pub, browser, authorInput, db):
     if 'author' in pub:
 
         au = browser.find_element_by_id('autoresFilter')
-        addAU = browser.find_element_by_xpath('//*[@title="Añadir"]')
+        add_au = browser.find_element_by_xpath('//*[@title="Añadir"]')
         for author in pub['author'].split(' and '):
             au.send_keys(author)
-            addAU.click()
+            add_au.click()
             """ fill author position"""
-            pos = author_position(pub['author'], authorInput)
+            pos = author_position(pub['author'], author_input)
             browser.find_element_by_id(
                 'posicionSolicitanteTextId').send_keys(pos)
     else:
@@ -268,7 +271,7 @@ def fillNewInproceedings(pub, browser, authorInput, db):
         pagefrom = browser.find_element_by_id('pagDesdeTextId')
         pagelast = browser.find_element_by_id('pagHastaTextId')
         pages = pub['pages'].split('-')
-        if (len(pages) > 1):
+        if len(pages) > 1:
             pagefrom.send_keys(pages[0])
             pagelast.send_keys(pages[1])
         else:
@@ -289,19 +292,19 @@ def fillNewInproceedings(pub, browser, authorInput, db):
 """ Function tha will fill a new Indexed Article publication """
 
 
-def fillNewIndexArticle(pub, browser, authorInput, db):
+def fill_new_index_article(pub, browser, author_input, db):
     """Open new pub form """
     browser.find_element_by_id('nuevaPublicacionNoIdxId').click()
     time.sleep(1)
     """ fill author"""
     if 'author' in pub:
         au = browser.find_element_by_id('autoresFilter')
-        addAU = browser.find_element_by_xpath('//*[@title="Añadir"]')
+        add_au = browser.find_element_by_xpath('//*[@title="Añadir"]')
         for author in pub['author'].split(' and '):
             au.send_keys(author)
-            addAU.click()
+            add_au.click()
         """ fill author position"""
-        pos = author_position(pub['author'], authorInput)
+        pos = author_position(pub['author'], author_input)
         browser.find_element_by_id('posicionSolicitanteTextId').send_keys(pos)
 
     else:
@@ -359,7 +362,7 @@ def fillNewIndexArticle(pub, browser, authorInput, db):
     browser.find_element_by_id(
         'indiceImpactoTextId').send_keys(pub['ImpactIndex'])
     """ Fill category """
-    broser.find_element_by_id(
+    browser.find_element_by_id(
         'categoriaTextId').send_keys(pub['research-areas'])
     """ Fill JCR cites"""
     browser.find_element_by_id('citasJcrTextId').send_keys(pub['cites'])
@@ -378,10 +381,13 @@ return : int
 """
 
 
-def author_position(auth, authorInput):
+def author_position(auth, author_input):
     cont = 1
-    au2 = parse_string(authorInput)
+    """ Parse author name (remove non alphabetic characters)"""
+    au2 = parse_string(author_input)
+    """ Split author strings in to substring to be compared"""
     for author in auth.split(' and '):
+        """ parse sub string """
         au1 = parse_string(author)
         if au1 == au2:
             return cont
@@ -389,7 +395,12 @@ def author_position(auth, authorInput):
     return 1
 
 
+""" Function that will save given publication to be written in a BibTex File , the publications to be saved are those 
+that are not completed (there are missing fields)"""
+
+
 def save_pub(db, browser, pub):
+    """ Add pub to db """
     db.entries.append(pub)
     """ Cancel publication"""
     browser.find_element_by_class_name('close').click()

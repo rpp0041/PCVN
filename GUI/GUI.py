@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from tkinter import *
 from tkinter import ttk
 from PIL import Image
@@ -6,56 +9,59 @@ from GetPublicationsScopus import *
 from GetPublicationsWOS import *
 from GroupFiles import *
 from ANECA import *
-import time
+
 """ Fucntion that will show window to entry author name to be searched
 in Google Scholar """
 
 
-def Google():
+def google_window():
     window = Tk()
     window.title('PCVN')
     window.geometry('800x800')
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
+
     def func(event):
         get_scholar_pub()
+
     window.bind('<Return>', func)
     """ Function to be executed when click search button"""
+
     def get_scholar_pub():
         # author name , will be used later
-        author = entryGoogleScholar.get()
-        global authorGoogle
-        authorGoogle = author
+        author = entry_google_scholar.get()
+        global author_google
+        author_google = author
         # place progressbar in window
-        pbarGoogleScholar.place(x=200, y=550)
-        pbarGoogleScholar.update()
-        pbarGoogleScholar['maximum'] = 100
+        pbar_google_scholar.place(x=200, y=550)
+        pbar_google_scholar.update()
+        pbar_google_scholar['maximum'] = 100
         # Call function to retrieve publications
-        GetPublicationsScholar(author, pbarGoogleScholar)
-        pbarGoogleScholar.stop()
+        get_publications_scholar(author, pbar_google_scholar)
+        pbar_google_scholar.stop()
         # Destroy Window
         window.destroy()
 
     # backGround Image
-    photo = PhotoImage(file="test.png")
+    photo = PhotoImage(file="background.png")
     labelbg = Label(window, image=photo)
     labelbg.pack()
     # Label
-    labelGoogleScholar = Label(window, text="Google Scholar Author:")
+    label_google_scholar = Label(window, text="Google Scholar Author:")
     font = ('times', 15)
-    labelGoogleScholar.config(font=font)
-    labelGoogleScholar.place(x=130, y=320)
+    label_google_scholar.config(font=font)
+    label_google_scholar.place(x=130, y=320)
     # Entry
-    entryGoogleScholar = Entry(window, width=50)
-    entryGoogleScholar.place(x=350, y=325)
+    entry_google_scholar = Entry(window, width=50)
+    entry_google_scholar.place(x=350, y=325)
     # Search Button
-    BTGoogleScholar = Button(window, text="Search",
-                             command=get_scholar_pub, height=1, width=30)
+    bt_google_scholar = Button(window, text="Search",
+                               command=get_scholar_pub, height=1, width=30)
     bfont = ('times', 17)
-    BTGoogleScholar.config(font=bfont)
-    BTGoogleScholar.place(x=200, y=430)
+    bt_google_scholar.config(font=bfont)
+    bt_google_scholar.place(x=200, y=430)
     # Progress Bar
-    pbarGoogleScholar = ttk.Progressbar(window, mode='determinate', length=400)
+    pbar_google_scholar = ttk.Progressbar(window, mode='determinate', length=400)
 
     window.mainloop()
 
@@ -64,49 +70,52 @@ def Google():
 in Scopus """
 
 
-def Scopus():
+def scopus_window():
     window = Tk()
     window.title('PCVN')
     window.geometry('800x800')
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
+
     def func(event):
         get_scopus_pub()
+
     window.bind('<Return>', func)
     """ Function to be executed when click on search button"""
+
     def get_scopus_pub():
         # Get ID from entry
-        author = entryScopus.get()
+        author = entry_scopus.get()
         # Place progress bar in window
-        pbarScopus.place(x=200, y=550)
-        pbarScopus.update()
-        pbarScopus['maximum'] = 100
+        pbar_scopus.place(x=200, y=550)
+        pbar_scopus.update()
+        pbar_scopus['maximum'] = 100
         # Call function to retrieve publications
-        GetPublicationsScopus(author, pbarScopus)
-        pbarScopus.stop()
+        get_publications_scopus(author, pbar_scopus)
+        pbar_scopus.stop()
         # Destroy window
         window.destroy()
 
     # backGround
-    photo = PhotoImage(file="test.png")
+    photo = PhotoImage(file="background.png")
     labelbg = Label(window, image=photo)
     labelbg.pack()
     # Label
-    labelScopus = Label(window, text="Scopus Author ID:")
+    label_scopus = Label(window, text="Scopus Author ID:")
     font = ('times', 15)
-    labelScopus.config(font=font)
-    labelScopus.place(x=185, y=320)
+    label_scopus.config(font=font)
+    label_scopus.place(x=185, y=320)
     # Entry
-    entryScopus = Entry(window, width=50)
-    entryScopus.place(x=350, y=325)
+    entry_scopus = Entry(window, width=50)
+    entry_scopus.place(x=350, y=325)
     # Search Button
-    BTScopus = Button(window, text="Search",
-                      command=get_scopus_pub, height=1, width=30)
+    bt_scopus = Button(window, text="Search",
+                       command=get_scopus_pub, height=1, width=30)
     bfont = ('times', 17)
-    BTScopus.config(font=bfont)
-    BTScopus.place(x=200, y=430)
+    bt_scopus.config(font=bfont)
+    bt_scopus.place(x=200, y=430)
     # Progress Bar
-    pbarScopus = ttk.Progressbar(window, mode='determinate', length=400)
+    pbar_scopus = ttk.Progressbar(window, mode='determinate', length=400)
 
     window.mainloop()
 
@@ -115,16 +124,19 @@ def Scopus():
 in Web Of Science """
 
 
-def wos():
+def wos_window():
     window = Tk()
     window.title('PCVN')
     window.geometry('800x800')
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
+
     def func(event):
         get_wos_pub()
+
     window.bind('<Return>', func)
     """ Function to be executed when click on search button"""
+
     def get_wos_pub():
         # Get name from entry
         author = entry_wos.get()
@@ -139,7 +151,7 @@ def wos():
         window.destroy()
 
     # backGround
-    photo = PhotoImage(file="test.png")
+    photo = PhotoImage(file="background.png")
     labelbg = Label(window, image=photo)
     labelbg.pack()
     # Label
@@ -151,11 +163,11 @@ def wos():
     entry_wos = Entry(window, width=50)
     entry_wos.place(x=350, y=325)
     # Search Button
-    BT_wos = Button(window, text="Search",
+    bt_wos = Button(window, text="Search",
                     command=get_wos_pub, height=1, width=30)
     bfont = ('times', 17)
-    BT_wos.config(font=bfont)
-    BT_wos.place(x=200, y=430)
+    bt_wos.config(font=bfont)
+    bt_wos.place(x=200, y=430)
     # Progress Bar
     pbar_wos = ttk.Progressbar(window, mode='determinate', length=400)
 
@@ -166,12 +178,13 @@ def wos():
 the process of Grouping files and parsing is taking place """
 
 
-def Groupfiles():
+def group_window():
     window = Tk()
     window.title('PCVN')
     window.geometry('800x800')
     """ Function that will place progress bar and start 
     groupfiles process"""
+
     def groupfiles():
         # Place progressbar in window
         pbar_g_files.place(x=200, y=550)
@@ -184,7 +197,7 @@ def Groupfiles():
         window.destroy()
 
     # backGround
-    photo = PhotoImage(file="test.png")
+    photo = PhotoImage(file="background.png")
     labelbg = Label(window, image=photo)
     labelbg.pack()
     # Label
@@ -206,9 +219,8 @@ def Groupfiles():
 
     window.mainloop()
 
-
-""" Function that will show the user a window to log in in Academia 
-	these credential will be later use in Aneca() """
+    """ Function that will show the user a window to log in in Academia 
+    these credential will be later use in Aneca() """
 
 
 def aneca_login():
@@ -216,6 +228,7 @@ def aneca_login():
     window.title('PCVN')
     window.geometry('800x800')
     """ Function that get data from entries """
+
     def get_login():
         # needed global variables for use in other windows process
         global user
@@ -224,8 +237,9 @@ def aneca_login():
         pswd = entry_pswd.get()
         # Destroy window
         window.destroy()
+
     # backGround
-    photo = PhotoImage(file="test.png")
+    photo = PhotoImage(file="background.png")
     labelbg = Label(window, image=photo)
     labelbg.pack()
 
@@ -264,14 +278,15 @@ will also show a window for login, and later will show a window
 indicating the progress taken """
 
 
-def Aneca(author):
-        # Call login function
+def aneca_window(author):
+    # Call login function
     aneca_login()
     window = Tk()
     window.title('PCVN')
     window.geometry('800x800')
     """ Function that will place progress bar and start 
     upload process"""
+
     def start_aneca():
         # Place progressbar in window
         pbar_aneca.place(x=220, y=420)
@@ -284,7 +299,7 @@ def Aneca(author):
         window.destroy()
 
     # backGround
-    photo = PhotoImage(file="test.png")
+    photo = PhotoImage(file="background.png")
     labelbg = Label(window, image=photo)
     labelbg.pack()
     # Label
@@ -302,9 +317,39 @@ def Aneca(author):
     window.mainloop()
 
 
+def completed_window():
+    window = Tk()
+    window.title('PCVN')
+    window.geometry('800x800')
+
+    def end_gui():
+        # Destroy Window
+        window.destroy()
+
+    # backGround
+    photo = PhotoImage(file="background.png")
+    labelbg = Label(window, image=photo)
+    labelbg.pack()
+    # Label
+    label_completed = Label(window, text="Proceso finalizado")
+    font = ('times', 25)
+    label_completed.config(font=font)
+    label_completed.place(x=300, y=320)
+
+    # Close Button
+    bt_login = Button(window, text="Close", height=1,
+                      width=10, command=end_gui)
+    bfont = ('times', 17)
+    bt_login.config(font=bfont)
+    bt_login.place(x=350, y=430)
+
+    window.mainloop()
+
+
 if __name__ == '__main__':
-    Google()
-    Scopus()
-    wos()
-    Groupfiles()
-    Aneca(authorGoogle)
+    google_window()
+    scopus_window()
+    wos_window()
+    group_window()
+    aneca_window(author_google)
+    completed_window()

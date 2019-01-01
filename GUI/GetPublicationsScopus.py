@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """ Needed libraries to extract and write the data
 pyscopus : Is a non Official API to extract data from Scopus 
 bibtexparser: Is a library that allow to work with BibTex format file """
@@ -17,29 +19,30 @@ Returns : String (Author´s name in BibTex format)
 """
 
 
-def GetAU(id,author_pub,scopus): 
+def get_au(au_id, author_pub, scopus):
     string = ''
-    lg = len(author_pub['author'][id])
+    lg = len(author_pub['author'][au_id])
 
-    for i in range(0, lg-1):
-        query = 'au-id(%s)' % author_pub['author'][id][i]
+    for i in range(0, lg - 1):
+        query = 'au-id(%s)' % author_pub['author'][au_id][i]
         a = scopus.search_author(query, 10)
         string += (a['name'][0])
         string += ' and '
     """ In the last one we don´t want have 'and' behind author´s name 
     so we convert ID in real name separtly"""
-    query = 'au-id(%s)' % author_pub['author'][id][lg-1]
+    query = 'au-id(%s)' % author_pub['author'][au_id][lg - 1]
     a = scopus.search_author(query, 10)
     string += (a['name'][0])
     return string
 
-def GetPublicationsScopus(author_id,pbar):
+
+def get_publications_scopus(author_id, pbar):
     """ Key gived by Elsevier to acces their api """
     key = 'a3ddc2b8df64bc16774266fb842c0365'
     scopus = Scopus(key)
 
     """ We ask the user to enter the author´s ID """
-    #author_id = input('ID del Autor: ')
+    # author_id = input('ID del Autor: ')
 
     """ int number indicates the number of publications to be retrieved
     (set by default in 10000) """
@@ -71,11 +74,11 @@ def GetPublicationsScopus(author_id,pbar):
     author_pub['url'] = author_pub['full_text']
     author_pub.pop('full_text')
 
-    listOfKeys = list(author_pub.keys())
-    listOfKeys.remove('author')
-    listOfKeys.remove('citation_count')
-    listOfKeys.remove('cover_date')
-    listOfKeys.remove('publication_name')
+    list_of_keys = list(author_pub.keys())
+    list_of_keys.remove('author')
+    list_of_keys.remove('citation_count')
+    list_of_keys.remove('cover_date')
+    list_of_keys.remove('publication_name')
     """
     ----------------------------------------------------------------------
     """
@@ -83,22 +86,22 @@ def GetPublicationsScopus(author_id,pbar):
     db = BibDatabase()
 
     """ Number of Publications retrieved """
-    numPub = len(author_pub['title'])
-    progressbarInc=90/numPub
+    num_pub = len(author_pub['title'])
+    progress_bar_inc = 90 / num_pub
     writer = BibTexWriter()
 
     """ Go through all the publications creating a dict with all the 
     fields corresponding """
-    for i in range(0, numPub):
+    for i in range(0, num_pub):
         bib = dict()
         """ parse ID to real author name"""
-        bib['author'] = GetAU(i,author_pub,scopus)
+        bib['author'] = get_au(i, author_pub, scopus)
         """ parse number of cites to str"""
         bib['citation_count'] = str(author_pub['citation_count'][i])
         """ parse date to get only the year"""
         bib['year'] = author_pub['cover_date'][i].split('-')[0]
         """ Go through all the keys in the dict """
-        for x in listOfKeys:
+        for x in list_of_keys:
             if author_pub[x][i] is not None:
                 """ parse affiliation field to get only the affiliation name"""
                 if x is 'affiliation':
@@ -119,8 +122,8 @@ def GetPublicationsScopus(author_id,pbar):
                     else:
                         bib[x] = author_pub[x][i]
 
-        """ update progress bar """    
-        pbar['value'] += progressbarInc
+        """ update progress bar """
+        pbar['value'] += progress_bar_inc
         pbar.update()
         db.entries.append(bib)
     """ Write the extracted data stored in db (BibDatabase) and save it 

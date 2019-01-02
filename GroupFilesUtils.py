@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from unicodedata import normalize
@@ -10,7 +12,7 @@ parameter : Name of journal
 return : dict with impact index and year"""
 
 
-def GetImpactIndex(title):
+def get_impact_index(title):
 
     options = Options()
     options.headless = True
@@ -40,14 +42,17 @@ def GetImpactIndex(title):
         return 0
 
     time.sleep(5)
-    """  close previous windows open """
-    window_after = browser.window_handles[1]
-    browser.close()
-    browser.switch_to.window(window_after)
-    time.sleep(5)
-    """ See all data for every year from 2017-1998"""
-    browser.find_element_by_link_text("All years").click()
-    time.sleep(10)
+    try:
+        """  close previous windows open """
+        window_after = browser.window_handles[1]
+        browser.close()
+        browser.switch_to.window(window_after)
+        time.sleep(5)
+        """ See all data for every year from 2017-1998"""
+        browser.find_element_by_link_text("All years").click()
+        time.sleep(10)
+    except IndexError:
+        time.sleep(0.1)
     """ Save results in a list """
     table = browser.find_elements_by_class_name('x-grid-cell-inner')
 
@@ -69,8 +74,8 @@ def GetImpactIndex(title):
 """ Function that will Check if we have data for the journla given
 if not will search and add it to the data structure and finnaly return
 the data for a exactly year given:
-parameter : ImpactIndexList (list(dic))
-            JournalList     (list(str))
+parameter : impact_index_list (list(dic))
+            journal_list     (list(str))
             journal         (str)
             year            (int)
 
@@ -78,26 +83,26 @@ return :    impactIndex     (float)
 """
 
 
-def CheckImpactIndex(ImpactIndexList, JournalList, journal, year):
+def check_impact_index(impact_index_list, journal_list, journal, year):
     journalower = journal.lower()
     # Actual year dont have impact index , so we get past year index
     if year == '2018':
         year = '2017'
     # if journal name is not on the list search impact index and add it
-    if journalower not in JournalList:
-        JournalList.append(journalower)
-        impactDict = GetImpactIndex(journalower)
-        if impactDict == 0:
+    if journalower not in journal_list:
+        journal_list.append(journalower)
+        impact_dict = get_impact_index(journalower)
+        if impact_dict == 0:
             return 0
-        ImpactIndexList.append(impactDict)
+        impact_index_list.append(impact_dict)
 
-        return impactDict.get(str(year))
+        return impact_dict.get(str(year))
     # if it is on the list search on impacIndexList
     else:
-        index = JournalList.index(journalower)
-        impactDict = ImpactIndexList[index]
+        index = journal_list.index(journalower)
+        impact_dict = impact_index_list[index]
 
-        return impactDict.get(str(year))
+        return impact_dict.get(str(year))
 
 
 """ Function that if 2 given publications check if hass issn attribute
@@ -107,7 +112,7 @@ return : True/False
 """
 
 
-def checkISSN(pub1, pub2):
+def check_issn(pub1, pub2):
     if 'issn' in pub1 and 'issn' in pub2:
         if pub1['issn'] == pub2['issn']:
             return True
@@ -120,13 +125,12 @@ return : True/False
 """
 
 
-def checkTitle(pub1, pub2):
+def check_title(pub1, pub2):
     title1 = parse_string(pub1['title'])
     title2 = parse_string(pub2['title'])
     if title1 == title2:
         return True
     return False
-
 
 
 """ Function that given 2 list of publications check if their are the same
@@ -135,14 +139,14 @@ parameter: list of publications (list of dicts)
 return: lists """
 
 
-def RemoveDupliates(list1, list2):
+def remove_duplicates(list1, list2):
     for pub in list1:
         for pub2 in list2:
-            if checkISSN(pub, pub2):
+            if check_issn(pub, pub2):
                 """ In case ISSN is the same,update keys from 1st pub"""
                 pub.update(pub2)
                 list2.remove(pub2)
-            elif checkTitle(pub, pub2):
+            elif check_title(pub, pub2):
                 """ In case title is the same,update keys from 1st pub"""
                 pub.update(pub2)
                 list2.remove(pub2)
@@ -153,24 +157,28 @@ def RemoveDupliates(list1, list2):
 We need to remove extra '{}' characters , but some fields has not
 this extra characters so we exclude them from parse proccess.
 parameter: list of publications (list of dicts)
-           ImpactIndexList      (list of dicts)
-           JournalList          (list of str)
+           impact_index_list      (list of dicts)
+           journal_list          (list of str)
 """
 
 
-def ParseWOS(wos, ImpactIndexList, JournalList):
+def parse_wos(wos, impact_index_list, journal_list, pbar):
+    pbar_increment = 85/len(wos)
     for pub in wos:
-        listKeys = list(pub.keys())
-        listKeys.remove('author')
-        listKeys.remove('ENTRYTYPE')
-        listKeys.remove('ID')
-        for key in listKeys:
+        list_keys = list(pub.keys())
+        list_keys.remove('author')
+        list_keys.remove('ENTRYTYPE')
+        list_keys.remove('ID')
+        for key in list_keys:
             pub[key] = pub[key].split('{')[1].split('}')[0]
         if pub['ENTRYTYPE'] == 'article':
             year = pub['year']
             journal = pub['journal']
-            pub['impactIndex'] = str(CheckImpactIndex(
-                ImpactIndexList, JournalList, journal, year))
+            pub['impactIndex'] = str(check_impact_index(
+                impact_index_list, journal_list, journal, year))
+        """ update progress bar GUI"""
+        pbar['value'] += pbar_increment
+        pbar.update()
 
 
 """ Function that will parse Volume field to remove extra information
@@ -179,7 +187,7 @@ parameter : publication (dict)
 return: publication(dict) """
 
 
-def ParseVolume(pub):
+def parse_volume(pub):
     if 'volume' in pub.keys():
         pub['volume'] = pub['volume'].split(' ')[0]
     return pub
@@ -192,7 +200,7 @@ parameter : publication (dict)
 return: publication(dict) """
 
 
-def ParseImpacIndex(pub):
+def parse_impact_index(pub):
     if 'impactIndex' in pub.keys():
         if pub['impactIndex'] == '0':
             pub.pop('impactIndex')
@@ -217,4 +225,4 @@ def parse_string(s):
     # remove non alphabetic characters
     regex = re.compile('[^a-zA-Z]')
     s = regex.sub('', s)
-    return(s.lower())
+    return s.lower()

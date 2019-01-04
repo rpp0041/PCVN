@@ -37,8 +37,11 @@ def group_files(pbar):
     """ Parse WOS db in order to get same format for every bibTex db 
     this will help us in the future comparison (otherwise it will be impossible)"""
     impact_index_list = list()
+    rank_list = list()
+    quartile_list = list()
+    category_list = list()
     journal_list = list()
-    parse_wos(wos.entries, impact_index_list, journal_list, pbar)
+    parse_wos(wos.entries, impact_index_list, journal_list, rank_list, category_list, quartile_list, pbar)
 
     """ update progress bar GUI"""
     pbar['value'] = 95

@@ -53,22 +53,9 @@ def get_impact_index(title):
         time.sleep(10)
     except IndexError:
         time.sleep(0.1)
-    """ Save results in a list """
-    table = browser.find_elements_by_class_name('x-grid-cell-inner')
-
-    """ Parse list to dict to be returned """
-    dic = dict()
-    """ the are 2 extra rows with unusefull information 
-    so we avoid them settin the length in -28.
-    the important rows are 0 & 2 , so we avoid the rest of rows 
-    14 rows in total"""
-    ln = len(table)-28
-    for i in range(0, ln, 14):
-        dic[table[i].text] = table[i+2].text
-
+    dic_impact, rank_dic, quartile_dic, category_dic = get_info(browser)
     browser.close()
-
-    return dic
+    return dic_impact, rank_dic, quartile_dic, category_dic
 
 
 """ Function that will Check if we have data for the journla given
@@ -83,7 +70,7 @@ return :    impactIndex     (float)
 """
 
 
-def check_impact_index(impact_index_list, journal_list, journal, year):
+def check_impact_index(impact_index_list, journal_list, rank_list, quartile_list, category_list, journal, year):
     journalower = journal.lower()
     # Actual year dont have impact index , so we get past year index
     if year == '2018':
@@ -91,18 +78,25 @@ def check_impact_index(impact_index_list, journal_list, journal, year):
     # if journal name is not on the list search impact index and add it
     if journalower not in journal_list:
         journal_list.append(journalower)
-        impact_dict = get_impact_index(journalower)
-        if impact_dict == 0:
-            return 0
+        try:
+            impact_dict, rank_dic, quartile_dic, category = get_impact_index(journalower)
+        except TypeError:
+            return
         impact_index_list.append(impact_dict)
+        rank_list.append(impact_dict)
+        quartile_list.append(quartile_dic)
+        category_list.append(category)
 
-        return impact_dict.get(str(year))
+        return impact_dict.get(str(year)), rank_dic.get(str(year)), quartile_dic.get(str(year)), category
     # if it is on the list search on impacIndexList
     else:
         index = journal_list.index(journalower)
         impact_dict = impact_index_list[index]
+        rank_dic = rank_list[index]
+        quartile_dic = quartile_list[index]
+        category = category_list[index]
 
-        return impact_dict.get(str(year))
+        return impact_dict.get(str(year)), rank_dic.get(str(year)), quartile_dic.get(str(year)), category
 
 
 """ Function that if 2 given publications check if hass issn attribute
@@ -162,7 +156,7 @@ parameter: list of publications (list of dicts)
 """
 
 
-def parse_wos(wos, impact_index_list, journal_list, pbar):
+def parse_wos(wos, impact_index_list, journal_list, rank_list, category_list, quartile_list, pbar):
     pbar_increment = 85/len(wos)
     for pub in wos:
         list_keys = list(pub.keys())
@@ -174,8 +168,17 @@ def parse_wos(wos, impact_index_list, journal_list, pbar):
         if pub['ENTRYTYPE'] == 'article':
             year = pub['year']
             journal = pub['journal']
-            pub['impactIndex'] = str(check_impact_index(
-                impact_index_list, journal_list, journal, year))
+            # Check impact index
+            try:
+                impact_index, rank, quartile, category = check_impact_index(impact_index_list, journal_list, rank_list,
+                                                                            quartile_list, category_list, journal, year)
+            except TypeError:
+                return
+
+            pub['impactIndex'] = str(impact_index)
+            pub['journalRank'] = str(rank)
+            pub['journalQuartile'] = str(quartile)
+            pub['journalCategory'] = str(category)
         """ update progress bar GUI"""
         pbar['value'] += pbar_increment
         pbar.update()
@@ -226,3 +229,111 @@ def parse_string(s):
     regex = re.compile('[^a-zA-Z]')
     s = regex.sub('', s)
     return s.lower()
+
+
+def get_info(browser):
+    browser.find_element_by_link_text('Rank').click()
+    time.sleep(0.5)
+    """ Save impact index results in a list """
+    table = browser.find_elements_by_class_name('x-grid-cell-inner')
+
+    """ Parse list to dict to be returned """
+    dic_impact = dict()
+    """ the are 2 extra rows with unusefull information 
+    so we avoid them settin the length in -28.
+    the important rows are 0 & 2 , so we avoid the rest of rows 
+    14 rows in total"""
+    ln = len(table) - 28
+    for i in range(0, ln, 14):
+        dic_impact[table[i].text] = table[i + 2].text
+
+    """ RANK & QUARTILE OF JOURNAL"""
+    """ Extract data from rank table"""
+    name_tab = browser.find_element_by_id('headercontainer-1038-innerCt').text
+    name_tab = name_tab.split('\n')
+    num_of_categories = int((len(name_tab) - 1) / 4)
+
+    """ Extract category names """
+    rank_table = browser.find_element_by_id('gridview-1039').text
+    rank_table = rank_table.split('\n')
+
+    """ Check table"""
+    rank_table, name_tab = parse_table(rank_table, name_tab, num_of_categories)
+
+    """ Remove years from table"""
+    list_year = list()
+    for i in range(0, len(rank_table), (num_of_categories * 3) + 1):
+        list_year.append(rank_table[i])
+    for i in list_year:
+        rank_table.remove(i)
+
+    """ fill dict """
+    dic_rank = dict()
+    dic_quartile = dict()
+    cont_year = 0
+    """ fill rank & quartile """
+    for i in range(0, len(rank_table), num_of_categories * 3):
+        rank = ''
+        quartile = ''
+        if num_of_categories > 1:
+            for x in range(0, (num_of_categories - 1) * 3, 3):
+                rank += str(rank_table[i]) + '\n'
+                quartile += str(rank_table[i + 1]) + '\n'
+
+            rank += str(rank_table[i + 3])
+            quartile += str(rank_table[i + 4])
+        else:
+            rank += str(rank_table[i])
+            quartile += str(rank_table[i + 1])
+
+        dic_rank[list_year[cont_year]] = rank
+        dic_quartile[list_year[cont_year]] = quartile
+        cont_year += 1
+
+    """ fill category"""
+    name = ''
+    if num_of_categories > 1:
+        for i in range(1, len(name_tab) - 4, 4):
+            name += str(name_tab[i]) + '\n'
+
+        name += str(name_tab[i + 4])
+    else:
+        name += str(name_tab[1])
+    return dic_impact, dic_rank, dic_quartile, name
+
+
+def parse_table(rank_table, name_tab, num_of_categories):
+    # remove white spaces in fields
+    for i in range(0, len(rank_table)):
+        rank_table[i] = rank_table[i].lstrip()
+    """ difference of fields betwen actual 2017 (2018 data still not released)
+    and previus year (2016)"""
+    fin = rank_table.index('2016')
+    diff = fin - 1
+    """ num of standard fields for a normal rank table"""
+    num_fields = (num_of_categories * 3) + 1
+    """ num of fields to be remove"""
+    num_to_remove = diff - num_fields
+
+    if diff > num_fields:
+        # cont of fields to remove per row
+        cont = num_to_remove
+        # new table
+        table_parsed = list()
+        """ parse rank table"""
+
+        for i in range(0, len(rank_table)):
+            if cont == 0:  # cont is over
+                i += num_to_remove  # skip extra fields
+                cont = num_to_remove  # start again cont
+            else:
+                table_parsed.append(rank_table[i])  # add field to new table
+                cont -= 1
+
+        """ parse header table """
+        num_header = (num_of_categories * 4) + 1
+        for j in range(num_header, len(name_tab)):
+            name_tab.pop()
+        return table_parsed, name_tab
+    else:
+        return rank_table, name_tab

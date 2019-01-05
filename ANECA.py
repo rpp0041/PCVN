@@ -41,11 +41,12 @@ def aneca(author_input, pbar, user, pswd):
     progress_bar_inc = len(db.entries)/100
     """ Add every publication read from file"""
     for i in db.entries:
+        print(i['title'])
         if i['ENTRYTYPE'] == 'book':
             db_salida = fill_new_book(i, browser, author_input, db_salida)
             time.sleep(13)
         elif i['ENTRYTYPE'] == 'article':
-            if 'ImpactIndex' in i.keys():
+            if 'impactindex' in i.keys():
                 db_salida = fill_new_index_article(
                     i, browser, author_input, db_salida)
                 time.sleep(13)

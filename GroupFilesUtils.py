@@ -83,10 +83,9 @@ def check_impact_index(impact_index_list, journal_list, rank_list, quartile_list
         except TypeError:
             return
         impact_index_list.append(impact_dict)
-        rank_list.append(impact_dict)
+        rank_list.append(rank_dic)
         quartile_list.append(quartile_dic)
         category_list.append(category)
-
         return impact_dict.get(str(year)), rank_dic.get(str(year)), quartile_dic.get(str(year)), category
     # if it is on the list search on impacIndexList
     else:
@@ -95,7 +94,6 @@ def check_impact_index(impact_index_list, journal_list, rank_list, quartile_list
         rank_dic = rank_list[index]
         quartile_dic = quartile_list[index]
         category = category_list[index]
-
         return impact_dict.get(str(year)), rank_dic.get(str(year)), quartile_dic.get(str(year)), category
 
 

@@ -47,7 +47,7 @@ def get_impact_index(title):
         window_after = browser.window_handles[1]
         browser.close()
         browser.switch_to.window(window_after)
-        time.sleep(5)
+        time.sleep(6)
         """ See all data for every year from 2017-1998"""
         browser.find_element_by_link_text("All years").click()
         time.sleep(10)
@@ -172,13 +172,12 @@ def parse_wos(wos, impact_index_list, journal_list, rank_list, category_list, qu
             try:
                 impact_index, rank, quartile, category = check_impact_index(impact_index_list, journal_list, rank_list,
                                                                             quartile_list, category_list, journal, year)
+                pub['impactIndex'] = str(impact_index)
+                pub['journalRank'] = str(rank)
+                pub['journalQuartile'] = str(quartile)
+                pub['journalCategory'] = str(category)
             except TypeError:
-                return
-
-            pub['impactIndex'] = str(impact_index)
-            pub['journalRank'] = str(rank)
-            pub['journalQuartile'] = str(quartile)
-            pub['journalCategory'] = str(category)
+                pass
         """ update progress bar GUI"""
         pbar['value'] += pbar_increment
         pbar.update()
@@ -234,18 +233,17 @@ def parse_string(s):
 def get_info(browser):
     browser.find_element_by_link_text('Rank').click()
     time.sleep(0.5)
-    """ Save impact index results in a list """
-    table = browser.find_elements_by_class_name('x-grid-cell-inner')
+    """ Save results in a list """
+    table=browser.find_element_by_id('gridview-1011-body').text
+    table=table.split('\n')
 
     """ Parse list to dict to be returned """
     dic_impact = dict()
-    """ the are 2 extra rows with unusefull information 
-    so we avoid them settin the length in -28.
-    the important rows are 0 & 2 , so we avoid the rest of rows 
+    """ the important rows are 0 & 2 , so we avoid the rest of rows 
     14 rows in total"""
-    ln = len(table) - 28
-    for i in range(0, ln, 14):
-        dic_impact[table[i].text] = table[i + 2].text
+
+    for i in range(0,len(table), 14):
+        dic_impact[table[i]] = table[i+2]
 
     """ RANK & QUARTILE OF JOURNAL"""
     """ Extract data from rank table"""
@@ -306,10 +304,15 @@ def parse_table(rank_table, name_tab, num_of_categories):
     # remove white spaces in fields
     for i in range(0, len(rank_table)):
         rank_table[i] = rank_table[i].lstrip()
+    """ when undefined appears in a row of the table percentile row  disappears, producing errors on code execution """
+    i = 0
+    while i < len(rank_table):
+        if rank_table[i] == 'undefined':
+            rank_table.insert(i + 1, '\\')
+        i += 1
     """ difference of fields betwen actual 2017 (2018 data still not released)
     and previus year (2016)"""
-    fin = rank_table.index('2016')
-    diff = fin - 1
+    diff = rank_table.index('2016')-1
     """ num of standard fields for a normal rank table"""
     num_fields = (num_of_categories * 3) + 1
     """ num of fields to be remove"""
@@ -317,23 +320,23 @@ def parse_table(rank_table, name_tab, num_of_categories):
 
     if diff > num_fields:
         # cont of fields to remove per row
-        cont = num_to_remove
+        cont = num_fields
         # new table
         table_parsed = list()
         """ parse rank table"""
-
-        for i in range(0, len(rank_table)):
+        i = 0
+        while i < len(rank_table):
             if cont == 0:  # cont is over
                 i += num_to_remove  # skip extra fields
-                cont = num_to_remove  # start again cont
+                cont = num_fields  # start again cont
             else:
                 table_parsed.append(rank_table[i])  # add field to new table
                 cont -= 1
-
+            i += 1
+        rank_table=table_parsed.copy()
         """ parse header table """
         num_header = (num_of_categories * 4) + 1
         for j in range(num_header, len(name_tab)):
             name_tab.pop()
-        return table_parsed, name_tab
-    else:
-        return rank_table, name_tab
+
+    return rank_table, name_tab

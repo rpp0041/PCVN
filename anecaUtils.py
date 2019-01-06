@@ -303,7 +303,7 @@ def fill_new_inproceedings(pub, browser, author_input, db):
 
 def fill_new_index_article(pub, browser, author_input, db):
     """Open new pub form """
-    browser.find_element_by_id('nuevaPublicacionNoIdxId').click()
+    browser.find_element_by_id('nuevaPublicacionIdxId').click()
     time.sleep(1)
     """ fill author"""
     if 'author' in pub:
@@ -374,13 +374,30 @@ def fill_new_index_article(pub, browser, author_input, db):
     browser.find_element_by_id('baseDatosTextId').send_keys('Web of Science')
     """ Fill ImpactIndex """
     browser.find_element_by_id(
-        'indiceImpactoTextId').send_keys(pub['ImpactIndex'])
-    """ Fill category """
-    browser.find_element_by_id(
-        'categoriaTextId').send_keys(pub['research-areas'])
+        'indiceImpactoTextId').send_keys(pub['impactindex'])
+
+    """ Fill journal rank position """
+    position = pub['journalrank'].split('\n')
+    category = pub['journalcategory'].split('\n')
+    quartile = pub['journalquartile'].split('\n')
+
+    flag_index = False
+    for x in range(0, len(position)):
+        if fill_journal(browser, position, category, quartile) is True:
+            position.pop(0)
+            category.pop(0)
+            quartile.pop(0)
+        else:
+            flag_index = True
+
+    if not flag_index:
+        db = save_pub(db, browser, pub)
+        return db
+
     """ Fill JCR cites"""
     browser.find_element_by_id('citasJcrTextId').send_keys(pub['cites'])
-    # test
+
+    # TODO
     browser.find_element_by_class_name('col-sm-5').click()
     browser.find_element_by_xpath('//*[@data-value="2"]').click()
 
@@ -419,3 +436,28 @@ def save_pub(db, browser, pub):
     """ Cancel publication"""
     browser.find_element_by_class_name('close').click()
     return db
+
+
+def fill_journal(browser, position, category, quartile):
+    if position[0] != 'None':
+        pos1 = position[0].split('/')
+        browser.find_element_by_id('posRevistaTextId').send_keys(pos1[0])
+
+        """ Fill number of journal rank max"""
+        browser.find_element_by_id('posRevistaMaxTextId').send_keys(pos1[1])
+
+        """ Fill Category """
+        browser.find_element_by_id('categoriaTextId').send_keys(category[0])
+
+        """Fill quartile """
+        browser.find_element_by_id('cuartilComboId').send_keys(quartile[0][1])
+
+        """ Fill Other information """
+        if len(position) > 1:
+            other_information = ''
+            for x in range(1, len(position)):
+                other_information += 'rank' + position[x]
+                other_information += 'quartile' + quartile[x]
+                other_information += 'Category' + category[x] + ' '
+    else:
+        return True

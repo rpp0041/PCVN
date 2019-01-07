@@ -228,10 +228,6 @@ def fill_new_inproceedings(pub, browser, author_input, db):
         for author in pub['author'].split(' and '):
             au.send_keys(author)
             add_au.click()
-            """ fill author position"""
-            pos = author_position(pub['author'], author_input)
-            browser.find_element_by_id(
-                'posicionSolicitanteTextId').send_keys(pos)
     else:
         db = save_pub(db, browser, pub)
         return db
@@ -389,6 +385,7 @@ def fill_new_index_article(pub, browser, author_input, db):
             quartile.pop(0)
         else:
             flag_index = True
+            break
 
     if not flag_index:
         db = save_pub(db, browser, pub)
@@ -459,5 +456,6 @@ def fill_journal(browser, position, category, quartile):
                 other_information += 'rank' + position[x]
                 other_information += 'quartile' + quartile[x]
                 other_information += 'Category' + category[x] + ' '
+            browser.find_element_by_id('otrosIndiciosTextAreaId').send_keys(other_information)
     else:
         return True

@@ -12,18 +12,29 @@ from bibtexparser.bwriter import BibTexWriter
 import bibtexparser
 from anecaUtils import *
 
+""" Function that will login in Academa application and will upload all read information to it
+ parameter : author name    (string) 
+             pbar           (tkinter progressbar)
+             user           (string)
+             password       (string)
+             
+return : Nothing
+"""
+
 
 def aneca(author_input, pbar, user, pswd):
     """ Options for Selenium driver """
     options = Options()
+    # set options of driver to be invisible for user (headless)
     options.headless = True
-
+    # set driver browser as Firefox
     fp = webdriver.FirefoxProfile()
     fp.set_preference("browser.download.folderList", 2)
     fp.set_preference("browser.download.manager.showWhenStarting", False)
+    # initialize driver with options
     browser = webdriver.Firefox(options=options, firefox_profile=fp)
 
-    """ Go to Academia application """
+    """ Go to Academia application, if login is not ok , function will return True so GUI can ask for login again"""
     if go_to_academia(browser, user, pswd):
         browser.close()
         return True
@@ -37,11 +48,13 @@ def aneca(author_input, pbar, user, pswd):
 
     """ BibTex database for uncompleted publications"""
     db_salida = BibDatabase()
+    # BibTex file writer object
     writer = BibTexWriter()
-    progress_bar_inc = len(db.entries)/100
+    """ update progress bar GUI"""
+    progress_bar_inc = len(db.entries) / 100
+
     """ Add every publication read from file"""
     for i in db.entries:
-        print(i['title'])
         if i['ENTRYTYPE'] == 'book':
             db_salida = fill_new_book(i, browser, author_input, db_salida)
             time.sleep(13)
@@ -55,7 +68,7 @@ def aneca(author_input, pbar, user, pswd):
                 time.sleep(13)
         elif i['ENTRYTYPE'] == 'inproceedings':
             db_salida = fill_new_inproceedings(
-                i, browser, author_input, db_salida)
+                i, browser, db_salida)
             time.sleep(13)
         pbar['value'] += progress_bar_inc
         pbar.update()

@@ -7,11 +7,11 @@ from pyscopus import Scopus
 from bibtexparser.bwriter import BibTexWriter
 from bibtexparser.bibdatabase import BibDatabase
 
-""" Function that recived an int as a parameter , corresponding to the
+""" Function that received an int as a parameter , corresponding to the
 current position of the publications, and will return the author´s
-name in an apropiate BibTex format 
+name in an appropriate BibTex format 
 ----------------------------------------------------------------------
-author_pub[id] : list of ID (each id corresponds an author
+author_pub[id] : list of ID (each id corresponds an author)
 query : str (correspond to Scopus query Style)
 
 Returns : String (Author´s name in BibTex format)
@@ -20,37 +20,48 @@ Returns : String (Author´s name in BibTex format)
 
 
 def get_au(au_id, author_pub, scopus):
+    # string to be return with authors name
     string = ''
     lg = len(author_pub['author'][au_id])
 
+    # go thought all IDs in list to recover author name corresponding , and add it to final string
     for i in range(0, lg - 1):
+        # query for scopus search
         query = 'au-id(%s)' % author_pub['author'][au_id][i]
+        # recover author name
         a = scopus.search_author(query, 10)
+        # add it to return string
         string += (a['name'][0])
         string += ' and '
     """ In the last one we don´t want have 'and' behind author´s name 
-    so we convert ID in real name separtly"""
+    so we convert ID in real name separately"""
     query = 'au-id(%s)' % author_pub['author'][au_id][lg - 1]
     a = scopus.search_author(query, 10)
     string += (a['name'][0])
     return string
 
 
+""" Function that will search for publications made by the author given as a parameter an will save the results in a 
+BibTex file
+input : author (string)
+        pbar   (tkinter progressbar) 
+
+return : BibTex file
+"""
+
+
 def get_publications_scopus(author_id, pbar):
-    """ Key gived by Elsevier to acces their api """
+    """ Key given by Elsevier to access their api """
     key = 'a3ddc2b8df64bc16774266fb842c0365'
     scopus = Scopus(key)
-
-    """ We ask the user to enter the author´s ID """
-    # author_id = input('ID del Autor: ')
 
     """ int number indicates the number of publications to be retrieved
     (set by default in 10000) """
     author_pub = scopus.search_author_publication(author_id, 10000)
-    """ Modifications on Internal data structure to fit with Bibtex Structure 
+    """ Modifications on Internal data structure to fit with BibTex Structure 
     ----------------------------------------------------------------------
     page_range : will be rename as pages
-    authors : will be rename as atuhor
+    authors : will be rename as author
     scopus_id: will be rename as ID
     subtype_description : will be rename as ENTRYTYPE
     full_text: will be rename as url
@@ -87,7 +98,9 @@ def get_publications_scopus(author_id, pbar):
 
     """ Number of Publications retrieved """
     num_pub = len(author_pub['title'])
+    """ update progress bar GUI"""
     progress_bar_inc = 90 / num_pub
+    # Bib writer object
     writer = BibTexWriter()
 
     """ Go through all the publications creating a dict with all the 
@@ -122,10 +135,11 @@ def get_publications_scopus(author_id, pbar):
                     else:
                         bib[x] = author_pub[x][i]
 
-        """ update progress bar """
+        """ update progress bar GUI"""
         pbar['value'] += progress_bar_inc
         pbar.update()
         db.entries.append(bib)
+
     """ Write the extracted data stored in db (BibDatabase) and save it 
     in bibtexScopus.bib for later use """
     with open('bibtexScopus.bib', 'w', encoding='utf-8') as bibfile:

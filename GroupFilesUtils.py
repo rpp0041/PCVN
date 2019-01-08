@@ -8,15 +8,22 @@ import re
 
 
 """Function that return the impact index of a journal from 2017 to 1998 
-parameter : Name of journal 
-return : dict with impact index and year"""
+parameter : string (Name of journal) 
+return : dict (with impact index and year as Key)
+         dict (with journal rank and year as Key)
+         dict (with journal quartile and year as Key)
+         dict (with journal category and year as Key)
+"""
 
 
 def get_impact_index(title):
 
+    # set options of driver to be invisible for user (headless)
     options = Options()
     options.headless = True
+    # set driver browser as Firefox
     fp = webdriver.FirefoxProfile()
+    # initialize driver with options
     browser = webdriver.Firefox(options=options, firefox_profile=fp)
     """ Go to incites web site """
     browser.get(
@@ -28,8 +35,9 @@ def get_impact_index(title):
     """ Click go Button """
     browser.find_element_by_xpath(
         '//div//a[@href="javascript:shibbolethRedirect(document.forms[1].select2);"]').click()
-
+    # wait for page to load
     time.sleep(5)
+
     """ Insert search"""
     browser.find_element_by_id('search-inputEl').send_keys(title)
     time.sleep(2)
@@ -40,8 +48,10 @@ def get_impact_index(title):
     except IndexError:
         browser.close()
         return 0
-
+    # wait page to load
     time.sleep(5)
+
+    # catch IndexError if there are no more than 1 window open
     try:
         """  close previous windows open """
         window_after = browser.window_handles[1]
@@ -71,33 +81,43 @@ return :    impactIndex     (float)
 
 
 def check_impact_index(impact_index_list, journal_list, rank_list, quartile_list, category_list, journal, year):
+    # put journal name in lower case
     journalower = journal.lower()
     # Actual year dont have impact index , so we get past year index
     if year == '2018':
         year = '2017'
-    # if journal name is not on the list search impact index and add it
+    # if journal name is not on the list search quality indexes and add it
     if journalower not in journal_list:
+        # add journal name to the list
         journal_list.append(journalower)
+        # try get_impact_index and catch Type error , return None
         try:
             impact_dict, rank_dic, quartile_dic, category = get_impact_index(journalower)
         except TypeError:
             return
+        # add quality indexes (dic) to each list
         impact_index_list.append(impact_dict)
         rank_list.append(rank_dic)
         quartile_list.append(quartile_dic)
         category_list.append(category)
+
         return impact_dict.get(str(year)), rank_dic.get(str(year)), quartile_dic.get(str(year)), category
-    # if it is on the list search on impacIndexList
+    # if it is on the list search search on the list the correspond year
     else:
+        # search journal position in list, will serve as index for the other lists
         index = journal_list.index(journalower)
+
+        # search dicts in lists
         impact_dict = impact_index_list[index]
         rank_dic = rank_list[index]
         quartile_dic = quartile_list[index]
         category = category_list[index]
+
+        # return value for the correspond year
         return impact_dict.get(str(year)), rank_dic.get(str(year)), quartile_dic.get(str(year)), category
 
 
-""" Function that if 2 given publications check if hass issn attribute
+""" Function that if 2 given publications check if has ISSN attribute
 and in case both have , check if are equal
 parameter : publication (dict)
 return : True/False
@@ -105,7 +125,9 @@ return : True/False
 
 
 def check_issn(pub1, pub2):
+    # Check if issn field is in both publications
     if 'issn' in pub1 and 'issn' in pub2:
+        # if it is and is equal return True , Else return False
         if pub1['issn'] == pub2['issn']:
             return True
     return False
@@ -118,8 +140,10 @@ return : True/False
 
 
 def check_title(pub1, pub2):
+    # parse titles trying to be as accurate in comparision as possible
     title1 = parse_string(pub1['title'])
     title2 = parse_string(pub2['title'])
+    # return True if Equal, return false if not
     if title1 == title2:
         return True
     return False
@@ -132,8 +156,11 @@ return: lists """
 
 
 def remove_duplicates(list1, list2):
+    # go trough al publications on list 1
     for pub in list1:
+        # go trough al publications on list 2
         for pub2 in list2:
+            # check if issn or title are equals, if they are update pub from list 1 and remove second one.
             if check_issn(pub, pub2):
                 """ In case ISSN is the same,update keys from 1st pub"""
                 pub.update(pub2)
@@ -155,18 +182,22 @@ parameter: list of publications (list of dicts)
 
 
 def parse_wos(wos, impact_index_list, journal_list, rank_list, category_list, quartile_list, pbar):
+    # progress bar GUI increment
     pbar_increment = 85/len(wos)
     for pub in wos:
+        # remove fields that not need to be parsed
         list_keys = list(pub.keys())
         list_keys.remove('author')
         list_keys.remove('ENTRYTYPE')
         list_keys.remove('ID')
+        # removed extra brackets on each field
         for key in list_keys:
             pub[key] = pub[key].split('{')[1].split('}')[0]
+        # if publication is an article , then we will search for quality indexes
         if pub['ENTRYTYPE'] == 'article':
             year = pub['year']
             journal = pub['journal']
-            # Check impact index
+            # Check quality indexes
             try:
                 impact_index, rank, quartile, category = check_impact_index(impact_index_list, journal_list, rank_list,
                                                                             quartile_list, category_list, journal, year)
@@ -194,7 +225,7 @@ def parse_volume(pub):
 
 
 """ Function that will remove impactIndex key if equals 0
-becouse this will mean that during consulting progress 
+because this will mean that during consulting progress 
 ,there are not results found for this journal name
 parameter : publication (dict)
 return: publication(dict) """
@@ -229,24 +260,26 @@ def parse_string(s):
 
 
 def get_info(browser):
+    # click on rank field
     browser.find_element_by_link_text('Rank').click()
     time.sleep(0.5)
     """ Save results in a list """
-    table=browser.find_element_by_id('gridview-1011-body').text
-    table=table.split('\n')
+    table = browser.find_element_by_id('gridview-1011-body').text
+    table = table.split('\n')
 
     """ Parse list to dict to be returned """
     dic_impact = dict()
     """ the important rows are 0 & 2 , so we avoid the rest of rows 
     14 rows in total"""
 
-    for i in range(0,len(table), 14):
+    for i in range(0, len(table), 14):
         dic_impact[table[i]] = table[i+2]
 
     """ RANK & QUARTILE OF JOURNAL"""
     """ Extract data from rank table"""
     name_tab = browser.find_element_by_id('headercontainer-1038-innerCt').text
     name_tab = name_tab.split('\n')
+    # number of categories the journal is part of
     num_of_categories = int((len(name_tab) - 1) / 4)
 
     """ Extract category names """
@@ -266,32 +299,46 @@ def get_info(browser):
     """ fill dict """
     dic_rank = dict()
     dic_quartile = dict()
+    # counter index of the year
     cont_year = 0
-    """ fill rank & quartile """
+    """ Go trough all the rows in the table to fill rank & quartile"""
     for i in range(0, len(rank_table), num_of_categories * 3):
+        # strings to group all the information about rank & quartile
         rank = ''
         quartile = ''
+        # if there are more than 1 categories add all ranks and quartile of each category in the string
+        # we will add '\n' to separate each category
+        # else add just the correspond (only 1)
         if num_of_categories > 1:
+            # go trough all rank & quartile (- last one that will be added later)
             for x in range(0, (num_of_categories - 1) * 3, 3):
+                # add rank & quartile
                 rank += str(rank_table[i]) + '\n'
                 quartile += str(rank_table[i + 1]) + '\n'
 
+            # add last rank & quartile without '\n'
             rank += str(rank_table[i + 3])
             quartile += str(rank_table[i + 4])
         else:
             rank += str(rank_table[i])
             quartile += str(rank_table[i + 1])
 
+        # add strings to each dict with year as key
         dic_rank[list_year[cont_year]] = rank
         dic_quartile[list_year[cont_year]] = quartile
+        # counter year +1
         cont_year += 1
 
     """ fill category"""
+    # string to group all categories if needed
     name = ''
+    # if there are more than 1 categories add all of them to the String
+    # else add just the correspond (only 1)
     if num_of_categories > 1:
+        # go trough all categories (- last one that will be added later)
         for i in range(1, len(name_tab) - 4, 4):
             name += str(name_tab[i]) + '\n'
-
+        # add last category without '\n'
         name += str(name_tab[i + 4])
     else:
         name += str(name_tab[1])
@@ -331,7 +378,7 @@ def parse_table(rank_table, name_tab, num_of_categories):
                 table_parsed.append(rank_table[i])  # add field to new table
                 cont -= 1
             i += 1
-        rank_table=table_parsed.copy()
+        rank_table = table_parsed.copy()
         """ parse header table """
         num_header = (num_of_categories * 4) + 1
         for j in range(num_header, len(name_tab)):

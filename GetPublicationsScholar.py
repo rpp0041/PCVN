@@ -6,60 +6,88 @@ from bibtexparser.bwriter import BibTexWriter
 from bibtexparser.bibdatabase import BibDatabase
 
 """ Function that will return Abstract field parsed, without some
-html tags that in same cases the API return"""
+html tags that in same cases the API return
+input : string
+return : string 
+"""
 
 
 def parse_abstract(i):
+    # Parse abstract field to string
     abstract = str(i.bib['abstract'])
+    # split in "gsh_csp" html tags to be removed
     abstract = abstract.split('class="gsh_csp">')
+    # if len of abstract list split is bigger that 2, indicates that there are more than 1 "gsh_csp" tags
     if len(abstract) < 2:
+        # split in "gsh_vcd_descr" html tags to be removed
         abstract = abstract[0].split('class="gsh_small">')
+        # if len of abstract list split is bigger that 2, indicates that there are more than 1 "gsh_vcd_descr" tags
         if len(abstract) < 2:
             abstract = abstract[0].split('"gsc_vcd_descr">')[1]
         else:
             abstract = abstract[1]
     else:
         abstract = abstract[1]
+    # Remove "</div>" tag
     abstract = abstract.split('</div>')[0]
     return abstract
 
 
-def get_publications_scholar(author_input, pbar):
-    """ Ask the user to input the name of the author to search for"""
+""" Function that will search for publications made by the author given as a parameter an will save the results in a 
+BibTex file
+input : author (string)
+        pbar   (tkinter progressbar) 
+        
+return : BibTex file
+"""
 
-    """  Call to scholarly functions that will search for the author given 
+
+def get_publications_scholar(author_input, pbar):
+    """  Call to scholarly functions that will search for the author given
     as a parameter and will return an iterable object with all the 
     publications found for the author given"""
     search_query = scholarly.search_author(author_input)
     author = next(search_query).fill()
+    # Iterable object that contains all user publications
     author_pub = author.publications
-
+    # BibTex database for write data to BibTex File
     db = BibDatabase()
-
+    # Counter that indicates ID in BibDatabase
     cont = 0
+    """ update progress bar GUI"""
     progress_bar_inc = 100 / len(author_pub)
+    # BibTex writer object
     writer = BibTexWriter()
-    """ Go trought all the author´s publications , complete all the fields
+    """ Go thought all the author´s publications , complete all the fields
     and parse some in order to fit BibTexWriter"""
-    for i in author_pub:
-        i.fill()
-        """ Need modifications for BibTextWriter """
-        if 'journal' in i.bib.keys():
-            i.bib['ENTRYTYPE'] = 'article'
+    for pub in author_pub:
+        # fill all fields possible of that publication
+        pub.fill()
+        """ Need modifications for BibTextWriter 
+        if has journal field , it indicates that it is an articule
+        otherwise it is a book"""
+        if 'journal' in pub.bib.keys():
+            pub.bib['ENTRYTYPE'] = 'article'
         else:
-            i.bib['ENTRYTYPE'] = 'book'
-        i.bib['ID'] = str(cont)
-        if 'abstract' in i.bib.keys():
-            abstract = parse_abstract(i)
-            i.bib['abstract'] = abstract
-        if 'year' in i.bib.keys():
-            i.bib['year'] = str(i.bib['year'])
-        if hasattr(i, 'citedby'):
-            i.bib['cites'] = str(i.citedby)
+            pub.bib['ENTRYTYPE'] = 'book'
+        # set counter as Pub ID
+        pub.bib['ID'] = str(cont)
+        # parse abstract field
+        if 'abstract' in pub.bib.keys():
+            abstract = parse_abstract(pub)
+            pub.bib['abstract'] = abstract
+        # parse year to string
+        if 'year' in pub.bib.keys():
+            pub.bib['year'] = str(pub.bib['year'])
+        # set number of Cites , it has no attribute "citedBy" it has NO cites so it set as 0
+        if hasattr(pub, 'citedby'):
+            pub.bib['cites'] = str(pub.citedby)
         else:
-            i.bib['cites'] = '0'
-        db.entries.append(i.bib)
+            pub.bib['cites'] = '0'
+        # add publication to database
+        db.entries.append(pub.bib)
         cont += 1
+        """ update progress bar GUI"""
         pbar['value'] += progress_bar_inc
         pbar.update()
 

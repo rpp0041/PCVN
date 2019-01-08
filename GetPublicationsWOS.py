@@ -24,22 +24,33 @@ def select_save_options(browser):
     browser.find_elements_by_class_name('select2-results__option')[1].click()
 
 
+""" Function that will search for publications made by the author given as a parameter an will save the results in a 
+BibTex file
+input : author (string)
+        pbar   (tkinter progressbar) 
+
+return : BibTex file
+"""
+
+
 def get_publications_wos(author, pbar):
-    """ We ask the user to enter the author´s name """
-    # author = input('Nombre del Autor :')
     """ Get current working directory (where we will save the files) """
     cwd = os.getcwd()
     """ Set options for webdriver
     to be invisible for the user (headless) 
     to never ask "saveToDisk" in bibTex files)
-    finnaly initialize in WOS web site 
+    finally initialize in WOS web site 
     """
+    # Set driver to be invisible
     options = Options()
     options.headless = False
+    # set driver browser to be Firefox
     fp = webdriver.FirefoxProfile()
     fp.set_preference("browser.download.folderList", 2)
     fp.set_preference("browser.download.manager.showWhenStarting", False)
+    # Set directory where save documents (actual working dir)
     fp.set_preference("browser.download.dir", str(cwd))
+    # Never ask save to disk
     fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/x-bibtex")
     browser = webdriver.Firefox(options=options, firefox_profile=fp)
     browser.get(
@@ -49,9 +60,10 @@ def get_publications_wos(author, pbar):
     """ update progress bar GUI"""
     pbar['value'] = 20
     pbar.update()
+
     """Wait 5 sec to ensure web is loaded, after that check 
     if current url is login web site , if it is :
-    log selectintg federation of Spain (FECYT) """
+    log selecting federation of Spain (FECYT) """
     time.sleep(5)
     actual_url = browser.current_url
     loggin_url = "https://login.webofknowledge.com/error/Error?Src=IP&Alias=WOK5&Error=IPError&Params=&PathInfo=%2F" \
@@ -84,6 +96,7 @@ def get_publications_wos(author, pbar):
     page_count = int(page_count.text)
 
     select_save_options(browser)
+
     """ update progress bar GUI"""
     pbar['value'] = 60
     pbar.update()

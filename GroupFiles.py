@@ -5,11 +5,14 @@ from bibtexparser.bibdatabase import BibDatabase
 from GroupFilesUtils import *
 import bibtexparser
 
+"""" Function that will group all BibTex files return by the others functions in a single BibTex file removing in the 
+process duplicates , parsing at the same time necessary fields and adding new ones (impactIndex , JournalRank etc) 
+input : pbar (tkinter progress bar)
+return : BibTex file
+"""
+
 
 def group_files(pbar):
-    # Load BibTex files extract from Google Scholar, Scopus and WOS
-    # in order to remove duplicate publications and to group them
-    # in just one file so it will make easier to work with.
 
     # Load BibTex files extract from the websites
 
@@ -22,7 +25,8 @@ def group_files(pbar):
     # Load WOS BibTex File
     with open('savedrecs.bib', encoding='utf-8') as bibfile:
         wos = bibtexparser.load(bibfile)
-
+    # In case there are mora than 50 publications for this author in Web of science , function will generate 2 fields
+    # so we try to read it, in case it do not exists FileNotFoundError , we do nothing
     try:
         with open('savedrecs(1).bib', encoding='utf-8') as bibfile:
             wos2 = bibtexparser.load(bibfile)
@@ -30,12 +34,14 @@ def group_files(pbar):
             wos.entries.append(x)
     except FileNotFoundError:
         pass
+
     """ update progress bar GUI"""
     pbar['value'] = 10
     pbar.update()
 
     """ Parse WOS db in order to get same format for every bibTex db 
-    this will help us in the future comparison (otherwise it will be impossible)"""
+    this will help us in the future comparison (otherwise it will be impossible)
+    also look for quality indexes in JCR cites """
     impact_index_list = list()
     rank_list = list()
     quartile_list = list()
@@ -59,8 +65,8 @@ def group_files(pbar):
     """ Write the dictionaries modified in a new BibTex file 
     at this point we will not have duplicate publications,
     also modify some field´s name to fit BibTex Standard (cites)
-    and parse volume field becouse in same cases we get 
-    extra information that prouces errors in ACADEMIA
+    and parse volume field because in same cases we get 
+    extra information that produces errors in ACADEMIA
     """
     writer = BibTexWriter()
     db = BibDatabase()

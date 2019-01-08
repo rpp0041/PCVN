@@ -4,7 +4,11 @@ from GroupFilesUtils import parse_string
 from selenium.common.exceptions import NoSuchElementException
 import time
 
-""" Function that will log user in to Aneca Academia Application"""
+""" Function that will log user in to Aneca Academia Application
+parameter : browser     (Selenium web driver)
+            user        (string)
+            password    (string)
+"""
 
 
 def login(browser, user, pswd):
@@ -28,11 +32,14 @@ def go_to_academia(browser, user, pswd):
     browser.get(
         'https://sede.educacion.gob.es/sede/login/inicio.jjsp;jsessionid=7D33705756C3CC4DC0C46E17B7DEA3CB')
     """ search for Academia """
+    # insert search for academia application, on Aneca formalities
     academia = browser.find_element_by_id(
         'buscadorConvocatoriasForm.descripcion.descripcion.desc')
     academia.send_keys('academia')
+    # click search button
     browser.find_element_by_id(
         'buscarConvocatoriasInicio_boton_consulta_convocatoria').click()
+    # click to academia application
     browser.find_element_by_id('listaConvocatoriaForm0').click()
 
     """ Check if the user & password given are correct 
@@ -76,9 +83,11 @@ def fill_new_book(pub, browser, author_input, db):
     browser.find_element_by_id('nuevLibroCapituloId').click()
     time.sleep(1)
     """ fill author *NECESSARY FIELD* """
+    # find for author container on web page
     au = browser.find_element_by_id('autoresFilter')
     add_au = browser.find_element_by_xpath('//*[@title="Añadir"]')
     if 'author' in pub:
+        # for each author in pub add split by word 'and'
         for author in pub['author'].split(' and '):
             au.send_keys(author)
             add_au.click()
@@ -102,9 +111,14 @@ def fill_new_book(pub, browser, author_input, db):
     if 'pages' in pub:
         pagefrom = browser.find_element_by_id('pagDesdeTextId')
         pagelast = browser.find_element_by_id('pagHastaTextId')
+        # EX ( pages : 150-260 ), so we split on '-' and each int to one field
         pages = pub['pages'].split('-')
-        pagefrom.send_keys(pages[0])
-        pagelast.send_keys(pages[1])
+        if len(pages) > 1:
+            pagefrom.send_keys(pages[0])
+            pagelast.send_keys(pages[1])
+        else:
+            pagefrom.send_keys(0)
+            pagelast.send_keys(pages[0])
     """ fill number of cites """
     browser.find_element_by_id('numeroCitasTextAreaId').send_keys(pub['cites'])
 
@@ -142,6 +156,7 @@ def fill_new_article(pub, browser, author_input, db):
     au = browser.find_element_by_id('autoresFilter')
     add_au = browser.find_element_by_xpath('//*[@title="Añadir"]')
     if 'author' in pub:
+        # for each author in pub add split by word 'and'
         for author in pub['author'].split(' and '):
             au.send_keys(author)
             add_au.click()
@@ -179,6 +194,7 @@ def fill_new_article(pub, browser, author_input, db):
         pagefrom = browser.find_element_by_id('pagDesdeTextId')
         pagelast = browser.find_element_by_id('pagHastaTextId')
         pages = pub['pages'].split('-')
+        # EX ( pages : 150-260 ), so we split on '-' and each int to one field
         if len(pages) > 1:
             pagefrom.send_keys(pages[0])
             pagelast.send_keys(pages[1])
@@ -215,7 +231,7 @@ def fill_new_article(pub, browser, author_input, db):
 """ Function tha will fill a new Inprocedings publication """
 
 
-def fill_new_inproceedings(pub, browser, author_input, db):
+def fill_new_inproceedings(pub, browser, db):
     """Open new pub form """
     browser.find_element_by_id('nuevoCongreso').click()
     time.sleep(1)
@@ -225,6 +241,7 @@ def fill_new_inproceedings(pub, browser, author_input, db):
 
         au = browser.find_element_by_id('autoresFilter')
         add_au = browser.find_element_by_xpath('//*[@title="Añadir"]')
+        # for each author in pub add split by word 'and'
         for author in pub['author'].split(' and '):
             au.send_keys(author)
             add_au.click()
@@ -276,6 +293,7 @@ def fill_new_inproceedings(pub, browser, author_input, db):
         pagefrom = browser.find_element_by_id('pagDesdeTextId')
         pagelast = browser.find_element_by_id('pagHastaTextId')
         pages = pub['pages'].split('-')
+        # EX ( pages : 150-260 ), so we split on '-' and each int to one field
         if len(pages) > 1:
             pagefrom.send_keys(pages[0])
             pagelast.send_keys(pages[1])
@@ -305,6 +323,7 @@ def fill_new_index_article(pub, browser, author_input, db):
     if 'author' in pub:
         au = browser.find_element_by_id('autoresFilter')
         add_au = browser.find_element_by_xpath('//*[@title="Añadir"]')
+        # for each author in pub add split by word 'and'
         for author in pub['author'].split(' and '):
             au.send_keys(author)
             add_au.click()
@@ -343,6 +362,7 @@ def fill_new_index_article(pub, browser, author_input, db):
         pagefrom = browser.find_element_by_id('pagDesdeTextId')
         pagelast = browser.find_element_by_id('pagHastaTextId')
         pages = pub['pages'].split('-')
+        # EX ( pages : 150-260 ), so we split on '-' and each int to one field
         if len(pages) > 1:
             pagefrom.send_keys(pages[0])
             pagelast.send_keys(pages[1])
@@ -373,12 +393,16 @@ def fill_new_index_article(pub, browser, author_input, db):
         'indiceImpactoTextId').send_keys(pub['impactindex'])
 
     """ Fill journal rank position """
+    # split on '\n' for cases where journal of publications correspond to more than one category
     position = pub['journalrank'].split('\n')
     category = pub['journalcategory'].split('\n')
     quartile = pub['journalquartile'].split('\n')
-
+    # Flag that will indicate if quality indexes had been add or not
     flag_index = False
+    # go trough all the categories
     for x in range(0, len(position)):
+        # try to fill the fields , but if date is None pop data from list and try with next
+        # else the data is correct ,so set quality index flag to True and break Loop
         if fill_journal(browser, position, category, quartile) is True:
             position.pop(0)
             category.pop(0)
@@ -386,7 +410,7 @@ def fill_new_index_article(pub, browser, author_input, db):
         else:
             flag_index = True
             break
-
+    # if flag is still False (no index quality is correct) cancel publication
     if not flag_index:
         db = save_pub(db, browser, pub)
         return db
@@ -433,6 +457,18 @@ def save_pub(db, browser, pub):
     """ Cancel publication"""
     browser.find_element_by_class_name('close').click()
     return db
+
+
+""" Function that will check if quality index is correct to fill the field
+if is correct fill the fields 
+else return True
+
+parameter : browser     (Selenium web driver)
+            position    (string)
+            category    (string)
+            quartile    (string)
+return True
+"""
 
 
 def fill_journal(browser, position, category, quartile):

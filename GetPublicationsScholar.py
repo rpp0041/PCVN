@@ -12,18 +12,23 @@ return : string
 """
 
 
-def parse_abstract(i):
-    # Parse abstract field to string
-    abstract = str(i.bib['abstract'])
+def parse_abstract(abstract):
+    if type(abstract) not in [str]:
+        raise TypeError('Abstract must be an str')
     # split in "gsh_csp" html tags to be removed
     abstract = abstract.split('class="gsh_csp">')
-    # if len of abstract list split is bigger that 2, indicates that there are more than 1 "gsh_csp" tags
+    # if len of abstract list split is less that 2, indicates that there are no "gsh_csp" tags
     if len(abstract) < 2:
         # split in "gsh_vcd_descr" html tags to be removed
         abstract = abstract[0].split('class="gsh_small">')
-        # if len of abstract list split is bigger that 2, indicates that there are more than 1 "gsh_vcd_descr" tags
+        # if len of abstract list split is less that 2, indicates that there are no "gsh_small" tags
         if len(abstract) < 2:
-            abstract = abstract[0].split('"gsc_vcd_descr">')[1]
+            abstract = abstract[0].split('"gsc_vcd_descr">')
+            # if len of abstract list split is less that 2, indicates that there are no "gsh_vcd_descr" tags
+            if len(abstract) < 2:
+                abstract = abstract[0]
+            else:
+                abstract = abstract[1]
         else:
             abstract = abstract[1]
     else:
@@ -74,7 +79,9 @@ def get_publications_scholar(author_input, pbar):
         pub.bib['ID'] = str(cont)
         # parse abstract field
         if 'abstract' in pub.bib.keys():
-            abstract = parse_abstract(pub)
+            # Parse abstract field to string
+            abstract = str(pub.bib['abstract'])
+            abstract = parse_abstract(abstract)
             pub.bib['abstract'] = abstract
         # parse year to string
         if 'year' in pub.bib.keys():

@@ -26,6 +26,12 @@ def google_window():
 
     window.bind('<Return>', func)
     """ Function to be executed when click search button"""
+    def re_start():
+        window.destroy()
+        google_window()
+
+    def skip():
+        window.destroy()
 
     def get_scholar_pub():
         # author name , will be used later
@@ -37,10 +43,39 @@ def google_window():
         pbar_google_scholar.update()
         pbar_google_scholar['maximum'] = 100
         # Call function to retrieve publications
-        get_publications_scholar(author, pbar_google_scholar)
-        pbar_google_scholar.stop()
-        # Destroy Window
-        window.destroy()
+        try:
+            get_publications_scholar(author, pbar_google_scholar)
+        except StopIteration:
+            pbar_google_scholar.stop()
+            # remove all widgets on window
+            widget_list = window.place_slaves()
+            for l in widget_list:
+                l.destroy()
+            window.update()
+            time.sleep(1)
+            # Label that indicates that there are No publications found
+            label_no_pub = Label(window, text="There are no publications returned for this author",
+                                 bg='red')
+            label_no_pub.config(font=font)
+            label_no_pub.place(x=200, y=300)
+            # Search Again Button
+            bt_search_again = Button(window, text="Search again",
+                                     command=re_start, height=1, width=30)
+            b_font = ('times', 17)
+            bt_search_again.config(font=b_font)
+            bt_search_again.place(x=200, y=430)
+            # Skip Button
+            bt_search_again = Button(window, text="Skip",
+                                     command=skip, height=1, width=30)
+            b_font = ('times', 17)
+            bt_search_again.config(font=b_font)
+            bt_search_again.place(x=200, y=480)
+
+            window.update()
+        else:
+            pbar_google_scholar.stop()
+            # Destroy Window
+            window.destroy()
 
     # backGround Image
     photo = PhotoImage(file="background.png")
@@ -83,6 +118,13 @@ def scopus_window():
     window.bind('<Return>', func)
     """ Function to be executed when click on search button"""
 
+    def re_start():
+        window.destroy()
+        scopus_window()
+
+    def skip():
+        window.destroy()
+
     def get_scopus_pub():
         # Get ID from entry
         author = entry_scopus.get()
@@ -91,10 +133,51 @@ def scopus_window():
         pbar_scopus.update()
         pbar_scopus['maximum'] = 100
         # Call function to retrieve publications
-        get_publications_scopus(author, pbar_scopus)
-        pbar_scopus.stop()
-        # Destroy window
-        window.destroy()
+        try:
+            if get_publications_scopus(author, pbar_scopus):
+                pbar_scopus.stop()
+                # remove all widgets on window
+                widget_list = window.place_slaves()
+                for l in widget_list:
+                    l.destroy()
+                window.update()
+                time.sleep(1)
+                # Label that indicates that there are No publications found
+                label_no_pub = Label(window, text="There are no publications returned for this author",
+                                     bg='red')
+                label_no_pub.config(font=font)
+                label_no_pub.place(x=200, y=300)
+                # Search Again Button
+                bt_search_again = Button(window, text="Search again",
+                                         command=re_start, height=1, width=30)
+                b_font = ('times', 17)
+                bt_search_again.config(font=b_font)
+                bt_search_again.place(x=200, y=430)
+                # Skip Button
+                bt_search_again = Button(window, text="Skip",
+                                         command=skip, height=1, width=30)
+                b_font = ('times', 17)
+                bt_search_again.config(font=b_font)
+                bt_search_again.place(x=200, y=480)
+
+                window.update()
+            else:
+                pbar_scopus.stop()
+                window.destroy()
+
+        except KeyError:
+
+            # Label that indicates the failure of the function to connect with Scopus API
+            label_fail = Label(window, text="Error en la conexion , compruebe si su conexion tiene acceso a Scopus",
+                               bg='red')
+            label_fail.config(font=font)
+            label_fail.place(x=150, y=500)
+            window.update()
+
+            time.sleep(2)
+
+            window.destroy()
+            scopus_window()
 
     # backGround
     photo = PhotoImage(file="background.png")
@@ -240,6 +323,7 @@ def aneca_login():
 
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
+
     def func(event):
         get_login()
 
@@ -387,8 +471,12 @@ def fail_login():
 
 if __name__ == '__main__':
     google_window()
-    scopus_window()
+    #scopus_window()
+    """
     wos_window()
+    
     group_window()
     aneca_window(author_google)
     completed_window()
+    
+    """

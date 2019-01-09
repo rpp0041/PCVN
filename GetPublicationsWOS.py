@@ -43,7 +43,7 @@ def get_publications_wos(author, pbar):
     """
     # Set driver to be invisible
     options = Options()
-    options.headless = False
+    options.headless = True
     # set driver browser to be Firefox
     fp = webdriver.FirefoxProfile()
     fp.set_preference("browser.download.folderList", 2)

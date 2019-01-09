@@ -58,6 +58,8 @@ def get_publications_scopus(author_id, pbar):
     """ int number indicates the number of publications to be retrieved
     (set by default in 10000) """
     author_pub = scopus.search_author_publication(author_id, 10000)
+    if len(author_pub) == 0:
+        return True
     """ Modifications on Internal data structure to fit with BibTex Structure 
     ----------------------------------------------------------------------
     page_range : will be rename as pages

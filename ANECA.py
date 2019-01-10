@@ -7,6 +7,9 @@ anecaUtils: set of functions to navigate in ACADEMIA
 """
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
 from bibtexparser.bibdatabase import BibDatabase
 from bibtexparser.bwriter import BibTexWriter
 import bibtexparser
@@ -57,19 +60,28 @@ def aneca(author_input, pbar, user, pswd):
     for i in db.entries:
         if i['ENTRYTYPE'] == 'book':
             db_salida = fill_new_book(i, browser, author_input, db_salida)
-            time.sleep(13)
+            """ Wait publication to ve saved"""
+            element = WebDriverWait(browser, 20).until(
+                ec.element_to_be_clickable((By.CSS_SELECTOR, "#nuevaPublicacionIdxId")))
         elif i['ENTRYTYPE'] == 'article':
             if 'impactindex' in i.keys():
                 db_salida = fill_new_index_article(
                     i, browser, author_input, db_salida)
-                time.sleep(13)
+                """ Wait publication to ve saved"""
+                element = WebDriverWait(browser, 20).until(
+                    ec.element_to_be_clickable((By.CSS_SELECTOR, "#nuevLibroCapituloId")))
+                time.sleep(1)
             else:
                 db_salida = fill_new_article(i, browser, author_input, db_salida)
-                time.sleep(13)
+                """ Wait publication to ve saved"""
+                element = WebDriverWait(browser, 20).until(
+                    ec.element_to_be_clickable((By.CSS_SELECTOR, "#nuevaConferenciaSeminarioId")))
         elif i['ENTRYTYPE'] == 'inproceedings':
             db_salida = fill_new_inproceedings(
                 i, browser, db_salida)
-            time.sleep(13)
+            """ Wait publication to ve saved"""
+            element = WebDriverWait(browser, 20).until(
+                ec.element_to_be_clickable((By.CSS_SELECTOR, "#nuevaPublicacionIdxId")))
         pbar['value'] += progress_bar_inc
         pbar.update()
     browser.close()

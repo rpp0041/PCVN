@@ -23,7 +23,9 @@ def get_au(au_id, author_pub, scopus):
     # string to be return with authors name
     string = ''
     lg = len(author_pub['author'][au_id])
-
+    """ if there are no authors return void sting"""
+    if lg == 0:
+        return string
     # go thought all IDs in list to recover author name corresponding , and add it to final string
     for i in range(0, lg - 1):
         # query for scopus search

@@ -471,12 +471,8 @@ def fail_login():
 
 if __name__ == '__main__':
     google_window()
-    #scopus_window()
-    """
+    scopus_window()
     wos_window()
-    
     group_window()
     aneca_window(author_google)
     completed_window()
-    
-    """

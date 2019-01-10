@@ -45,9 +45,10 @@ def group_files(pbar):
     impact_index_list = list()
     rank_list = list()
     quartile_list = list()
+    tertile_list = list()
     category_list = list()
     journal_list = list()
-    parse_wos(wos.entries, impact_index_list, journal_list, rank_list, category_list, quartile_list, pbar)
+    parse_wos(wos.entries, impact_index_list, journal_list, rank_list, category_list, quartile_list, tertile_list, pbar)
 
     """ update progress bar GUI"""
     pbar['value'] = 95

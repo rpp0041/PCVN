@@ -6,7 +6,6 @@ from unicodedata import normalize
 import time
 import re
 
-
 """Function that return the impact index of a journal from 2017 to 1998 
 parameter : string (Name of journal) 
 return : dict (with impact index and year as Key)
@@ -17,7 +16,6 @@ return : dict (with impact index and year as Key)
 
 
 def get_impact_index(title):
-
     # set options of driver to be invisible for user (headless)
     options = Options()
     options.headless = True
@@ -63,9 +61,9 @@ def get_impact_index(title):
         time.sleep(10)
     except IndexError:
         time.sleep(0.1)
-    dic_impact, rank_dic, quartile_dic, category_dic = get_info(browser)
+    dic_impact, rank_dic, quartile_dic, tertile_dict, category_dic = get_info(browser)
     browser.close()
-    return dic_impact, rank_dic, quartile_dic, category_dic
+    return dic_impact, rank_dic, quartile_dic, tertile_dict, category_dic
 
 
 """ Function that will Check if we have data for the journla given
@@ -80,7 +78,8 @@ return :    impactIndex     (float)
 """
 
 
-def check_impact_index(impact_index_list, journal_list, rank_list, quartile_list, category_list, journal, year):
+def check_impact_index(impact_index_list, journal_list, rank_list, quartile_list, tertile_list, category_list, journal,
+                       year):
     # put journal name in lower case
     journalower = journal.lower()
     # Actual year dont have impact index , so we get past year index
@@ -92,16 +91,18 @@ def check_impact_index(impact_index_list, journal_list, rank_list, quartile_list
         journal_list.append(journalower)
         # try get_impact_index and catch Type error , return None
         try:
-            impact_dict, rank_dic, quartile_dic, category = get_impact_index(journalower)
+            impact_dict, rank_dic, quartile_dic, tertile_dic, category = get_impact_index(journalower)
         except TypeError:
             return
         # add quality indexes (dic) to each list
         impact_index_list.append(impact_dict)
         rank_list.append(rank_dic)
         quartile_list.append(quartile_dic)
+        tertile_list.append(tertile_dic)
         category_list.append(category)
 
-        return impact_dict.get(str(year)), rank_dic.get(str(year)), quartile_dic.get(str(year)), category
+        return impact_dict.get(str(year)), rank_dic.get(str(year)), quartile_dic.get(str(year)), tertile_dic.get(
+            str(year)), category
     # if it is on the list search search on the list the correspond year
     else:
         # search journal position in list, will serve as index for the other lists
@@ -111,10 +112,12 @@ def check_impact_index(impact_index_list, journal_list, rank_list, quartile_list
         impact_dict = impact_index_list[index]
         rank_dic = rank_list[index]
         quartile_dic = quartile_list[index]
+        tertile_dic = tertile_list[index]
         category = category_list[index]
 
         # return value for the correspond year
-        return impact_dict.get(str(year)), rank_dic.get(str(year)), quartile_dic.get(str(year)), category
+        return impact_dict.get(str(year)), rank_dic.get(str(year)), quartile_dic.get(str(year)), tertile_dic.get(
+            str(year)), category
 
 
 """ Function that if 2 given publications check if has ISSN attribute
@@ -181,9 +184,9 @@ parameter: list of publications (list of dicts)
 """
 
 
-def parse_wos(wos, impact_index_list, journal_list, rank_list, category_list, quartile_list, pbar):
+def parse_wos(wos, impact_index_list, journal_list, rank_list, category_list, quartile_list, tertile_list, pbar):
     # progress bar GUI increment
-    pbar_increment = 85/len(wos)
+    pbar_increment = 85 / len(wos)
     for pub in wos:
         # remove fields that not need to be parsed
         list_keys = list(pub.keys())
@@ -199,11 +202,14 @@ def parse_wos(wos, impact_index_list, journal_list, rank_list, category_list, qu
             journal = pub['journal']
             # Check quality indexes
             try:
-                impact_index, rank, quartile, category = check_impact_index(impact_index_list, journal_list, rank_list,
-                                                                            quartile_list, category_list, journal, year)
+                impact_index, rank, quartile, tertile, category = check_impact_index(impact_index_list, journal_list,
+                                                                                     rank_list,
+                                                                                     quartile_list, tertile_list,
+                                                                                     category_list, journal, year)
                 pub['impactIndex'] = str(impact_index)
                 pub['journalRank'] = str(rank)
                 pub['journalQuartile'] = str(quartile)
+                pub['journalTertile'] = str(tertile)
                 pub['journalCategory'] = str(category)
             except TypeError:
                 pass
@@ -259,6 +265,12 @@ def parse_string(s):
     return s.lower()
 
 
+""" Function that will get information about journal quality indexes , rank , quartile ,categories etc.
+With a selenium browser with journal page loaded (in JCR), will look for its quality indexes and return several dicts
+one for each index with information of all the possible years. 
+"""
+
+
 def get_info(browser):
     # click on rank field
     browser.find_element_by_link_text('Rank').click()
@@ -273,7 +285,7 @@ def get_info(browser):
     14 rows in total"""
 
     for i in range(0, len(table), 14):
-        dic_impact[table[i]] = table[i+2]
+        dic_impact[table[i]] = table[i + 2]
 
     """ RANK & QUARTILE OF JOURNAL"""
     """ Extract data from rank table"""
@@ -299,6 +311,7 @@ def get_info(browser):
     """ fill dict """
     dic_rank = dict()
     dic_quartile = dict()
+    dic_tertile = dict()
     # counter index of the year
     cont_year = 0
     """ Go trough all the rows in the table to fill rank & quartile"""
@@ -306,6 +319,7 @@ def get_info(browser):
         # strings to group all the information about rank & quartile
         rank = ''
         quartile = ''
+        tertile = ''
         # if there are more than 1 categories add all ranks and quartile of each category in the string
         # we will add '\n' to separate each category
         # else add just the correspond (only 1)
@@ -315,17 +329,21 @@ def get_info(browser):
                 # add rank & quartile
                 rank += str(rank_table[i]) + '\n'
                 quartile += str(rank_table[i + 1]) + '\n'
+                tertile += str(calculate_tertile(rank_table[i])) + '\n'
 
             # add last rank & quartile without '\n'
             rank += str(rank_table[i + 3])
             quartile += str(rank_table[i + 4])
+            tertile += str(calculate_tertile(rank_table[i + 3]))
         else:
             rank += str(rank_table[i])
             quartile += str(rank_table[i + 1])
+            tertile += str(calculate_tertile(rank_table[i]))
 
         # add strings to each dict with year as key
         dic_rank[list_year[cont_year]] = rank
         dic_quartile[list_year[cont_year]] = quartile
+        dic_tertile[list_year[cont_year]] = tertile
         # counter year +1
         cont_year += 1
 
@@ -342,7 +360,11 @@ def get_info(browser):
         name += str(name_tab[i + 4])
     else:
         name += str(name_tab[1])
-    return dic_impact, dic_rank, dic_quartile, name
+    return dic_impact, dic_rank, dic_quartile, dic_tertile, name
+
+
+""" Function that will parse the table with indexes quality in case it is not completed 
+Ex: there are 3 categories but only 7 rows , there should be 9 rows (3 per category)"""
 
 
 def parse_table(rank_table, name_tab, num_of_categories):
@@ -357,7 +379,7 @@ def parse_table(rank_table, name_tab, num_of_categories):
         i += 1
     """ difference of fields betwen actual 2017 (2018 data still not released)
     and previus year (2016)"""
-    diff = rank_table.index('2016')-1
+    diff = rank_table.index('2016') - 1
     """ num of standard fields for a normal rank table"""
     num_fields = (num_of_categories * 3) + 1
     """ num of fields to be remove"""
@@ -385,3 +407,16 @@ def parse_table(rank_table, name_tab, num_of_categories):
             name_tab.pop()
 
     return rank_table, name_tab
+
+
+""" Function that will calculate the tertile of a journal, given the rank of this journal"""
+
+
+def calculate_tertile(rank):
+    try:
+        posjournal = int(rank.split('/')[0])
+        numjournal = int(rank.split('/')[1])
+    except ValueError:
+        return 'None'
+
+    return round(posjournal * 3 / (numjournal + 1) + .5)

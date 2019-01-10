@@ -397,16 +397,18 @@ def fill_new_index_article(pub, browser, author_input, db):
     position = pub['journalrank'].split('\n')
     category = pub['journalcategory'].split('\n')
     quartile = pub['journalquartile'].split('\n')
+    tertile = pub['journaltertile'].split('\n')
     # Flag that will indicate if quality indexes had been add or not
     flag_index = False
     # go trough all the categories
     for x in range(0, len(position)):
         # try to fill the fields , but if date is None pop data from list and try with next
         # else the data is correct ,so set quality index flag to True and break Loop
-        if fill_journal(browser, position, category, quartile) is True:
+        if fill_journal(browser, position, category, quartile, tertile) is True:
             position.pop(0)
             category.pop(0)
             quartile.pop(0)
+            tertile.pop(0)
         else:
             flag_index = True
             break
@@ -471,7 +473,7 @@ return True
 """
 
 
-def fill_journal(browser, position, category, quartile):
+def fill_journal(browser, position, category, quartile, tertile):
     if position[0] != 'None':
         pos1 = position[0].split('/')
         browser.find_element_by_id('posRevistaTextId').send_keys(pos1[0])
@@ -485,13 +487,23 @@ def fill_journal(browser, position, category, quartile):
         """Fill quartile """
         browser.find_element_by_id('cuartilComboId').send_keys(quartile[0][1])
 
+        """ Fill tertile """
+
+        """ Click on dropdown to select tertile"""
+        browser.find_elements_by_xpath('//input[@type="text"]')[20].click()
+
+        """ select corresponding option for tertile, we rest 1 to actual tertile value because arrays start at 0"""
+        pos_tertile = int(tertile[0])-1
+        browser.find_elements_by_class_name('option')[pos_tertile].click()
+
         """ Fill Other information """
         if len(position) > 1:
             other_information = ''
             for x in range(1, len(position)):
-                other_information += 'rank' + position[x]
-                other_information += 'quartile' + quartile[x]
-                other_information += 'Category' + category[x] + ' '
+                other_information += 'rank ' + position[x]
+                other_information += 'quartile ' + quartile[x]
+                other_information += 'tertile ' + tertile[x]
+                other_information += 'Category ' + category[x]
             browser.find_element_by_id('otrosIndiciosTextAreaId').send_keys(other_information)
     else:
         return True

@@ -134,37 +134,8 @@ def scopus_window():
         pbar_scopus['maximum'] = 100
         # Call function to retrieve publications
         try:
-            if get_publications_scopus(author, pbar_scopus):
-                pbar_scopus.stop()
-                # remove all widgets on window
-                widget_list = window.place_slaves()
-                for l in widget_list:
-                    l.destroy()
-                window.update()
-                time.sleep(1)
-                # Label that indicates that there are No publications found
-                label_no_pub = Label(window, text="There are no publications returned for this author",
-                                     bg='red')
-                label_no_pub.config(font=font)
-                label_no_pub.place(x=200, y=300)
-                # Search Again Button
-                bt_search_again = Button(window, text="Search again",
-                                         command=re_start, height=1, width=30)
-                b_font = ('times', 17)
-                bt_search_again.config(font=b_font)
-                bt_search_again.place(x=200, y=430)
-                # Skip Button
-                bt_search_again = Button(window, text="Skip",
-                                         command=skip, height=1, width=30)
-                b_font = ('times', 17)
-                bt_search_again.config(font=b_font)
-                bt_search_again.place(x=200, y=480)
-
-                window.update()
-            else:
-                pbar_scopus.stop()
-                window.destroy()
-
+            get_publications_scopus(author, pbar_scopus)
+            window.update()
         except KeyError:
 
             # Label that indicates the failure of the function to connect with Scopus API
@@ -470,9 +441,10 @@ def fail_login():
 
 
 if __name__ == '__main__':
-    google_window()
+    #google_window()
     scopus_window()
-    wos_window()
-    group_window()
+    #wos_window()
+    #group_window()
+    author_google = 'César García-Osorio'
     aneca_window(author_google)
     completed_window()

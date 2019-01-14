@@ -16,10 +16,10 @@ def group_files(pbar):
 
     # Load BibTex files extract from the websites
 
-    # Load Google Scholar BibTex File
-    with open('bibtexScopus.bib', encoding='utf-8') as bibfile:
-        scopus = bibtexparser.load(bibfile)
     # Load Scopus BibTex File
+    with open('scopus.bib', encoding='utf-8') as bibfile:
+        scopus = bibtexparser.load(bibfile)
+    # Load Google Scholar BibTex File
     with open('bibtexScholar.bib', encoding='utf-8') as bibfile:
         scholar = bibtexparser.load(bibfile)
     # Load WOS BibTex File
@@ -49,6 +49,7 @@ def group_files(pbar):
     category_list = list()
     journal_list = list()
     parse_wos(wos.entries, impact_index_list, journal_list, rank_list, category_list, quartile_list, tertile_list, pbar)
+    scopus = parse_scopus(scopus)
 
     """ update progress bar GUI"""
     pbar['value'] = 95
@@ -72,9 +73,6 @@ def group_files(pbar):
     writer = BibTexWriter()
     db = BibDatabase()
     for i in scopus.entries:
-        """ Rename cites"""
-        i['cites'] = i['citation_count']
-        i.pop('citation_count')
         """ Parse Volume """
         i = parse_volume(i)
         """ Add pub to write BibTex db """

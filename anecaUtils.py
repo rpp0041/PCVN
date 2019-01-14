@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 from GroupFilesUtils import parse_string
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
 import time
 
 """ Function that will log user in to Aneca Academia Application
@@ -73,6 +76,10 @@ def go_to_publications(browser):
 
     """ Accept Coockie Polycy"""
     browser.find_element_by_link_text('Acepto').click()
+
+    """ Wait for publications to be accesible"""
+    element = WebDriverWait(browser, 20).until(
+        ec.element_to_be_clickable((By.ID, "nuevLibroCapituloId")))
 
 
 """ Function tha will fill a new Book publication """

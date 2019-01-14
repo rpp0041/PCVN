@@ -7,9 +7,6 @@ anecaUtils: set of functions to navigate in ACADEMIA
 """
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.support import expected_conditions as ec
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
 from bibtexparser.bibdatabase import BibDatabase
 from bibtexparser.bwriter import BibTexWriter
 import bibtexparser

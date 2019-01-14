@@ -166,12 +166,14 @@ def remove_duplicates(list1, list2):
             # check if issn or title are equals, if they are update pub from list 1 and remove second one.
             if check_issn(pub, pub2):
                 """ In case ISSN is the same,update keys from 1st pub"""
-                pub.update(pub2)
-                list2.remove(pub2)
+                pub2.update(pub)
+                list1.remove(pub)
+                break
             elif check_title(pub, pub2):
                 """ In case title is the same,update keys from 1st pub"""
-                pub.update(pub2)
-                list2.remove(pub2)
+                pub2.update(pub)
+                list1.remove(pub)
+                break
     return list1, list2
 
 
@@ -201,6 +203,7 @@ def parse_wos(wos, impact_index_list, journal_list, rank_list, category_list, qu
             year = pub['year']
             journal = pub['journal']
             # Check quality indexes
+
             try:
                 impact_index, rank, quartile, tertile, category = check_impact_index(impact_index_list, journal_list,
                                                                                      rank_list,
@@ -213,6 +216,7 @@ def parse_wos(wos, impact_index_list, journal_list, rank_list, category_list, qu
                 pub['journalCategory'] = str(category)
             except TypeError:
                 pass
+
         """ update progress bar GUI"""
         pbar['value'] += pbar_increment
         pbar.update()
@@ -388,7 +392,7 @@ def parse_table(rank_table, name_tab, num_of_categories):
     if diff > num_fields:
         # cont of fields to remove per row
         cont = num_fields
-        # new table
+        # new tablef
         table_parsed = list()
         """ parse rank table"""
         i = 0
@@ -420,3 +424,22 @@ def calculate_tertile(rank):
         return 'None'
 
     return round(posjournal * 3 / (numjournal + 1) + .5)
+
+
+""" Function that will parse number of cites of Scopus publications"""
+
+
+def parse_scopus(scopus):
+    for pub in scopus.entries:
+        """ ex: cited by 4"""
+        cites = pub['note'].split(' ')[2]
+        cites = re.sub('[^0-9]', '', cites)
+        pub['cites'] = cites
+        del pub['note']
+
+        if 'isbn' in pub.keys():
+            isbn = pub['isbn'].split('; ')
+            if len(isbn) > 1:
+                pub['isbn'] = isbn[1]
+
+    return scopus

@@ -8,7 +8,7 @@ from GetPublicationsScholar import *
 from GetPublicationsScopus import *
 from GetPublicationsWOS import *
 from GroupFiles import *
-from ANECA import *
+from aneca import *
 
 """ Fucntion that will show window to entry author name to be searched
 in Google Scholar """
@@ -441,10 +441,9 @@ def fail_login():
 
 
 if __name__ == '__main__':
-    #google_window()
+    google_window()
     scopus_window()
-    #wos_window()
-    #group_window()
-    author_google = 'César García-Osorio'
+    wos_window()
+    group_window()
     aneca_window(author_google)
     completed_window()

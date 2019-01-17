@@ -154,9 +154,12 @@ def add_no_idx(se2, d, headers, final_url, l, author_input, db_salida, pbar, pba
 
 
 def post_article_no_index(pub, value_for_post, author_input):
-    num_author = len(pub['author'].split('and'))
-    pos_author = author_position(pub['author'], author_input)
     postdata = ''
+    if 'author' in pub.keys():
+        num_author = len(pub['author'].split('and'))
+        pos_author = author_position(pub['author'], author_input)
+    else:
+        return postdata
     postdata += 'totalAutores=' + str(num_author) + '&'
     postdata += 'publicacionNoIndexada.posAutor=' + str(pos_author) + '&'
     postdata += 'publicacionNoIndexada.tipoPubliCient.id=1&'
@@ -233,9 +236,12 @@ def add_idx(se2, d, headers, final_url, l, author_input, db_salida, pbar, pbar_i
 
 
 def post_article_index(pub, value_for_post, author_input):
-    num_author = len(pub['author'].split('and'))
-    pos_author = author_position(pub['author'], author_input)
     postdata = ''
+    if 'author' in pub.keys():
+        num_author = len(pub['author'].split('and'))
+        pos_author = author_position(pub['author'], author_input)
+    else:
+        return postdata
     postdata += 'totalAutores=' + str(num_author) + '&'
     postdata += 'publicacionIndexada.posAutor=' + str(pos_author) + '&'
     postdata += 'publicacionIndexada.tipoPubliCient.id=1&'
@@ -352,9 +358,12 @@ def add_book(se2, d, headers, final_url, l, author_input, db_salida, pbar, pbar_
 
 
 def post_book(pub, value_for_post, author_input):
-    num_author = len(pub['author'].split('and'))
-    pos_author = author_position(pub['author'], author_input)
     postdata = ''
+    if 'author' in pub.keys():
+        num_author = len(pub['author'].split('and'))
+        pos_author = author_position(pub['author'], author_input)
+    else:
+        return postdata
     postdata += 'totalAutores=' + str(num_author) + '&'
     postdata += 'libroCapitulo.posAutor=' + str(pos_author) + '&'
     postdata += 'libroCapitulo.tipoLibroCapi.id=2&'

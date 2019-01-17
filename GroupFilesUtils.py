@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.common.exceptions import NoSuchElementException
 from unicodedata import normalize
 import time
 import re
@@ -61,7 +62,11 @@ def get_impact_index(title):
         time.sleep(10)
     except IndexError:
         time.sleep(0.1)
-    dic_impact, rank_dic, quartile_dic, tertile_dict, category_dic = get_info(browser)
+    try:
+        dic_impact, rank_dic, quartile_dic, tertile_dict, category_dic = get_info(browser)
+    except NoSuchElementException:
+        browser.close()
+        return
     browser.close()
     return dic_impact, rank_dic, quartile_dic, tertile_dict, category_dic
 
@@ -87,12 +92,12 @@ def check_impact_index(impact_index_list, journal_list, rank_list, quartile_list
         year = '2017'
     # if journal name is not on the list search quality indexes and add it
     if journalower not in journal_list:
-        # add journal name to the list
-        journal_list.append(journalower)
         # try get_impact_index and catch Type error , return None
         try:
             impact_dict, rank_dic, quartile_dic, tertile_dic, category = get_impact_index(journalower)
-        except TypeError:
+            # add journal name to the list
+            journal_list.append(journalower)
+        except (TypeError, NoSuchElementException) as e:
             return
         # add quality indexes (dic) to each list
         impact_index_list.append(impact_dict)

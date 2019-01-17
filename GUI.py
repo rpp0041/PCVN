@@ -9,6 +9,7 @@ from GetPublicationsScopus import *
 from GetPublicationsWOS import *
 from GroupFiles import *
 from aneca import *
+from selenium.common.exceptions import NoSuchElementException
 
 """ Fucntion that will show window to entry author name to be searched
 in Google Scholar """
@@ -135,8 +136,8 @@ def scopus_window():
         # Call function to retrieve publications
         try:
             get_publications_scopus(author, pbar_scopus)
-            window.update()
-        except KeyError:
+            window.destroy()
+        except (KeyError, NoSuchElementException):
 
             # Label that indicates the failure of the function to connect with Scopus API
             label_fail = Label(window, text="Error en la conexion , compruebe si su conexion tiene acceso a Scopus",
@@ -447,3 +448,4 @@ if __name__ == '__main__':
     group_window()
     aneca_window(author_google)
     completed_window()
+

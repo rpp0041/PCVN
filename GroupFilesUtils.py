@@ -149,11 +149,12 @@ return : True/False
 
 def check_title(pub1, pub2):
     # parse titles trying to be as accurate in comparision as possible
-    title1 = parse_string(pub1['title'])
-    title2 = parse_string(pub2['title'])
-    # return True if Equal, return false if not
-    if title1 == title2:
-        return True
+    if 'title' in pub1 and 'title' in pub2:
+        title1 = parse_string(pub1['title'])
+        title2 = parse_string(pub2['title'])
+        # return True if Equal, return false if not
+        if title1 == title2:
+            return True
     return False
 
 
@@ -425,7 +426,7 @@ def calculate_tertile(rank):
     try:
         posjournal = int(rank.split('/')[0])
         numjournal = int(rank.split('/')[1])
-    except ValueError:
+    except (ValueError, AttributeError):
         return 'None'
 
     return round(posjournal * 3 / (numjournal + 1) + .5)

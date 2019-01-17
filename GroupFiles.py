@@ -4,6 +4,7 @@ from bibtexparser.bwriter import BibTexWriter
 from bibtexparser.bibdatabase import BibDatabase
 from GroupFilesUtils import *
 import bibtexparser
+import pickle
 
 """" Function that will group all BibTex files return by the others functions in a single BibTex file removing in the 
 process duplicates , parsing at the same time necessary fields and adding new ones (impactIndex , JournalRank etc) 
@@ -42,12 +43,21 @@ def group_files(pbar):
     """ Parse WOS db in order to get same format for every bibTex db 
     this will help us in the future comparison (otherwise it will be impossible)
     also look for quality indexes in JCR cites """
-    impact_index_list = list()
-    rank_list = list()
-    quartile_list = list()
-    tertile_list = list()
-    category_list = list()
-    journal_list = list()
+    try:
+        with open('test.pkl', 'rb') as input:
+            impact_index_list = pickle.load(input)
+            rank_list = pickle.load(input)
+            quartile_list = pickle.load(input)
+            tertile_list = pickle.load(input)
+            category_list = pickle.load(input)
+            journal_list = pickle.load(input)
+    except:
+        impact_index_list = list()
+        rank_list = list()
+        quartile_list = list()
+        tertile_list = list()
+        category_list = list()
+        journal_list = list()
     parse_wos(wos.entries, impact_index_list, journal_list, rank_list, category_list, quartile_list, tertile_list, pbar)
     scopus = parse_scopus(scopus)
 
@@ -55,6 +65,13 @@ def group_files(pbar):
     pbar['value'] = 95
     pbar.update()
 
+    with open('test.pkl', 'wb') as output:
+        pickle.dump(impact_index_list, output, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(rank_list, output, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(quartile_list, output, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(tertile_list, output, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(category_list, output, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(journal_list, output, pickle.HIGHEST_PROTOCOL)
     #####################################################################
 
     """ Remove Duplicates from the BibTex Files"""

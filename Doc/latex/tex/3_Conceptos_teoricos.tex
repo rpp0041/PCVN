@@ -1,83 +1,75 @@
 \capitulo{3}{Conceptos teóricos}
 
-En aquellos proyectos que necesiten para su comprensión y desarrollo de unos conceptos teóricos de una determinada materia o de un determinado dominio de conocimiento, debe existir un apartado que sintetice dichos conceptos.
+Para la total compresión del proyecto es necesario tener claros algunos conceptos como son Técnica Web Scraping, formato BibTex, herramienta Selenium y el protocolo HTTP.
 
-Algunos conceptos teóricos de \LaTeX \footnote{Créditos a los proyectos de Álvaro López Cantero: Configurador de Presupuestos y Roberto Izquierdo Amo: PLQuiz}.
+\section{Web Scraping}
 
-\section{Secciones}
-
-Las secciones se incluyen con el comando section.
-
-\subsection{Subsecciones}
-
-Además de secciones tenemos subsecciones.
-
-\subsubsection{Subsubsecciones}
-
-Y subsecciones. 
-
-
-\section{Referencias}
-
-Las referencias se incluyen en el texto usando cite \cite{wiki:latex}. Para citar webs, artículos o libros \cite{koza92}.
-
-
-\section{Imágenes}
-
-Se pueden incluir imágenes con los comandos standard de \LaTeX, pero esta plantilla dispone de comandos propios como por ejemplo el siguiente:
-
-\imagen{escudoInfor}{Autómata para una expresión vacía}
-
-
-
-\section{Listas de items}
-
-Existen tres posibilidades:
-
+El Web Scraping [cita] es una técnica de extracción de información de una página web utilizando para este propósito programas software, su traducción inmediata al castellano sería algo así como "raspado web".
+Esta técnica simula la navegación de un ser humano en la red, se puede hacer de varias formas:
 \begin{itemize}
-	\item primer item.
-	\item segundo item.
+	\item Utilizar el protocolo HTTP manualmente.
+	\item Utilizar un navegador incrustado en el propio software, simulando la navegación tradicional que haría cualquier usuario tradicional.
 \end{itemize}
 
-\begin{enumerate}
-	\item primer item.
-	\item segundo item.
-\end{enumerate}
+Usando cualquiera de las dos alternativas arriba planteadas el objetivo es siempre el mismo, transformar los datos contenidos en una página web (normalmente con formato HTTML) en datos relevantes para ser almacenados y tratados con un fin.
 
-\begin{description}
-	\item[Primer item] más información sobre el primer item.
-	\item[Segundo item] más información sobre el segundo item.
-\end{description}
-	
+En este proyecto lo que vamos a realizar es extraer la información relevante acerca de las publicaciones de un determinado autor de las principales páginas web del sector (Google Scholar, Scopus y Web of Science)
+
+\section{BibTex}
+BibTex [cita] es una herramienta software que permite dar formato a un texto, tradicionalmente listas de referencias y que es usado habitualmente junto con los documentos en LaTeX.
+
+Es también un formato de archivo basado en texto, usado para definir datos bibliográficos (articulo,libros, ponencias en congreso etc.) habitualmente terminan en ".bib" y se caracteriza por que los elementos bibliográficos están separados por tipos. A continuación, se van a exponer los tipos más relevantes:
 \begin{itemize}
-\item 
+	\item @article
+		artículo publicado en una revista.
+		Campos Necesarios: author, title, journal, year, volume
+		Campos Opcionales: number, pages, month, doi, note, key
+	\item @book
+		libro publicado con un editor concreto.
+		Campos Necesarios: author/editor, title, publisher, year
+		Campos Opcionales: volume/number, series, address, edition, month, note, key, url
+	\item @inproceedings
+		Articulo presentado en una conferencia o congreso.
+		Campos Necesarios: author, title, booktitle, publisher, year
+		Campos Opcionales: editor, volume/number, series, type, chapter, pages, address, edition, month, note, key
+	\item @inbook
+		Parte de un libro, suele ser un capítulo cseccion, etc.
+		Campos Necesarios: author/editor, title, chapter/pages, publisher, year
+		Campos Opcionales: volume/number, series, type, address, edition, month, note, key
+		
+	 
 \end{itemize}
 
-\section{Tablas}
+\imagen{BibTeX}{Imagen de ejemplo de una publicación en formato BibTeX}
+Para saber más sobre los distintos tipos y campos que admite este formato [cita].
 
-Igualmente se pueden usar los comandos específicos de \LaTeX o bien usar alguno de los comandos de la plantilla.
+\section{Selenium}
 
-\tablaSmall{Herramientas y tecnologías utilizadas en cada parte del proyecto}{l c c c c}{herramientasportipodeuso}
-{ \multicolumn{1}{l}{Herramientas} & App AngularJS & API REST & BD & Memoria \\}{ 
-HTML5 & X & & &\\
-CSS3 & X & & &\\
-BOOTSTRAP & X & & &\\
-JavaScript & X & & &\\
-AngularJS & X & & &\\
-Bower & X & & &\\
-PHP & & X & &\\
-Karma + Jasmine & X & & &\\
-Slim framework & & X & &\\
-Idiorm & & X & &\\
-Composer & & X & &\\
-JSON & X & X & &\\
-PhpStorm & X & X & &\\
-MySQL & & & X &\\
-PhpMyAdmin & & & X &\\
-Git + BitBucket & X & X & X & X\\
-Mik\TeX{} & & & & X\\
-\TeX{}Maker & & & & X\\
-Astah & & & & X\\
-Balsamiq Mockups & X & & &\\
-VersionOne & X & X & X & X\\
-} 
+Selenium [cita] Es una herramienta software de código abierto, que proporciona un entorno de pruebas para aplicaciones web, permitiendo realizar las pruebas en cualquier navegador.
+
+A pesar de que tiene un entorno de desarrollo integrado (IDE), también posee librerías para su uso en los lenguajes de programación mas usados (Java, C\#,Ruby,Groovy,Perl,Php y Python).Además es multiplataforma lo  que permite que pueda ser utilizado en los distintos sistemas operativos, a través de la mayor parte de navegadores (Google Chrome, Internet explorer,Firefox,Safari,Opera,HtmlUnit,phanmjs,Android,IOS)[cita1]
+
+A pesar de que Selenium dispone de varios componentes, el componente que nos interesa es Selenium WebDriver 
+
+\begin{itemize}
+	\item Selenium web driver a diferencia de su antecesor Selenium RC no necesita de un servidor especial para ejecutar las pruebas, si no que 
+iniciará una instancia del navegador elegido y lo controlará, permitiendo al usuario navegar de una forma similar a como lo haría cualquier usuario convencional.
+\end{itemize}
+
+
+
+
+\section{Protocolo HTTP}
+
+Protocolo HTTP o protocolo de transferencia de hipertexto [cita] es el protocolo de comunicación que rige las comunicaciones en la red.
+
+El protocolo HTTP se basa en un modelo de petición y respuesta, en la que el usuario realiza una petición y el servidor responde a la petición realizada, normalmente estas peticiones van acompañadas de parámetros o argumentos necesarios para que el servidor procese la petición y genere una respuesta.
+
+Existen distintos tipos de métodos para interactuar, pero los fundamentales para la comprensión del funcionamiento de este proyecto son GET y POST.
+\begin{itemize}
+	\item	GET El método GET realiza una petición sobre un recurso específico, devolviendo información, en ningún caso debería tener otro efecto.
+\item		POST El método POST envía una serie de datos para que sean procesados por el recurso al cual se le está haciendo la petición, como consecuencia puede resultar en la modificación de los recursos del servidor. Los datos deberán ser incluidos en el cuerpo de la petición.
+\end{itemize}
+
+ El protocolo se define como un protocolo sin estado, esto quiere decir que no guarda ninguna información de otras conexiones. Es por esto que surge el concepto de cookies[cita], que es una pequeña cantidad de información que se almacena en el equipo del usuario y que permite recordar si el cliente ya ha accedido al servidor anteriormente, permitiendo mostrar una y otra información o creando el concepto de sesión [cita]. Así cuando iniciamos sesión en una página web con nuestro usuario y contraseña lo que se genera es una cookie, y cada vez que se envié una petición al servidor esta es enviada para indicar que estamos autenticados con eso usuario y contraseña.
+

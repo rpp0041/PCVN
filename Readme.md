@@ -1,5 +1,5 @@
-###	PCVN
-
+![alt text](https://github.com/rpp0041/PCVN/blob/master/logo_300.png)
+# PCVN
 
 **PCVN** es un proyecto de WebScraping que trata de simplificar el trabajo de los investigadores  
 en la recolección de sus publicaciones en las paginas mas usadas:

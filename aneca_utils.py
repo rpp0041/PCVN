@@ -5,6 +5,11 @@ import re
 import urllib
 from GroupFilesUtils import parse_string
 
+""" Function that will return the position of an specific author from a larger String
+Ex : "Tom Adams and kevin rox and Angelina Red" , "Tom Adams" -> Return 1
+parameter : String
+return : int"""
+
 
 def author_position(auth, author_input):
     cont = 1
@@ -18,6 +23,13 @@ def author_position(auth, author_input):
             return cont
         cont += 1
     return 1
+
+
+""" Function that will send POST request to login ACADEMIA application, will receive as a parameter user & password
+will return request session so we dont need to log in every time we do a new request
+parameter : String
+return : request Session 
+"""
 
 
 def login(user, pswd):
@@ -41,9 +53,9 @@ def login(user, pswd):
                'Accept-Encoding': 'gzip, deflate, br',
                'Accept-Language': 'es-ES,es;q=0.9'}
 
-    a = se.post(url, headers=headers, data=data)
+    post_req = se.post(url, headers=headers, data=data)
 
-    if re.findall('logueado', a.text):
+    if re.findall('logueado', post_req.text):
         print("Logged in!")
     else:
         return True
@@ -51,9 +63,16 @@ def login(user, pswd):
     return se
 
 
+""" Function that will follow redirect to access main page of ACADEMIA application
+parameter: request session 
+return : request session (new) ,String (url),String (url)"""
+
+
 def redirect(se):
-    """ FOLLOW REDIRECT """
+    """ url to access"""
     url2 = 'https://sede.educacion.gob.es/sede/login/accesotramiteexterno.jjsp'
+
+    """ Data to be send on post request"""
     data = 'redirectUrl=https%3A%2F%2Fsrv.aneca.es%2FAcademia3%2Fsolicitudes%3Ftoken%3D&codigoConvocatoria=590'
 
     headers = {'Host': 'sede.educacion.gob.es',
@@ -65,11 +84,11 @@ def redirect(se):
                'Content-Type': 'application/x-www-form-urlencoded',
                'Connection': 'close'}
 
-    b = se.post(url2, headers=headers, data=data)
+    post_req = se.post(url2, headers=headers, data=data)
 
-    temp_url = b.url
+    temp_url = post_req.url
 
-    new_url = re.findall('<meta http-equiv="Refresh" content="1; URL=(.+?)">', b.text)
+    new_url = re.findall('<meta http-equiv="Refresh" content="1; URL=(.+?)">', post_req.text)
 
     """ OBTAIN CODE IDENTIFIER TO ACCESS PUBLICATION AREA"""
 
@@ -87,12 +106,17 @@ def redirect(se):
     se2 = requests.Session()
     c = se2.get(new_url[0], headers=headers)
 
-    other_url = re.findall('<li><a href="(.+?)">Calidad y dif', c.text)
+    partial_url = re.findall('<li><a href="(.+?)">Calidad y dif', c.text)
 
-    return se2, new_url, other_url
+    return se2, new_url, partial_url
 
 
-def acces_publication_area(se2, new_url, other_url):
+""" Function that will get access to CV area
+parameter : request session (new) ,String (url),String (url
+return : request session ,request response,String (headers),String (url)"""
+
+
+def acces_publication_area(se2, new_url, partial_url):
     """ ACCES TO PUBLICATIONS AREA (GET)"""
     headers = {
 
@@ -107,22 +131,28 @@ def acces_publication_area(se2, new_url, other_url):
 
     }
 
-    final_url = "https://srv.aneca.es" + other_url[0]
+    final_url = "https://srv.aneca.es" + partial_url[0]
 
-    d = se2.get(final_url, headers=headers)
-    return se2, d, headers, final_url
+    get_response = se2.get(final_url, headers=headers)
+    return se2, get_response, headers, final_url
 
 
-def add_no_idx(se2, d, headers, final_url, l, author_input, db_salida, pbar, pbar_inc):
+""" Function that will send post request for every not index publication
+param: request session , get_response , headers of CV Area , url , list of pub , bibtex db, progressbar , int
+return: request session , get_response"""
+
+
+def add_no_idx(se2, get_response, headers, final_url, list_pub, author_input, db_salida, pbar, pbar_inc):
+    """ find url to send get request"""
     no_dix = re.findall(
         '<a id="nuevaPublicacionNoIdxId" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">',
-        d.text)
-
+        get_response.text)
+    """ get requests url , needed to do post request with publication information"""
     url_noidx = "https://srv.aneca.es" + no_dix[0]
 
-    f = se2.get(url_noidx, headers=headers)
-
-    value_for_post = re.findall('<input type="hidden" name="_HDIV_STATE_" value="(.+?)" /></form>', f.text)
+    get_req = se2.get(url_noidx, headers=headers)
+    """ token to be send on POST request"""
+    value_for_post = re.findall('<input type="hidden" name="_HDIV_STATE_" value="(.+?)" /></form>', get_req.text)
 
     posturl = 'https://srv.aneca.es/Academia3/actInvestigadora/calidadDifusion/guardarPublicacionNoIndexada'
     newheaders = {
@@ -138,23 +168,27 @@ def add_no_idx(se2, d, headers, final_url, l, author_input, db_salida, pbar, pba
         'Accept-Language': 'es-ES,es;q=0.9'
     }
 
-    for x in l:
-        post_data_test = post_article_no_index(x, value_for_post[0], author_input)
-        test_request = se2.post(posturl, headers=newheaders, data=post_data_test)
+    for pub in list_pub:
+        post_data = post_article_no_index(pub, value_for_post[0], author_input)
+        post_req = se2.post(posturl, headers=newheaders, data=post_data)
 
-        if test_request.text != '':
-            print('FAILED!')
-            db_salida.entries.append(x)
-        else:
-            print('SUCCESSED!')
+        if post_req.text != '':
+            db_salida.entries.append(pub)
+
         """ update progress bar GUI"""
         pbar['value'] += pbar_inc
         pbar.update()
-    return se2, d
+    return se2, get_response
+
+
+""" Function that will generate post data to be send on request
+parameter: pub (dict),token (string), author (string)
+return: post_data (string) """
 
 
 def post_article_no_index(pub, value_for_post, author_input):
     postdata = ''
+    """ Check num of authors and position"""
     if 'author' in pub.keys():
         num_author = len(pub['author'].split('and'))
         pos_author = author_position(pub['author'], author_input)
@@ -188,21 +222,29 @@ def post_article_no_index(pub, value_for_post, author_input):
         postdata += 'publicacionNoIndexada.annio=' + pub['year'] + '&'
     if 'issn' in pub.keys():
         postdata += 'publicacionNoIndexada.issn=' + pub['issn'] + '&'
+
+    """ token for post"""
     postdata += '_HDIV_STATE_=' + value_for_post + '&'
+    """ parse authors name and add to post string"""
     postdata += 'autores=' + urllib.parse.quote(pub['author']).replace('and', '%3B%3D')
 
     return postdata.encode("utf-8", "replace")
 
 
-def add_idx(se2, d, headers, final_url, l, author_input, db_salida, pbar, pbar_inc):
-    no_dix = re.findall(
+""" Function that will send post request for every not index publication
+param: request session , get_response , headers of CV Area , url , list of pub , bibtex db, progressbar , int
+return: request session , get_response"""
+
+
+def add_idx(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar, pbar_inc):
+    idx = re.findall(
         '<a id="nuevaPublicacionIdxId" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">', d.text)
 
-    url_noidx = "https://srv.aneca.es" + no_dix[0]
+    url_idx = "https://srv.aneca.es" + idx[0]
 
-    f = se2.get(url_noidx, headers=headers)
+    get_req = se2.get(url_idx, headers=headers)
 
-    value_for_post = re.findall('<input type="hidden" name="_HDIV_STATE_" value="(.+?)" /></form>', f.text)
+    value_for_post = re.findall('<input type="hidden" name="_HDIV_STATE_" value="(.+?)" /></form>', get_req.text)
 
     posturl = 'https://srv.aneca.es/Academia3/actInvestigadora/calidadDifusion/guardarPublicacionIndexada'
 
@@ -219,20 +261,23 @@ def add_idx(se2, d, headers, final_url, l, author_input, db_salida, pbar, pbar_i
         'Accept-Language': 'es-ES,es;q=0.9'
     }
 
-    for x in l:
-        post_data_test = post_article_index(x, value_for_post[0], author_input)
+    for pub in list_pub:
+        post_data_test = post_article_index(pub, value_for_post[0], author_input)
         test_request = se2.post(posturl, headers=newheaders, data=post_data_test)
 
         if test_request.text != '':
-            print('FAILED!')
-            db_salida.entries.append(x)
-        else:
-            print('SUCCESSED!')
+            db_salida.entries.append(pub)
+
         """ update progress bar GUI"""
         pbar['value'] += pbar_inc
         pbar.update()
 
     return se2, d
+
+
+""" Function that will generate post data to be send on request
+parameter: pub (dict),token (string), author (string)
+return: post_data (string) """
 
 
 def post_article_index(pub, value_for_post, author_input):
@@ -317,14 +362,19 @@ def post_article_index(pub, value_for_post, author_input):
     return postdata.encode("utf-8", "replace")
 
 
-def add_book(se2, d, headers, final_url, l, author_input, db_salida, pbar, pbar_inc):
+""" Function that will send post request for every not index publication
+param: request session , get_response , headers of CV Area , url , list of pub , bibtex db, progressbar , int
+return: request session , get_response"""
+
+
+def add_book(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar, pbar_inc):
     book = re.findall(
         '<a id="nuevLibroCapituloId" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">', d.text)
     url_book = "https://srv.aneca.es" + book[0]
 
-    f = se2.get(url_book, headers=headers)
+    get_req = se2.get(url_book, headers=headers)
 
-    value_for_post = re.findall('<input type="hidden" name="_HDIV_STATE_" value="(.+?)" /></form>', f.text)
+    value_for_post = re.findall('<input type="hidden" name="_HDIV_STATE_" value="(.+?)" /></form>', get_req.text)
 
     posturl = 'https://srv.aneca.es/Academia3/actInvestigadora/calidadDifusion/guardarLibroCapitulo'
 
@@ -341,13 +391,13 @@ def add_book(se2, d, headers, final_url, l, author_input, db_salida, pbar, pbar_
         'Accept-Language': 'es-ES,es;q=0.9'
     }
 
-    for x in l:
-        post_data_test = post_book(x, value_for_post[0], author_input)
+    for pub in list_pub:
+        post_data_test = post_book(pub, value_for_post[0], author_input)
         test_request = se2.post(posturl, headers=newheaders, data=post_data_test)
 
         if test_request.text != '':
             print('FAILED!')
-            db_salida.entries.append(x)
+            db_salida.entries.append(pub)
         else:
             print('SUCCESSED!')
         """ update progress bar GUI"""
@@ -355,6 +405,11 @@ def add_book(se2, d, headers, final_url, l, author_input, db_salida, pbar, pbar_
         pbar.update()
 
     return se2, d
+
+
+""" Function that will generate post data to be send on request
+parameter: pub (dict),token (string), author (string)
+return: post_data (string) """
 
 
 def post_book(pub, value_for_post, author_input):
@@ -398,14 +453,19 @@ def post_book(pub, value_for_post, author_input):
     return postdata.encode("utf-8", "replace")
 
 
+""" Function that will send post request for every not index publication
+param: request session , get_response , headers of CV Area , url , list of pub , bibtex db, progressbar , int
+return: request session , get_response"""
+
+
 def add_inprocedings(se2, d, headers, final_url, l, db_salida, pbar, pbar_inc):
-    book = re.findall('<a id="nuevoCongreso" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">',
+    inprocedings = re.findall('<a id="nuevoCongreso" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">',
                       d.text)
-    url_book = "https://srv.aneca.es" + book[0]
+    url_book = "https://srv.aneca.es" + inprocedings[0]
 
-    f = se2.get(url_book, headers=headers)
+    get_req = se2.get(url_book, headers=headers)
 
-    value_for_post = re.findall('<input type="hidden" name="_HDIV_STATE_" value="(.+?)" /></form>', f.text)
+    value_for_post = re.findall('<input type="hidden" name="_HDIV_STATE_" value="(.+?)" /></form>', get_req.text)
 
     posturl = 'https://srv.aneca.es/Academia3/actInvestigadora/calidadDifusion/guardarCongreso'
     newheaders = {
@@ -435,6 +495,11 @@ def add_inprocedings(se2, d, headers, final_url, l, db_salida, pbar, pbar_inc):
         pbar.update()
 
     return se2, d
+
+
+""" Function that will generate post data to be send on request
+parameter: pub (dict),token (string), author (string)
+return: post_data (string) """
 
 
 def post_inprocedings(pub, value_for_post):

@@ -6,8 +6,8 @@ from aneca_utils import *
 from login import *
 
 se = login(user, pswd)
-se2, new_url, other_url = redirect(se)
-se2, d, headers, final_url = acces_publication_area(se2, new_url, other_url)
+se2, new_url, partial_url = redirect(se)
+se2, d, headers, final_url = acces_publication_area(se2, new_url, partial_url)
 db_salida = BibDatabase()
 window = Tk()
 pbar = ttk.Progressbar(window, mode='determinate', length=100)

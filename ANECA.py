@@ -32,7 +32,7 @@ def aneca(author_input, pbar, user, pswd, num_var, total, failed):
     # BibTex file writer object
     writer = BibTexWriter()
     """ update progress bar GUI"""
-    pbar_inc = len(db.entries) / 100
+    pbar_inc = 100/len(db.entries)
 
     idx_article = list()
     no_idx_article = list()

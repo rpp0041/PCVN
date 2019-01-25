@@ -25,7 +25,7 @@ def info_window():
         au_scopus = entry_scopus.get()
         au_wos = entry_wos.get()
         window.destroy()
-
+        google_search()
     # backGround
     photo = PhotoImage(file="background.png")
     labelbg = Label(window, image=photo)
@@ -130,6 +130,7 @@ def google_search():
             pbar_google_scholar.stop()
             # Destroy Window
             window.destroy()
+            scopus_search()
 
     # backGround Image
     photo = PhotoImage(file="background.png")
@@ -223,13 +224,14 @@ def scopus_search():
 
     def get_scopus_pub():
         # Place progress bar in window
-        pbar_scopus.place(x=200, y=550)
+        pbar_scopus.place(x=200, y=300)
         pbar_scopus.update()
         pbar_scopus['maximum'] = 100
         # Call function to retrieve publications
         try:
             get_publications_scopus(au_scopus, pbar_scopus)
             window.destroy()
+            wos_window()
         except (KeyError, NoSuchElementException):
 
             # Label that indicates the failure of the function to connect with Scopus API
@@ -265,7 +267,7 @@ def scopus_search():
     label_info = Label(window, text=txt, width=48, height=8, wraplength=520, relief=RIDGE)
     font = ('times', 15)
     label_info.config(font=font)
-    label_info.place(x=130, y=470)
+    label_info.place(x=130, y=350)
     # get publications
     get_scopus_pub()
     window.mainloop()
@@ -328,7 +330,7 @@ def wos_window():
 
     def get_wos_pub():
         # Place progressbar in window
-        pbar_wos.place(x=200, y=550)
+        pbar_wos.place(x=200, y=300)
         pbar_wos.update()
         pbar_wos['maximum']= 100
         # Call function to retrieve publications
@@ -336,6 +338,7 @@ def wos_window():
         pbar_wos.stop()
         # Destroy window
         window.destroy()
+        group_window()
     photo = PhotoImage(file="background.png")
     labelbg = Label(window, image=photo)
     labelbg.pack()
@@ -346,7 +349,7 @@ def wos_window():
     label_info = Label(window, text=txt, width=48, height=8, wraplength=520, relief=RIDGE)
     font = ('times', 15)
     label_info.config(font=font)
-    label_info.place(x=130, y=470)
+    label_info.place(x=130, y=350)
     # Get Publicatiosn
     get_wos_pub()
     window.mainloop()
@@ -373,6 +376,7 @@ def group_window():
         pbar_g_files.stop()
         # Destroy window
         window.destroy()
+        aneca_window(au_google)
 
     # backGround
     photo = PhotoImage(file="background.png")
@@ -485,6 +489,7 @@ def aneca_window(author):
         pbar_aneca.stop()
         # Destroy Window
         window.destroy()
+        completed_window()
 
     # backGround
     photo = PhotoImage(file="background.png")
@@ -578,9 +583,3 @@ def fail_login():
 
 if __name__ == '__main__':
     info_window()
-    google_search()
-    scopus_search()
-    wos_window()
-    group_window()
-    aneca_window(au_google)
-    completed_window()

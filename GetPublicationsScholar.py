@@ -47,7 +47,7 @@ return : BibTex file
 """
 
 
-def get_publications_scholar(author_input, pbar):
+def get_publications_scholar(author_input, pbar,label_var):
     """  Call to scholarly functions that will search for the author given
     as a parameter and will return an iterable object with all the 
     publications found for the author given"""
@@ -97,7 +97,7 @@ def get_publications_scholar(author_input, pbar):
         """ update progress bar GUI"""
         pbar['value'] += progress_bar_inc
         pbar.update()
-
+        label_var.set('Número de publicaciones obtenidas:\n'+str(cont)+'/'+str(len(author_pub)))
     """ Write the extracted data stored in db (BibDatabase) and save it 
     in bibtexScholar.bib for later use """
     with open('bibtexScholar.bib', 'w', encoding='utf-8') as bibfile:

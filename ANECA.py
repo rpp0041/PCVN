@@ -21,7 +21,7 @@ return : Nothing
 """
 
 
-def aneca(author_input, pbar, user, pswd):
+def aneca(author_input, pbar, user, pswd, num_var, total, failed):
 
     """ Read data from BibTex file"""
     with open('BibFINAL.bib', encoding='utf-8') as bibfile:
@@ -54,16 +54,21 @@ def aneca(author_input, pbar, user, pswd):
 
     se = login(user, pswd)
     if se is True:
-        return True
+        total = failed = True
+        return total, failed
     se2, new_url, partial_url = redirect(se)
     se2, get_response, headers, final_url = acces_publication_area(se2, new_url, partial_url)
 
-    se2, get_response = add_no_idx(se2, get_response, headers, final_url, no_idx_article, author_input, db_salida, pbar, pbar_inc)
-    se2, get_response = add_book(se2, get_response, headers, final_url, book, author_input, db_salida, pbar, pbar_inc)
-    se2, get_response = add_idx(se2, get_response, headers, final_url, idx_article, author_input, db_salida, pbar, pbar_inc)
-    se2, get_response = add_inprocedings(se2, get_response, headers, final_url, inproceedings, db_salida, pbar, pbar_inc)
+    se2, get_response = add_no_idx(se2, get_response, headers, final_url, no_idx_article, author_input, db_salida, pbar, pbar_inc, num_var)
+    se2, get_response = add_book(se2, get_response, headers, final_url, book, author_input, db_salida, pbar, pbar_inc, num_var)
+    se2, get_response = add_idx(se2, get_response, headers, final_url, idx_article, author_input, db_salida, pbar, pbar_inc, num_var)
+    se2, get_response = add_inprocedings(se2, get_response, headers, final_url, inproceedings, db_salida, pbar, pbar_inc, num_var)
 
     """ Write the uncompleted publication stored in db (BibDatabase) and save it 
     in BibTex file """
     with open('uncompleted_publications.bib', 'w', encoding='utf-8') as bibfile:
         bibfile.write(writer.write(db_salida))
+    total = len(db.entries)
+    failed = len(db_salida.entries)
+
+    return total, failed

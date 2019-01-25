@@ -142,7 +142,7 @@ param: request session , get_response , headers of CV Area , url , list of pub ,
 return: request session , get_response"""
 
 
-def add_no_idx(se2, get_response, headers, final_url, list_pub, author_input, db_salida, pbar, pbar_inc):
+def add_no_idx(se2, get_response, headers, final_url, list_pub, author_input, db_salida, pbar, pbar_inc, num_var):
     """ find url to send get request"""
     no_dix = re.findall(
         '<a id="nuevaPublicacionNoIdxId" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">',
@@ -167,7 +167,7 @@ def add_no_idx(se2, get_response, headers, final_url, list_pub, author_input, db
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'es-ES,es;q=0.9'
     }
-
+    cont = 0
     for pub in list_pub:
         post_data = post_article_no_index(pub, value_for_post[0], author_input)
         post_req = se2.post(posturl, headers=newheaders, data=post_data)
@@ -177,7 +177,9 @@ def add_no_idx(se2, get_response, headers, final_url, list_pub, author_input, db
 
         """ update progress bar GUI"""
         pbar['value'] += pbar_inc
+        num_var.set('Número de artículos no indexados subidos:\n' + str(cont) + '/' + str(len(list_pub)))
         pbar.update()
+        cont += 1
     return se2, get_response
 
 
@@ -236,7 +238,7 @@ param: request session , get_response , headers of CV Area , url , list of pub ,
 return: request session , get_response"""
 
 
-def add_idx(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar, pbar_inc):
+def add_idx(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar, pbar_inc, num_var):
     idx = re.findall(
         '<a id="nuevaPublicacionIdxId" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">', d.text)
 
@@ -260,7 +262,7 @@ def add_idx(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar,
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'es-ES,es;q=0.9'
     }
-
+    cont = 0
     for pub in list_pub:
         post_data_test = post_article_index(pub, value_for_post[0], author_input)
         test_request = se2.post(posturl, headers=newheaders, data=post_data_test)
@@ -270,7 +272,9 @@ def add_idx(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar,
 
         """ update progress bar GUI"""
         pbar['value'] += pbar_inc
+        num_var.set('Número de artículos indexados subidos:\n' + str(cont) + '/' + str(len(list_pub)))
         pbar.update()
+        cont += 1
 
     return se2, d
 
@@ -367,7 +371,7 @@ param: request session , get_response , headers of CV Area , url , list of pub ,
 return: request session , get_response"""
 
 
-def add_book(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar, pbar_inc):
+def add_book(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar, pbar_inc, num_var):
     book = re.findall(
         '<a id="nuevLibroCapituloId" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">', d.text)
     url_book = "https://srv.aneca.es" + book[0]
@@ -390,19 +394,18 @@ def add_book(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'es-ES,es;q=0.9'
     }
-
+    cont = 0
     for pub in list_pub:
         post_data_test = post_book(pub, value_for_post[0], author_input)
         test_request = se2.post(posturl, headers=newheaders, data=post_data_test)
 
         if test_request.text != '':
-            print('FAILED!')
             db_salida.entries.append(pub)
-        else:
-            print('SUCCESSED!')
         """ update progress bar GUI"""
         pbar['value'] += pbar_inc
+        num_var.set('Número de libros/capítulos de libros subidos:\n' + str(cont) + '/' + str(len(list_pub)))
         pbar.update()
+        cont += 1
 
     return se2, d
 
@@ -458,7 +461,7 @@ param: request session , get_response , headers of CV Area , url , list of pub ,
 return: request session , get_response"""
 
 
-def add_inprocedings(se2, d, headers, final_url, l, db_salida, pbar, pbar_inc):
+def add_inprocedings(se2, d, headers, final_url, list_pub, db_salida, pbar, pbar_inc, num_var):
     inprocedings = re.findall('<a id="nuevoCongreso" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">',
                       d.text)
     url_book = "https://srv.aneca.es" + inprocedings[0]
@@ -480,19 +483,18 @@ def add_inprocedings(se2, d, headers, final_url, l, db_salida, pbar, pbar_inc):
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'es-ES,es;q=0.9'
     }
-
-    for x in l:
+    cont = 0
+    for x in list_pub:
         post_data_test = post_inprocedings(x, value_for_post[0])
         test_request = se2.post(posturl, headers=newheaders, data=post_data_test)
 
         if test_request.text != '':
-            print('FAILED!')
             db_salida.entries.append(x)
-        else:
-            print('SUCCESSED!')
         """ update progress bar GUI"""
         pbar['value'] += pbar_inc
+        num_var.set('Número de ponencias en congresos subidas:\n' + str(cont) + '/' + str(len(list_pub)))
         pbar.update()
+        cont += 1
 
     return se2, d
 

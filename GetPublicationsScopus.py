@@ -11,7 +11,7 @@ def get_publications_scopus(author_id, pbar):
     """ Options for Selenium driver """
     # Set driver to be invisible
     options = Options()
-    options.headless = False
+    options.headless = True
     cwd = os.getcwd()
     # set driver browser to be Firefox
     fp = webdriver.FirefoxProfile()

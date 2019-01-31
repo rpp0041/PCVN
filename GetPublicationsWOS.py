@@ -91,10 +91,9 @@ def get_publications_wos(author, pbar):
     "Check if author input has results"
     try:
         browser.find_element_by_class_name('newErrorHead')
+        return True
     except NoSuchElementException:
         pass
-    else:
-        return True
 
     """Select *show 50 per page* """
     browser.find_element_by_id('select2-selectPageSize_bottom-container').click()

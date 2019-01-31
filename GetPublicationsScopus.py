@@ -42,11 +42,10 @@ def get_publications_scopus(author_id, pbar):
     time.sleep(3)
     """ Check if there are results for author input"""
     try:
-        browser.find_element_by_class_name('alertContent')
+        browser.find_element_by_class_name('alert alert-danger')
+        return True
     except NoSuchElementException:
         pass
-    else:
-        return True
 
     """ update progress bar GUI"""
     pbar['value'] = 30

@@ -9,7 +9,9 @@ from GetPublicationsScopus import *
 from GetPublicationsWOS import *
 from GroupFiles import *
 from aneca import *
+
 from selenium.common.exceptions import NoSuchElementException
+from requests.exceptions import ConnectionError
 
 
 def info_window():
@@ -109,6 +111,33 @@ def google_search():
             time.sleep(1)
             # Label that indicates that there are No publications found
             label_no_pub = Label(window, text="There are no publications returned for this author",
+                                 bg='red')
+            font = ('times', 15)
+            label_no_pub.config(font=font)
+            label_no_pub.place(x=200, y=300)
+            # Search Again Button
+            bt_search_again = Button(window, text="Search again",
+                                     command=re_start, height=1, width=30)
+            b_font = ('times', 17)
+            bt_search_again.config(font=b_font)
+            bt_search_again.place(x=200, y=430)
+            # Skip Button
+            bt_search_again = Button(window, text="Skip",
+                                     command=skip, height=1, width=30)
+            bt_search_again.config(font=b_font)
+            bt_search_again.place(x=200, y=480)
+
+            window.update()
+        except ConnectionError:
+            pbar_google_scholar.stop()
+            # remove all widgets on window
+            widget_list = window.place_slaves()
+            for l in widget_list:
+                l.destroy()
+            window.update()
+            time.sleep(1)
+            # Label that indicates that there are No publications found
+            label_no_pub = Label(window, text="Se ha producido un error en la conexión",
                                  bg='red')
             font = ('times', 15)
             label_no_pub.config(font=font)
@@ -229,10 +258,45 @@ def scopus_search():
         pbar_scopus['maximum'] = 100
         # Call function to retrieve publications
         try:
-            get_publications_scopus(au_scopus, pbar_scopus)
-            window.destroy()
-            wos_window()
-        except (KeyError, NoSuchElementException):
+            if get_publications_scopus(au_scopus, pbar_scopus):
+                pbar_scopus.stop()
+                # remove all widgets on window
+                widget_list = window.place_slaves()
+                for l in widget_list:
+                    l.destroy()
+                window.update()
+                time.sleep(1)
+                # Label that indicates that there are No publications found
+                label_no_pub = Label(window, text="There are no publications returned for this author",
+                                     bg='red')
+                font = ('times', 15)
+                label_no_pub.config(font=font)
+                label_no_pub.place(x=200, y=300)
+                # Search Again Button
+                bt_search_again = Button(window, text="Search again",
+                                         command=re_start, height=1, width=30)
+                b_font = ('times', 17)
+                bt_search_again.config(font=b_font)
+                bt_search_again.place(x=200, y=430)
+                # Skip Button
+                bt_search_again = Button(window, text="Skip",
+                                         command=skip, height=1, width=30)
+                bt_search_again.config(font=b_font)
+                bt_search_again.place(x=200, y=480)
+
+                window.update()
+
+            else:
+                window.destroy()
+                wos_search()
+
+        except (KeyError, NoSuchElementException, ConnectionError):
+            # remove all widgets on window
+            widget_list = window.place_slaves()
+            for l in widget_list:
+                l.destroy()
+            window.update()
+            time.sleep(1)
 
             # Label that indicates the failure of the function to connect with Scopus API
             label_fail = Label(window, text="Error en la conexion , compruebe si su conexion tiene acceso a Scopus",
@@ -321,24 +385,83 @@ def scopus_window():
 """ Fucntion that will show process of data scrapping in WOS """
 
 
-def wos_window():
+def wos_search():
     window = Tk()
     window.title('PCVN')
     window.geometry('800x800')
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
+    def re_start():
+        window.destroy()
+        wos_window()
+
+    def skip():
+        window.destroy()
+
     def get_wos_pub():
         # Place progressbar in window
         pbar_wos.place(x=200, y=300)
         pbar_wos.update()
-        pbar_wos['maximum']= 100
-        # Call function to retrieve publications
-        get_publications_wos(au_wos, pbar_wos)
-        pbar_wos.stop()
-        # Destroy window
-        window.destroy()
-        group_window()
+        pbar_wos['maximum'] = 100
+        try:
+            # Call function to retrieve publications
+            if get_publications_wos(au_wos, pbar_wos):
+                pbar_wos.stop()
+                # remove all widgets on window
+                widget_list = window.place_slaves()
+                for l in widget_list:
+                    l.destroy()
+                window.update()
+                time.sleep(1)
+                # Label that indicates that there are No publications found
+                label_no_pub = Label(window, text="There are no publications returned for this author",
+                                     bg='red')
+                font = ('times', 15)
+                label_no_pub.config(font=font)
+                label_no_pub.place(x=200, y=300)
+                # Search Again Button
+                bt_search_again = Button(window, text="Search again",
+                                         command=re_start, height=1, width=30)
+                b_font = ('times', 17)
+                bt_search_again.config(font=b_font)
+                bt_search_again.place(x=200, y=430)
+                # Skip Button
+                bt_search_again = Button(window, text="Skip",
+                                         command=skip, height=1, width=30)
+                bt_search_again.config(font=b_font)
+                bt_search_again.place(x=200, y=480)
+
+                window.update()
+            else:
+                pbar_wos.stop()
+                # Destroy window
+                window.destroy()
+                group_window()
+        except ConnectionError:
+
+            # Label that indicates the failure of the function to connect with Scopus API
+            label_fail = Label(window, text="Error en la conexion , compruebe si tiene acceso a internet",
+                               bg='red')
+            font = ('times', 15)
+            label_fail.config(font=font)
+            label_fail.place(x=150, y=200)
+            window.update()
+
+            time.sleep(2)
+
+            # Search Again Button
+            bt_search_again = Button(window, text="Search again",
+                                     command=re_start, height=1, width=30)
+            b_font = ('times', 17)
+            bt_search_again.config(font=b_font)
+            bt_search_again.place(x=200, y=430)
+            # Skip Button
+            bt_search_again = Button(window, text="Skip",
+                                     command=skip, height=1, width=30)
+            bt_search_again.config(font=b_font)
+            bt_search_again.place(x=200, y=480)
+
     photo = PhotoImage(file="background.png")
     labelbg = Label(window, image=photo)
     labelbg.pack()
@@ -352,6 +475,47 @@ def wos_window():
     label_info.place(x=130, y=350)
     # Get Publicatiosn
     get_wos_pub()
+    window.mainloop()
+
+
+def wos_window():
+    window = Tk()
+    window.title('PCVN')
+    window.geometry('800x800')
+    """ Function that make possible push enter keyboard button 
+    and it will work as search button"""
+
+    def func(event):
+        retry()
+
+    window.bind('<Return>', func)
+    """ Function to be executed when click on search button"""
+
+    def retry():
+        # author name , will be used later
+        au_wos = entry_wos.get()
+        window.destroy()
+        wos_search()
+
+        # backGround
+
+    photo = PhotoImage(file="background.png")
+    labelbg = Label(window, image=photo)
+    labelbg.pack()
+    # Label
+    label_wos = Label(window, text="WOS Author name:")
+    font = ('times', 15)
+    label_wos.config(font=font)
+    label_wos.place(x=185, y=320)
+    # Entry
+    entry_wos = Entry(window, width=50)
+    entry_wos.place(x=350, y=325)
+    # Search Button
+    bt_wos = Button(window, text="Search", command=retry, height=1, width=30)
+    bfont = ('times', 17)
+    bt_wos.config(font=bfont)
+    bt_wos.place(x=200, y=430)
+
     window.mainloop()
 
 
@@ -376,7 +540,7 @@ def group_window():
         pbar_g_files.stop()
         # Destroy window
         window.destroy()
-        aneca_window(au_google)
+        aneca_login()
 
     # backGround
     photo = PhotoImage(file="background.png")
@@ -415,6 +579,7 @@ def aneca_login():
         pswd = entry_pswd.get()
         # Destroy window
         window.destroy()
+        aneca_window(au_google)
 
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
@@ -464,8 +629,6 @@ indicating the progress taken """
 
 
 def aneca_window(author):
-    # Call login function
-    aneca_login()
     window = Tk()
     window.title('PCVN')
     window.geometry('800x800')
@@ -537,7 +700,8 @@ def completed_window():
     label_completed.config(font=font)
     label_completed.place(x=300, y=320)
     # Label info
-    label_info = Label(window, text='Número de publicaciones que no pudieron ser subidas:\n' + str(failed) + '/' + str(total))
+    label_info = Label(window,
+                       text='Número de publicaciones que no pudieron ser subidas:\n' + str(failed) + '/' + str(total))
     font = ('times', 18)
     label_info.config(font=font)
     label_info.place(x=220, y=200)

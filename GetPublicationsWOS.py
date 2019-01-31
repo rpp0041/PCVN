@@ -5,6 +5,7 @@ Selenium: we will use selenium to navegate through WOS web site
 """
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.common.exceptions import NoSuchElementException
 import time
 import os
 
@@ -86,6 +87,14 @@ def get_publications_wos(author, pbar):
     browser.find_element_by_id("select2-select1-container").click()
     browser.find_elements_by_class_name('select2-results__option')[2].click()
     browser.find_element_by_id('searchCell1').click()
+
+    "Check if author input has results"
+    try:
+        browser.find_element_by_class_name('newErrorHead')
+    except NoSuchElementException:
+        pass
+    else:
+        return True
 
     """Select *show 50 per page* """
     browser.find_element_by_id('select2-selectPageSize_bottom-container').click()

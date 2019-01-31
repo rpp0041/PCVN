@@ -1,5 +1,6 @@
 from selenium.webdriver.firefox.options import Options
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -39,6 +40,13 @@ def get_publications_scopus(author_id, pbar):
     browser.find_element_by_id('searchfield').send_keys(query)
     browser.find_element_by_id('advSearch').click()
     time.sleep(3)
+    """ Check if there are results for author input"""
+    try:
+        browser.find_element_by_class_name('alertContent')
+    except NoSuchElementException:
+        pass
+    else:
+        return True
 
     """ update progress bar GUI"""
     pbar['value'] = 30

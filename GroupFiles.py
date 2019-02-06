@@ -110,7 +110,7 @@ def group_files(pbar):
         """ Add pub to write BibTex db """
         db.entries.append(i)
     """ Write db to BibTex file """
-    with open('BibFINAL.bib', 'w', encoding='utf-8') as bibfile:
+    with open('todas.bib', 'w', encoding='utf-8') as bibfile:
         bibfile.write(writer.write(db))
 
     """ update progress bar GUI"""

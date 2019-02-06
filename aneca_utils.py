@@ -142,7 +142,7 @@ param: request session , get_response , headers of CV Area , url , list of pub ,
 return: request session , get_response"""
 
 
-def add_no_idx(se2, get_response, headers, final_url, list_pub, author_input, db_salida, pbar, pbar_inc, num_var):
+def add_no_idx(se2, get_response, headers, final_url, list_pub, author_input, db_salida, db_completa, pbar, pbar_inc, num_var):
     """ find url to send get request"""
     no_dix = re.findall(
         '<a id="nuevaPublicacionNoIdxId" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">',
@@ -174,6 +174,8 @@ def add_no_idx(se2, get_response, headers, final_url, list_pub, author_input, db
 
         if post_req.text != '':
             db_salida.entries.append(pub)
+        else:
+            db_completa.entries.append(pub)
 
         """ update progress bar GUI"""
         pbar['value'] += pbar_inc
@@ -238,7 +240,7 @@ param: request session , get_response , headers of CV Area , url , list of pub ,
 return: request session , get_response"""
 
 
-def add_idx(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar, pbar_inc, num_var):
+def add_idx(se2, d, headers, final_url, list_pub, author_input, db_salida, db_completa, pbar, pbar_inc, num_var):
     idx = re.findall(
         '<a id="nuevaPublicacionIdxId" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">', d.text)
 
@@ -269,7 +271,8 @@ def add_idx(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar,
 
         if test_request.text != '':
             db_salida.entries.append(pub)
-
+        else:
+            db_completa.entries.append(pub)
         """ update progress bar GUI"""
         pbar['value'] += pbar_inc
         num_var.set('Número de artículos indexados subidos:\n' + str(cont) + '/' + str(len(list_pub)))
@@ -371,7 +374,7 @@ param: request session , get_response , headers of CV Area , url , list of pub ,
 return: request session , get_response"""
 
 
-def add_book(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar, pbar_inc, num_var):
+def add_book(se2, d, headers, final_url, list_pub, author_input, db_salida, db_completa, pbar, pbar_inc, num_var):
     book = re.findall(
         '<a id="nuevLibroCapituloId" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">', d.text)
     url_book = "https://srv.aneca.es" + book[0]
@@ -401,6 +404,8 @@ def add_book(se2, d, headers, final_url, list_pub, author_input, db_salida, pbar
 
         if test_request.text != '':
             db_salida.entries.append(pub)
+        else:
+            db_completa.entries.append(pub)
         """ update progress bar GUI"""
         pbar['value'] += pbar_inc
         num_var.set('Número de libros/capítulos de libros subidos:\n' + str(cont) + '/' + str(len(list_pub)))
@@ -461,7 +466,7 @@ param: request session , get_response , headers of CV Area , url , list of pub ,
 return: request session , get_response"""
 
 
-def add_inprocedings(se2, d, headers, final_url, list_pub, db_salida, pbar, pbar_inc, num_var):
+def add_inprocedings(se2, d, headers, final_url, list_pub, db_salida, db_completa, pbar, pbar_inc, num_var):
     inprocedings = re.findall('<a id="nuevoCongreso" onclick="cargarModal\(this\);return false;" href="(.+?)" title="Nuevo">',
                       d.text)
     url_book = "https://srv.aneca.es" + inprocedings[0]
@@ -490,6 +495,8 @@ def add_inprocedings(se2, d, headers, final_url, list_pub, db_salida, pbar, pbar
 
         if test_request.text != '':
             db_salida.entries.append(x)
+        else:
+            db_completa.entries.append(pub)
         """ update progress bar GUI"""
         pbar['value'] += pbar_inc
         num_var.set('Número de ponencias en congresos subidas:\n' + str(cont) + '/' + str(len(list_pub)))

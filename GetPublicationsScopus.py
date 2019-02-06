@@ -63,6 +63,8 @@ def get_publications_scopus(author_id, pbar):
     time.sleep(1)
 
     """ Click Export button"""
+    element = WebDriverWait(browser, 20).until(
+        ec.element_to_be_clickable((By.ID, "export_results")))
     browser.find_element_by_id('export_results').click()
 
     """ update progress bar GUI"""

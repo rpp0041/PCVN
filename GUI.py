@@ -9,7 +9,7 @@ from GetPublicationsScopus import *
 from GetPublicationsWOS import *
 from GroupFiles import *
 from aneca import *
-
+from aneca_utils import login
 from selenium.common.exceptions import NoSuchElementException
 from requests.exceptions import ConnectionError
 import textwrap
@@ -19,62 +19,93 @@ import tkinter.messagebox
 def info_window():
     window = Tk()
     window.title('PCVN')
-    window.geometry('800x800')
+    window.geometry('750x750')
     window.resizable(width=False, height=False)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
     def return_au():
-        global au_google, au_scopus, au_wos
+        global au_google, au_scopus, au_wos, user, pswd
+        user = entry_user.get()
+        pswd = entry_pswd.get()
         au_google = entry_google_scholar.get()
         au_scopus = entry_scopus.get()
         au_wos = entry_wos.get()
+        if login(user, pswd) is True:
+            error = tkinter.messagebox.showerror(
+                "Usuario o Contraseña Incorrectos \n Por favor introduzca los datos de nuevo")
+            window.destroy()
+            info_window()
         window.destroy()
         google_search()
 
     txt = "Cuando se pulse el botón 'search' se procederá a la búsqueda de los datos referentes al autor introducidos durante el proceso ocurriera algún problema con los datos introducidos podrá introducirlos nuevamente"
     # Background
-    bg = Background(window, txt)
+    bg = Background(window, txt, 'background1.png')
     # Menu #
     menu = GuiMenu(window)
-    # Estado
-    estado = State(window)
-    estado.actualiza()
+
+    # Frame
+    frame = Frame()
+    frame.place(x=135, y=50)
 
     # ///////// Google Scholar Entry /////////#
     # Label
-    label_google_scholar = Label(window, text="Google Scholar Author:")
+    label_google_scholar = Label(frame, text="Google Scholar Author:")
     font = ('times', 15)
     label_google_scholar.config(font=font)
-    label_google_scholar.place(x=150, y=70)
+    label_google_scholar.grid(row=0, column=0, sticky=E)
     # Entry
-    entry_google_scholar = Entry(window, width=50)
-    entry_google_scholar.place(x=350, y=75)
+    entry_google_scholar = Entry(frame, width=50)
+    entry_google_scholar.grid(row=0, column=1)
 
     # ///////// Scopus Entry /////////#
     # Label
-    label_scopus = Label(window, text="Scopus Author ID:")
+    label_scopus = Label(frame, text="Scopus Author ID:")
     label_scopus.config(font=font)
-    label_scopus.place(x=190, y=170)
+    label_scopus.grid(row=1, column=0, sticky=E)
     # Entry
-    entry_scopus = Entry(window, width=50)
-    entry_scopus.place(x=350, y=175)
+    entry_scopus = Entry(frame, width=50)
+    entry_scopus.grid(row=1, column=1)
 
     # ///////// WOS Entry /////////#
     # Label
-    label_wos = Label(window, text="WOS Author Name:")
+    label_wos = Label(frame, text="WOS Author Name:")
     label_wos.config(font=font)
-    label_wos.place(x=180, y=270)
+    label_wos.grid(row=2, column=0, sticky=E)
     # Entry
-    entry_wos = Entry(window, width=50)
-    entry_wos.place(x=350, y=275)
+    entry_wos = Entry(frame, width=50)
+    entry_wos.grid(row=2, column=1)
 
+    # Label Academia
+    label_academia = Label(frame, text='Acceso a ACADEMIA')
+    label_academia.config(font=font)
+    label_academia.grid(columnspan=2, sticky=S, pady=10)
+
+    # Label User
+    label_user = Label(frame, text="Usuario:")
+    label_user.config(font=font)
+    label_user.grid(row=5, column=0, sticky=E)
+    # Entry User
+    entry_user = Entry(frame, width=40)
+    entry_user.grid(row=5, column=1, sticky=W)
+
+    # Label Password
+    label_pswd = Label(frame, text="Contraseña:")
+    label_pswd.config(font=font)
+    label_pswd.grid(row=6, column=0, sticky=E)
+    # Entry Password
+    entry_pswd = Entry(frame, width=20)
+    entry_pswd.grid(row=6, column=1, sticky=W)
+    entry_pswd.config(show="*")  # Make password invisible
+
+    # //////////////////////////////////////////////
     # Search Button
-    bt_scopus = Button(window, text="Search",
-                       command=return_au, height=1, width=30)
+    bt_scopus = Button(frame, text="Comenzar", height=1, width=30, command=return_au)
     bfont = ('times', 17)
     bt_scopus.config(font=bfont)
-    bt_scopus.place(x=200, y=370)
+    bt_scopus.grid(columnspan=2, sticky=N, pady=20)
+
     """ 
     # Label information
     txt = "Cuando se pulse el botón 'search' se procederá a la búsqueda de los datos referentes al autor introducidos durante el proceso ocurriera algún problema con los datos introducidos podrá introducirlos nuevamente"
@@ -91,16 +122,10 @@ def info_window():
 def google_search():
     window = Tk()
     window.title('PCVN')
-    window.geometry('800x800')
+    window.geometry('750x750')
+    window.resizable(width=False, height=False)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
-
-    def re_start():
-        window.destroy()
-        google_window()
-
-    def skip():
-        window.destroy()
 
     def get_scholar_pub():
         # place progressbar in window
@@ -133,12 +158,10 @@ def google_search():
             scopus_search()
     # Background
     txt = "Actualmente se está realizando la obtención de los datos desde GOOGLE SCHOLAR.\n Cuando se termine el proceso comenzará automáticamente la búsqueda en Scopus"
-    bg = Background(window, txt)
+    bg = Background(window, txt, 'background2.png')
     # Menu
     menu = GuiMenu(window)
-    # Estado
-    estado = State(window)
-    estado.actualiza()
+
     # Numb publications label
     num_var = StringVar()
     num_var.set('Número de publicaciones obtenidas:\n')
@@ -160,7 +183,8 @@ def google_search():
 def google_window():
     window = Tk()
     window.title('PCVN')
-    window.geometry('800x800')
+    window.geometry('750x750')
+    window.resizable(width=False, height=False)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -179,7 +203,7 @@ def google_window():
         google_search()
 
     # backGround Image
-    bg = Background(window, '')
+    bg = Background(window, '', 'background2.png')
     # Label
     label_google_scholar = Label(window, text="Google Scholar Author:")
     font = ('times', 15)
@@ -204,16 +228,10 @@ def google_window():
 def scopus_search():
     window = Tk()
     window.title('PCVN')
-    window.geometry('800x800')
+    window.geometry('750x750')
+    window.resizable(width=False, height=False)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
-
-    def re_start():
-        window.destroy()
-        scopus_window()
-
-    def skip():
-        window.destroy()
 
     def get_scopus_pub():
         # Place progress bar in window
@@ -247,10 +265,8 @@ def scopus_search():
     menu = GuiMenu(window)
     # backGround
     text = "Actualmente se está realizando la obtención de los datos desde SCOPUS.\n Cuando se termine el proceso comenzará automáticamente la búsqueda en Web of Science."
-    bg = Background(window, text)
-    # Estado
-    estado = State(window)
-    estado.actualiza()
+    bg = Background(window, text, 'background3.png')
+
     # Progress Bar
     pbar_scopus = ttk.Progressbar(window, mode='determinate', length=400)
     # Label information
@@ -266,7 +282,8 @@ def scopus_search():
 def scopus_window():
     window = Tk()
     window.title('PCVN')
-    window.geometry('800x800')
+    window.geometry('750x750')
+    window.resizable(width=False, height=False)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -283,7 +300,7 @@ def scopus_window():
         scopus_search()
 
     # backGround
-    bg = Background(window, '')
+    bg = Background(window, '', 'background3.png')
     # Label
     label_scopus = Label(window, text="Scopus Author ID:")
     font = ('times', 15)
@@ -308,7 +325,8 @@ def scopus_window():
 def wos_search():
     window = Tk()
     window.title('PCVN')
-    window.geometry('800x800')
+    window.geometry('750x750')
+    window.resizable(width=False, height=False)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -328,31 +346,13 @@ def wos_search():
             # Call function to retrieve publications
             if get_publications_wos(au_wos, pbar_wos):
                 pbar_wos.stop()
-                # remove all widgets on window
-                widget_list = window.place_slaves()
-                for l in widget_list:
-                    l.destroy()
-                window.update()
-                time.sleep(1)
-                # Label that indicates that there are No publications found
-                label_no_pub = Label(window, text="There are no publications returned for this author",
-                                     bg='red')
-                font = ('times', 15)
-                label_no_pub.config(font=font)
-                label_no_pub.place(x=200, y=300)
-                # Search Again Button
-                bt_search_again = Button(window, text="Search again",
-                                         command=re_start, height=1, width=30)
-                b_font = ('times', 17)
-                bt_search_again.config(font=b_font)
-                bt_search_again.place(x=200, y=430)
-                # Skip Button
-                bt_search_again = Button(window, text="Skip",
-                                         command=skip, height=1, width=30)
-                bt_search_again.config(font=b_font)
-                bt_search_again.place(x=200, y=480)
-
-                window.update()
+                answer = tkinter.messagebox.askyesno('Sin resultados',
+                                                     'No se han encontrado resultados \n ¿Desea Volver a buscar?')
+                if answer:
+                    window.destroy()
+                    wos_window()
+                else:
+                    window.destroy()
             else:
                 pbar_wos.stop()
                 # Destroy window
@@ -384,12 +384,10 @@ def wos_search():
 
     # Background
     text = "Actualmente se está realizando la obtención de los datos desde WEB OF SCIENCE.\n Cuando se termine el proceso comenzará automáticamente el tratamiento de datos."
-    bg = Background(window, text)
+    bg = Background(window, text, 'background4.png')
     # Menu
     menu = GuiMenu(window)
-    # Estado
-    estado = State(window)
-    estado.actualiza()
+
     # Progress Bar
     pbar_wos = ttk.Progressbar(window, mode='determinate', length=400)
     # Get Publicatiosn
@@ -400,7 +398,8 @@ def wos_search():
 def wos_window():
     window = Tk()
     window.title('PCVN')
-    window.geometry('800x800')
+    window.geometry('750x750')
+    window.resizable(width=False, height=False)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -417,7 +416,7 @@ def wos_window():
         wos_search()
 
     # backGround
-    bg = Background(window, '')
+    bg = Background(window, '', 'background4.png')
     # Label
     label_wos = Label(window, text="WOS Author name:")
     font = ('times', 15)
@@ -442,7 +441,8 @@ the process of Grouping files and parsing is taking place """
 def group_window():
     window = Tk()
     window.title('PCVN')
-    window.geometry('800x800')
+    window.geometry('750x750')
+    window.resizable(width=False, height=False)
     """ Function that will place progress bar and start 
     groupfiles process"""
 
@@ -456,16 +456,14 @@ def group_window():
         pbar_g_files.stop()
         # Destroy window
         window.destroy()
-        aneca_login()
+        aneca_window(au_google)
 
     # backGround
     text = "Se esta procediendo al tratamiento de los datos, eliminación de elementos duplicados y agrupación en un solo fichero.\n Cuando se termine comenzará el proceso de subida a ACADEMIA"
-    bg = Background(window, text)
+    bg = Background(window, text, 'background5.png')
     # Menu
     menu = GuiMenu(window)
-    # Estado
-    estado = State(window)
-    estado.actualiza()
+
     # Progress Bar
     pbar_g_files = ttk.Progressbar(window, mode='determinate', length=400)
 
@@ -480,7 +478,8 @@ def group_window():
 def aneca_login():
     window = Tk()
     window.title('PCVN')
-    window.geometry('800x800')
+    window.geometry('750x750')
+    window.resizable(width=False, height=False)
     """ Function that get data from entries """
 
     def get_login():
@@ -501,12 +500,10 @@ def aneca_login():
 
     window.bind('<Return>', func)
     # backGround
-    bg = Background(window, '')
+    bg = Background(window, '', 'background6.png')
     # Menu
     menu = GuiMenu(window)
-    # Estado
-    estado = State(window)
-    estado.actualiza()
+
 
     # Label User
     label_user = Label(window, text="Usuario")
@@ -546,7 +543,8 @@ indicating the progress taken """
 def aneca_window(author):
     window = Tk()
     window.title('PCVN')
-    window.geometry('800x800')
+    window.geometry('750x750')
+    window.resizable(width=False, height=False)
     """ Function that will place progress bar and start 
     upload process"""
 
@@ -560,9 +558,10 @@ def aneca_window(author):
         total = failed = 0
         total, failed = aneca(author, pbar_aneca, user, pswd, num_var, total, failed)
         if total is True:
-            error = tkinter.messagebox.showerror("Usuario o Contraseña Incorrectos \n Por favor introduzca los datos de nuevos")
+            error = tkinter.messagebox.showerror("Usuario o Contraseña Incorrectos \n Por favor introduzca los datos de nuevo")
             window.destroy()
             aneca_login()
+
 
         pbar_aneca.stop()
         # Destroy Window
@@ -571,12 +570,10 @@ def aneca_window(author):
 
     # backGround
     text = "Se está procediendo a la subida de los datos a ACADEMIA.\n Este es el último paso del proceso, cuando termine se mostrará cuantas publicaciones pudieron ser subidas y las que no, habrán sido guardadas en un fichero para su corrección manual."
-    bg = Background(window, text)
+    bg = Background(window, text, 'background7.png')
     # Menu
     menu = GuiMenu(window)
-    # Estado
-    estado = State(window)
-    estado.actualiza()
+
 
     # Numb publications label
     num_var = StringVar()
@@ -597,60 +594,38 @@ def aneca_window(author):
 def completed_window():
     window = Tk()
     window.title('PCVN')
-    window.geometry('800x800')
+    window.geometry('750x750')
+    window.resizable(width=False, height=False)
 
     def end_gui():
         # Destroy Window
         window.destroy()
+    def open_pub():
+        os.startfile('pendientes.bib')
 
     # backGround
     text = 'Número de publicaciones que no pudieron ser subidas:\n' + str(failed) + '/' + str(total)
-    bg = Background(window, text)
+    bg = Background(window, text, 'background8.png')
     # Menu
     menu = GuiMenu(window)
-    # Estado
-    estado = State(window)
     # Label
     label_completed = Label(window, text="Proceso finalizado")
     font = ('times', 25)
     label_completed.config(font=font)
-    label_completed.place(x=300, y=300)
+    label_completed.place(x=260, y=250)
 
     # Close Button
-    bt_close = Button(window, text="Close", height=1,
-                      width=10, command=end_gui)
+    bt_close = Button(window, text="Cerrar Aplicación", height=1,
+                      width=18, command=end_gui)
     bfont = ('times', 17)
     bt_close.config(font=bfont)
-    bt_close.place(x=350, y=410)
-
-    window.mainloop()
-
-
-def fail_login():
-    window = Tk()
-    window.title('PCVN')
-    window.geometry('800x800')
-
-    def end_gui():
-        # Destroy Window
-        window.destroy()
-
-    # backGround
-    bg = Background(window, '')
-    # Menu
-    menu = GuiMenu(window)
-    # Label
-    label_completed = Label(window, text="Login fallído", bg='red')
-    font = ('times', 25)
-    label_completed.config(font=font)
-    label_completed.place(x=300, y=320)
-
-    # Close Button
-    bt_login = Button(window, text="Intentar otra vez", height=1,
-                      width=15, command=end_gui)
+    bt_close.place(x=255, y=350)
+    # Open Button
+    bt_open= Button(window, text="Abrir publicaciones\n Erroneas", height=1,
+                      width=18, command=open_pub)
     bfont = ('times', 17)
-    bt_login.config(font=bfont)
-    bt_login.place(x=295, y=430)
+    bt_open.config(font=bfont)
+    bt_open.place(x=255, y=410)
 
     window.mainloop()
 
@@ -668,10 +643,10 @@ class GuiMenu:
         self.submenu_pub.add_command(label="Todas", command=self.set_all)
         self.menu.add_cascade(label="Máx Publicaciones", menu=self.submenu_pub)
 
-        self.menu.add_command(label="Ayuda",command=self.test)
+        self.menu.add_command(label="Ayuda",command=self.open)
 
-    def test(self):
-        print('testing')
+    def open(self):
+        os.startfile('ayuda.pdf')
 
     def set10(self):
         global max_p
@@ -691,8 +666,8 @@ class GuiMenu:
 
 
 class Background:
-    def __init__(self, master, text):
-        self.image = Image.open("background.png")
+    def __init__(self, master, text, file):
+        self.image = Image.open('./backgrounds/'+file)
         self.draw = ImageDraw.Draw(self.image)
         try:
             self.font = ImageFont.truetype("times.ttf", 22)
@@ -707,58 +682,8 @@ class Background:
         Label(master, image=self.photoimage).place(x=0, y=0)
 
 
-class State:
-    def __init__(self, master):
-        self.list_label = list()
-
-        self.frame = Frame(master)
-        self.frame.place(x=145, y=0)
-
-        self.label_inicio = Label(self.frame, text='Inicio', bg='red', relief="groove")
-        self.label_inicio.pack(side=LEFT)
-        self.list_label.append(self.label_inicio)
-
-        self.label_scholar = Label(self.frame, text='Google Scholar', bg='red', relief="groove")
-        self.label_scholar.pack(side=LEFT)
-        self.list_label.append(self.label_scholar)
-
-        self.label_scopus = Label(self.frame, text='Scopus', bg='red', relief="groove")
-        self.label_scopus.pack(side=LEFT)
-        self.list_label.append(self.label_scopus)
-
-        self.label_wos = Label(self.frame, text='Web of Science', bg='red', relief="groove")
-        self.label_wos.pack(side=LEFT)
-        self.list_label.append(self.label_wos)
-
-        self.label_data = Label(self.frame, text='Tratando Datos', bg='red', relief="groove")
-        self.label_data.pack(side=LEFT)
-        self.list_label.append(self.label_data)
-
-        self.label_aneca = Label(self.frame, text='Aneca Login', bg='red', relief="groove")
-        self.label_aneca.pack(side=LEFT)
-        self.list_label.append(self.label_aneca)
-
-        self.label_academia = Label(self.frame, text='Academia', bg='red', relief="groove")
-        self.label_academia.pack(side=LEFT)
-        self.list_label.append(self.label_academia)
-
-        self.label_completado = Label(self.frame, text='Completado', bg='red', relief="groove")
-        self.label_completado.pack(side=LEFT)
-        self.list_label.append(self.label_completado)
-
-    def actualiza(self):
-        global cont
-        if cont < 0:
-            cont += 1
-            self.list_label[cont].config(bg='green', relief="sunken")
-
-        else:
-            self.list_label[cont].config(bg='red', relief="groove")
-            cont += 1
-            self.list_label[cont].config(bg='green', relief="sunken")
-
-
 if __name__ == '__main__':
     max_p = 10000
     cont = -1
     info_window()
+

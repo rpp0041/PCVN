@@ -3,7 +3,7 @@
 
 from tkinter import *
 from tkinter import ttk
-from PIL import Image
+from PIL import Image, ImageDraw, ImageTk, ImageFont
 from GetPublicationsScholar import *
 from GetPublicationsScopus import *
 from GetPublicationsWOS import *
@@ -12,12 +12,15 @@ from aneca import *
 
 from selenium.common.exceptions import NoSuchElementException
 from requests.exceptions import ConnectionError
+import textwrap
+import tkinter.messagebox
 
 
 def info_window():
     window = Tk()
     window.title('PCVN')
     window.geometry('800x800')
+    window.resizable(width=False, height=False)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -28,17 +31,22 @@ def info_window():
         au_wos = entry_wos.get()
         window.destroy()
         google_search()
-    # backGround
-    photo = PhotoImage(file="background.png")
-    labelbg = Label(window, image=photo)
-    labelbg.pack()
+
+    txt = "Cuando se pulse el botón 'search' se procederá a la búsqueda de los datos referentes al autor introducidos durante el proceso ocurriera algún problema con los datos introducidos podrá introducirlos nuevamente"
+    # Background
+    bg = Background(window, txt)
+    # Menu #
+    menu = GuiMenu(window)
+    # Estado
+    estado = State(window)
+    estado.actualiza()
 
     # ///////// Google Scholar Entry /////////#
     # Label
     label_google_scholar = Label(window, text="Google Scholar Author:")
     font = ('times', 15)
     label_google_scholar.config(font=font)
-    label_google_scholar.place(x=130, y=70)
+    label_google_scholar.place(x=150, y=70)
     # Entry
     entry_google_scholar = Entry(window, width=50)
     entry_google_scholar.place(x=350, y=75)
@@ -47,7 +55,7 @@ def info_window():
     # Label
     label_scopus = Label(window, text="Scopus Author ID:")
     label_scopus.config(font=font)
-    label_scopus.place(x=130, y=170)
+    label_scopus.place(x=190, y=170)
     # Entry
     entry_scopus = Entry(window, width=50)
     entry_scopus.place(x=350, y=175)
@@ -56,7 +64,7 @@ def info_window():
     # Label
     label_wos = Label(window, text="WOS Author Name:")
     label_wos.config(font=font)
-    label_wos.place(x=130, y=270)
+    label_wos.place(x=180, y=270)
     # Entry
     entry_wos = Entry(window, width=50)
     entry_wos.place(x=350, y=275)
@@ -67,12 +75,13 @@ def info_window():
     bfont = ('times', 17)
     bt_scopus.config(font=bfont)
     bt_scopus.place(x=200, y=370)
-
+    """ 
     # Label information
     txt = "Cuando se pulse el botón 'search' se procederá a la búsqueda de los datos referentes al autor introducidos durante el proceso ocurriera algún problema con los datos introducidos podrá introducirlos nuevamente"
     label_info = Label(window, text=txt, width=48, height=8, wraplength=520, relief=RIDGE)
     label_info.config(font=font)
     label_info.place(x=130, y=470)
+    """
     window.mainloop()
 
 
@@ -100,71 +109,36 @@ def google_search():
         pbar_google_scholar['maximum'] = 100
         # Call function to retrieve publications
         try:
-            get_publications_scholar(au_google, pbar_google_scholar, num_var)
+            get_publications_scholar(au_google, pbar_google_scholar, num_var, max_p)
         except StopIteration:
             pbar_google_scholar.stop()
-            # remove all widgets on window
-            widget_list = window.place_slaves()
-            for l in widget_list:
-                l.destroy()
-            window.update()
-            time.sleep(1)
-            # Label that indicates that there are No publications found
-            label_no_pub = Label(window, text="There are no publications returned for this author",
-                                 bg='red')
-            font = ('times', 15)
-            label_no_pub.config(font=font)
-            label_no_pub.place(x=200, y=300)
-            # Search Again Button
-            bt_search_again = Button(window, text="Search again",
-                                     command=re_start, height=1, width=30)
-            b_font = ('times', 17)
-            bt_search_again.config(font=b_font)
-            bt_search_again.place(x=200, y=430)
-            # Skip Button
-            bt_search_again = Button(window, text="Skip",
-                                     command=skip, height=1, width=30)
-            bt_search_again.config(font=b_font)
-            bt_search_again.place(x=200, y=480)
-
-            window.update()
+            answer = tkinter.messagebox.askyesno('Sin resultados', 'No se han encontrado resultados \n ¿Desea Volver a buscar?')
+            if answer:
+                window.destroy()
+                google_window()
+            else:
+                window.destroy()
         except ConnectionError:
             pbar_google_scholar.stop()
-            # remove all widgets on window
-            widget_list = window.place_slaves()
-            for l in widget_list:
-                l.destroy()
-            window.update()
-            time.sleep(1)
-            # Label that indicates that there are No publications found
-            label_no_pub = Label(window, text="Se ha producido un error en la conexión",
-                                 bg='red')
-            font = ('times', 15)
-            label_no_pub.config(font=font)
-            label_no_pub.place(x=200, y=300)
-            # Search Again Button
-            bt_search_again = Button(window, text="Search again",
-                                     command=re_start, height=1, width=30)
-            b_font = ('times', 17)
-            bt_search_again.config(font=b_font)
-            bt_search_again.place(x=200, y=430)
-            # Skip Button
-            bt_search_again = Button(window, text="Skip",
-                                     command=skip, height=1, width=30)
-            bt_search_again.config(font=b_font)
-            bt_search_again.place(x=200, y=480)
-
-            window.update()
+            answer = tkinter.messagebox.askyesno('Error de Conexión', 'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
+            if answer:
+                window.destroy()
+                google_window()
+            else:
+                window.destroy()
         else:
             pbar_google_scholar.stop()
             # Destroy Window
             window.destroy()
             scopus_search()
-
-    # backGround Image
-    photo = PhotoImage(file="background.png")
-    labelbg = Label(window, image=photo)
-    labelbg.pack()
+    # Background
+    txt = "Actualmente se está realizando la obtención de los datos desde GOOGLE SCHOLAR.\n Cuando se termine el proceso comenzará automáticamente la búsqueda en Scopus"
+    bg = Background(window, txt)
+    # Menu
+    menu = GuiMenu(window)
+    # Estado
+    estado = State(window)
+    estado.actualiza()
     # Numb publications label
     num_var = StringVar()
     num_var.set('Número de publicaciones obtenidas:\n')
@@ -174,13 +148,6 @@ def google_search():
     num_label.place(x=220, y=300)
     # Progress Bar
     pbar_google_scholar = ttk.Progressbar(window, mode='determinate', length=400)
-
-    # Label information
-    txt = "Actualmente se está realizando la obtención de los datos desde GOOGLE SCHOLAR.\n Cuando se termine el proceso comenzará automáticamente la búsqueda en Scopus"
-    label_info = Label(window, text=txt, width=48, height=8, wraplength=520, relief=RIDGE)
-    font = ('times', 15)
-    label_info.config(font=font)
-    label_info.place(x=130, y=470)
     # Get publications
     get_scholar_pub()
 
@@ -211,11 +178,8 @@ def google_window():
         window.destroy()
         google_search()
 
-        # backGround Image
-
-    photo = PhotoImage(file="background.png")
-    labelbg = Label(window, image=photo)
-    labelbg.pack()
+    # backGround Image
+    bg = Background(window, '')
     # Label
     label_google_scholar = Label(window, text="Google Scholar Author:")
     font = ('times', 15)
@@ -260,78 +224,37 @@ def scopus_search():
         try:
             if get_publications_scopus(au_scopus, pbar_scopus):
                 pbar_scopus.stop()
-                # remove all widgets on window
-                widget_list = window.place_slaves()
-                for l in widget_list:
-                    l.destroy()
-                window.update()
-                time.sleep(1)
-                # Label that indicates that there are No publications found
-                label_no_pub = Label(window, text="There are no publications returned for this author",
-                                     bg='red')
-                font = ('times', 15)
-                label_no_pub.config(font=font)
-                label_no_pub.place(x=200, y=300)
-                # Search Again Button
-                bt_search_again = Button(window, text="Search again",
-                                         command=re_start, height=1, width=30)
-                b_font = ('times', 17)
-                bt_search_again.config(font=b_font)
-                bt_search_again.place(x=200, y=430)
-                # Skip Button
-                bt_search_again = Button(window, text="Skip",
-                                         command=skip, height=1, width=30)
-                bt_search_again.config(font=b_font)
-                bt_search_again.place(x=200, y=480)
-
-                window.update()
-
+                answer = tkinter.messagebox.askyesno('Sin resultados',
+                                                     'No se han encontrado resultados \n ¿Desea Volver a buscar?')
+                if answer:
+                    window.destroy()
+                    scopus_window()
+                else:
+                    window.destroy()
             else:
                 window.destroy()
                 wos_search()
 
         except (KeyError, NoSuchElementException, ConnectionError):
-            # remove all widgets on window
-            widget_list = window.place_slaves()
-            for l in widget_list:
-                l.destroy()
-            window.update()
-            time.sleep(1)
-
-            # Label that indicates the failure of the function to connect with Scopus API
-            label_fail = Label(window, text="Error en la conexion , compruebe si su conexion tiene acceso a Scopus",
-                               bg='red')
-            font = ('times', 15)
-            label_fail.config(font=font)
-            label_fail.place(x=150, y=200)
-            window.update()
-
-            time.sleep(2)
-
-            # Search Again Button
-            bt_search_again = Button(window, text="Search again",
-                                     command=re_start, height=1, width=30)
-            b_font = ('times', 17)
-            bt_search_again.config(font=b_font)
-            bt_search_again.place(x=200, y=430)
-            # Skip Button
-            bt_search_again = Button(window, text="Skip",
-                                     command=skip, height=1, width=30)
-            bt_search_again.config(font=b_font)
-            bt_search_again.place(x=200, y=480)
-
+            pbar_scopus.stop()
+            answer = tkinter.messagebox.askyesno('Error de Conexión', 'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
+            if answer:
+                window.destroy()
+                scopus_window()
+            else:
+                window.destroy()
+    # Menu
+    menu = GuiMenu(window)
     # backGround
-    photo = PhotoImage(file="background.png")
-    labelbg = Label(window, image=photo)
-    labelbg.pack()
+    text = "Actualmente se está realizando la obtención de los datos desde SCOPUS.\n Cuando se termine el proceso comenzará automáticamente la búsqueda en Web of Science."
+    bg = Background(window, text)
+    # Estado
+    estado = State(window)
+    estado.actualiza()
     # Progress Bar
     pbar_scopus = ttk.Progressbar(window, mode='determinate', length=400)
     # Label information
-    txt = "Actualmente se está realizando la obtención de los datos desde SCOPUS.\n Cuando se termine el proceso comenzará automáticamente la búsqueda en Web of Science."
-    label_info = Label(window, text=txt, width=48, height=8, wraplength=520, relief=RIDGE)
-    font = ('times', 15)
-    label_info.config(font=font)
-    label_info.place(x=130, y=350)
+
     # get publications
     get_scopus_pub()
     window.mainloop()
@@ -359,11 +282,8 @@ def scopus_window():
         window.destroy()
         scopus_search()
 
-        # backGround
-
-    photo = PhotoImage(file="background.png")
-    labelbg = Label(window, image=photo)
-    labelbg.pack()
+    # backGround
+    bg = Background(window, '')
     # Label
     label_scopus = Label(window, text="Scopus Author ID:")
     font = ('times', 15)
@@ -462,17 +382,16 @@ def wos_search():
             bt_search_again.config(font=b_font)
             bt_search_again.place(x=200, y=480)
 
-    photo = PhotoImage(file="background.png")
-    labelbg = Label(window, image=photo)
-    labelbg.pack()
+    # Background
+    text = "Actualmente se está realizando la obtención de los datos desde WEB OF SCIENCE.\n Cuando se termine el proceso comenzará automáticamente el tratamiento de datos."
+    bg = Background(window, text)
+    # Menu
+    menu = GuiMenu(window)
+    # Estado
+    estado = State(window)
+    estado.actualiza()
     # Progress Bar
     pbar_wos = ttk.Progressbar(window, mode='determinate', length=400)
-    # Label information
-    txt = "Actualmente se está realizando la obtención de los datos desde WEB OF SCIENCE.\n Cuando se termine el proceso comenzará automáticamente el tratamiento de datos."
-    label_info = Label(window, text=txt, width=48, height=8, wraplength=520, relief=RIDGE)
-    font = ('times', 15)
-    label_info.config(font=font)
-    label_info.place(x=130, y=350)
     # Get Publicatiosn
     get_wos_pub()
     window.mainloop()
@@ -497,11 +416,8 @@ def wos_window():
         window.destroy()
         wos_search()
 
-        # backGround
-
-    photo = PhotoImage(file="background.png")
-    labelbg = Label(window, image=photo)
-    labelbg.pack()
+    # backGround
+    bg = Background(window, '')
     # Label
     label_wos = Label(window, text="WOS Author name:")
     font = ('times', 15)
@@ -543,17 +459,13 @@ def group_window():
         aneca_login()
 
     # backGround
-    photo = PhotoImage(file="background.png")
-    labelbg = Label(window, image=photo)
-    labelbg.pack()
-
-    # Label information
-    txt = "Se esta procediendo al tratamiento de los datos, eliminación de elementos duplicados y agrupación en un solo fichero.\n Cuando se termine comenzará el proceso de subida a ACADEMIA"
-    label_info = Label(window, text=txt, width=48, height=8, wraplength=520, relief=RIDGE)
-    font = ('times', 15)
-    label_info.config(font=font)
-    label_info.place(x=130, y=350)
-
+    text = "Se esta procediendo al tratamiento de los datos, eliminación de elementos duplicados y agrupación en un solo fichero.\n Cuando se termine comenzará el proceso de subida a ACADEMIA"
+    bg = Background(window, text)
+    # Menu
+    menu = GuiMenu(window)
+    # Estado
+    estado = State(window)
+    estado.actualiza()
     # Progress Bar
     pbar_g_files = ttk.Progressbar(window, mode='determinate', length=400)
 
@@ -589,9 +501,12 @@ def aneca_login():
 
     window.bind('<Return>', func)
     # backGround
-    photo = PhotoImage(file="background.png")
-    labelbg = Label(window, image=photo)
-    labelbg.pack()
+    bg = Background(window, '')
+    # Menu
+    menu = GuiMenu(window)
+    # Estado
+    estado = State(window)
+    estado.actualiza()
 
     # Label User
     label_user = Label(window, text="Usuario")
@@ -645,9 +560,9 @@ def aneca_window(author):
         total = failed = 0
         total, failed = aneca(author, pbar_aneca, user, pswd, num_var, total, failed)
         if total is True:
+            error = tkinter.messagebox.showerror("Usuario o Contraseña Incorrectos \n Por favor introduzca los datos de nuevos")
             window.destroy()
-            fail_login()
-            aneca_window(author)
+            aneca_login()
 
         pbar_aneca.stop()
         # Destroy Window
@@ -655,15 +570,13 @@ def aneca_window(author):
         completed_window()
 
     # backGround
-    photo = PhotoImage(file="background.png")
-    labelbg = Label(window, image=photo)
-    labelbg.pack()
-    # Label information
-    txt = "Se está procediendo a la subida de los datos a ACADEMIA.\n Este es el último paso del proceso, cuando termine se mostrará cuantas publicaciones pudieron ser subidas y las que no, habrán sido guardadas en un fichero para su corrección manual."
-    label_info = Label(window, text=txt, width=48, height=8, wraplength=620, relief=RIDGE)
-    font = ('times', 15)
-    label_info.config(font=font)
-    label_info.place(x=130, y=350)
+    text = "Se está procediendo a la subida de los datos a ACADEMIA.\n Este es el último paso del proceso, cuando termine se mostrará cuantas publicaciones pudieron ser subidas y las que no, habrán sido guardadas en un fichero para su corrección manual."
+    bg = Background(window, text)
+    # Menu
+    menu = GuiMenu(window)
+    # Estado
+    estado = State(window)
+    estado.actualiza()
 
     # Numb publications label
     num_var = StringVar()
@@ -691,27 +604,24 @@ def completed_window():
         window.destroy()
 
     # backGround
-    photo = PhotoImage(file="background.png")
-    labelbg = Label(window, image=photo)
-    labelbg.pack()
+    text = 'Número de publicaciones que no pudieron ser subidas:\n' + str(failed) + '/' + str(total)
+    bg = Background(window, text)
+    # Menu
+    menu = GuiMenu(window)
+    # Estado
+    estado = State(window)
     # Label
     label_completed = Label(window, text="Proceso finalizado")
     font = ('times', 25)
     label_completed.config(font=font)
-    label_completed.place(x=300, y=320)
-    # Label info
-    label_info = Label(window,
-                       text='Número de publicaciones que no pudieron ser subidas:\n' + str(failed) + '/' + str(total))
-    font = ('times', 18)
-    label_info.config(font=font)
-    label_info.place(x=220, y=200)
+    label_completed.place(x=300, y=300)
 
     # Close Button
     bt_close = Button(window, text="Close", height=1,
                       width=10, command=end_gui)
     bfont = ('times', 17)
     bt_close.config(font=bfont)
-    bt_close.place(x=350, y=430)
+    bt_close.place(x=350, y=410)
 
     window.mainloop()
 
@@ -726,9 +636,9 @@ def fail_login():
         window.destroy()
 
     # backGround
-    photo = PhotoImage(file="background.png")
-    labelbg = Label(window, image=photo)
-    labelbg.pack()
+    bg = Background(window, '')
+    # Menu
+    menu = GuiMenu(window)
     # Label
     label_completed = Label(window, text="Login fallído", bg='red')
     font = ('times', 25)
@@ -745,5 +655,107 @@ def fail_login():
     window.mainloop()
 
 
+class GuiMenu:
+    def __init__(self, master):
+        self.menu = Menu(master)
+        master.config(menu=self.menu)
+
+        self.submenu_pub = Menu(self.menu)
+
+        self.submenu_pub.add_command(label="10", command=self.set10)
+        self.submenu_pub.add_command(label="20", command=self.set20)
+        self.submenu_pub.add_command(label="50", command=self.set50)
+        self.submenu_pub.add_command(label="Todas", command=self.set_all)
+        self.menu.add_cascade(label="Máx Publicaciones", menu=self.submenu_pub)
+
+        self.menu.add_command(label="Ayuda",command=self.test)
+
+    def test(self):
+        print('testing')
+
+    def set10(self):
+        global max_p
+        max_p = 10
+
+    def set20(self):
+        global max_p
+        max_p = 20
+
+    def set50(self):
+        global max_p
+        max_p = 50
+
+    def set_all(self):
+        global max_p
+        max_p = 10000
+
+
+class Background:
+    def __init__(self, master, text):
+        self.image = Image.open("background.png")
+        self.draw = ImageDraw.Draw(self.image)
+        self.font = ImageFont.truetype("times.ttf", 22)
+        self.lines = textwrap.wrap(text, width=60)
+        self.y = 470
+        for line in self.lines:
+            self.draw.text((140, self.y), line, fill="white", font=self.font)
+            self.y += 25
+        self.photoimage = ImageTk.PhotoImage(self.image)
+        Label(master, image=self.photoimage).place(x=0, y=0)
+
+
+class State:
+    def __init__(self, master):
+        self.list_label = list()
+
+        self.frame = Frame(master)
+        self.frame.place(x=145, y=0)
+
+        self.label_inicio = Label(self.frame, text='Inicio', bg='red', relief="groove")
+        self.label_inicio.pack(side=LEFT)
+        self.list_label.append(self.label_inicio)
+
+        self.label_scholar = Label(self.frame, text='Google Scholar', bg='red', relief="groove")
+        self.label_scholar.pack(side=LEFT)
+        self.list_label.append(self.label_scholar)
+
+        self.label_scopus = Label(self.frame, text='Scopus', bg='red', relief="groove")
+        self.label_scopus.pack(side=LEFT)
+        self.list_label.append(self.label_scopus)
+
+        self.label_wos = Label(self.frame, text='Web of Science', bg='red', relief="groove")
+        self.label_wos.pack(side=LEFT)
+        self.list_label.append(self.label_wos)
+
+        self.label_data = Label(self.frame, text='Tratando Datos', bg='red', relief="groove")
+        self.label_data.pack(side=LEFT)
+        self.list_label.append(self.label_data)
+
+        self.label_aneca = Label(self.frame, text='Aneca Login', bg='red', relief="groove")
+        self.label_aneca.pack(side=LEFT)
+        self.list_label.append(self.label_aneca)
+
+        self.label_academia = Label(self.frame, text='Academia', bg='red', relief="groove")
+        self.label_academia.pack(side=LEFT)
+        self.list_label.append(self.label_academia)
+
+        self.label_completado = Label(self.frame, text='Completado', bg='red', relief="groove")
+        self.label_completado.pack(side=LEFT)
+        self.list_label.append(self.label_completado)
+
+    def actualiza(self):
+        global cont
+        if cont < 0:
+            cont += 1
+            self.list_label[cont].config(bg='green', relief="sunken")
+
+        else:
+            self.list_label[cont].config(bg='red', relief="groove")
+            cont += 1
+            self.list_label[cont].config(bg='green', relief="sunken")
+
+
 if __name__ == '__main__':
+    max_p = 10000
+    cont = -1
     info_window()

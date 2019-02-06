@@ -30,6 +30,7 @@ def parse_abstract(abstract):
             else:
                 abstract = abstract[1]
         else:
+
             abstract = abstract[1]
     else:
         abstract = abstract[1]
@@ -47,7 +48,7 @@ return : BibTex file
 """
 
 
-def get_publications_scholar(author_input, pbar,label_var):
+def get_publications_scholar(author_input, pbar, label_var, max):
     """  Call to scholarly functions that will search for the author given
     as a parameter and will return an iterable object with all the 
     publications found for the author given"""
@@ -59,13 +60,19 @@ def get_publications_scholar(author_input, pbar,label_var):
     db = BibDatabase()
     # Counter that indicates ID in BibDatabase
     cont = 0
+    if max == 10000:
+        max = len(author_pub)
     """ update progress bar GUI"""
-    progress_bar_inc = 100 / len(author_pub)
+    progress_bar_inc = 100 / max
     # BibTex writer object
     writer = BibTexWriter()
+
     """ Go thought all the author´s publications , complete all the fields
     and parse some in order to fit BibTexWriter"""
     for pub in author_pub:
+        # Set max of publications
+        if cont >= max:
+            break
         # fill all fields possible of that publication
         pub.fill()
         """ Need modifications for BibTextWriter 
@@ -97,7 +104,7 @@ def get_publications_scholar(author_input, pbar,label_var):
         """ update progress bar GUI"""
         pbar['value'] += progress_bar_inc
         pbar.update()
-        label_var.set('Número de publicaciones obtenidas:\n'+str(cont)+'/'+str(len(author_pub)))
+        label_var.set('Número de publicaciones obtenidas:\n'+str(cont)+'/'+str(max))
     """ Write the extracted data stored in db (BibDatabase) and save it 
     in bibtexScholar.bib for later use """
     with open('bibtexScholar.bib', 'w', encoding='utf-8') as bibfile:

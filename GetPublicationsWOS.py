@@ -118,7 +118,7 @@ def get_publications_wos(author, pbar):
     if page_count > 1:
         """ Select records range"""
         browser.find_element_by_id('numberOfRecordsRange').click()
-        mark_from = browser.find_element_by_id('mark_from')
+        mark_from = browser.find_element_by_id('markFrom')
         mark_from.send_keys(1)
         mark_to = browser.find_element_by_id('markTo')
         num_register = (page_count - 1) * 50

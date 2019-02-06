@@ -389,7 +389,10 @@ def parse_table(rank_table, name_tab, num_of_categories):
         i += 1
     """ difference of fields betwen actual 2017 (2018 data still not released)
     and previus year (2016)"""
-    diff = rank_table.index('2016') - 1
+    try:
+        diff = rank_table.index('2016') - 1
+    except ValueError:
+        return None
     """ num of standard fields for a normal rank table"""
     num_fields = (num_of_categories * 3) + 1
     """ num of fields to be remove"""

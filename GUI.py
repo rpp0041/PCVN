@@ -694,7 +694,10 @@ class Background:
     def __init__(self, master, text):
         self.image = Image.open("background.png")
         self.draw = ImageDraw.Draw(self.image)
-        self.font = ImageFont.truetype("times.ttf", 22)
+        try:
+            self.font = ImageFont.truetype("times.ttf", 22)
+        except OSError:
+            self.font = ImageFont.truetype("arial.ttf", 22)
         self.lines = textwrap.wrap(text, width=60)
         self.y = 470
         for line in self.lines:

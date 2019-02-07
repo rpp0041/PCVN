@@ -32,14 +32,14 @@ def info_window():
         au_scopus = entry_scopus.get()
         au_wos = entry_wos.get()
         if login(user, pswd) is True:
-            error = tkinter.messagebox.showerror(
-                "Usuario o Contraseña Incorrectos \n Por favor introduzca los datos de nuevo")
+            error = tkinter.messagebox.showerror(title="Error",
+                                                 message="Usuario o Contraseña Incorrectos \nPor favor introduzca los datos de nuevo")
             window.destroy()
             info_window()
         window.destroy()
         google_search()
 
-    txt = "Cuando se pulse el botón 'search' se procederá a la búsqueda de los datos referentes al autor introducidos durante el proceso ocurriera algún problema con los datos introducidos podrá introducirlos nuevamente"
+    txt = "Cuando se pulse el botón 'Comenzar', se procederá a la búsqueda de los datos referentes al autor introducido, si durante el proceso ocurriera algún problema con los datos introducidos, podrá introducirlos nuevamente."
     # Background
     bg = Background(window, txt, 'background1.png')
     # Menu #
@@ -54,28 +54,28 @@ def info_window():
     label_google_scholar = Label(frame, text="Google Scholar Author:")
     font = ('times', 15)
     label_google_scholar.config(font=font)
-    label_google_scholar.grid(row=0, column=0, sticky=E)
+    label_google_scholar.grid(row=0, column=0, sticky=E, pady=10)
     # Entry
     entry_google_scholar = Entry(frame, width=50)
-    entry_google_scholar.grid(row=0, column=1)
+    entry_google_scholar.grid(row=0, column=1, pady=10)
 
     # ///////// Scopus Entry /////////#
     # Label
     label_scopus = Label(frame, text="Scopus Author ID:")
     label_scopus.config(font=font)
-    label_scopus.grid(row=1, column=0, sticky=E)
+    label_scopus.grid(row=1, column=0, sticky=E, pady=10)
     # Entry
     entry_scopus = Entry(frame, width=50)
-    entry_scopus.grid(row=1, column=1)
+    entry_scopus.grid(row=1, column=1, pady=10)
 
     # ///////// WOS Entry /////////#
     # Label
     label_wos = Label(frame, text="WOS Author Name:")
     label_wos.config(font=font)
-    label_wos.grid(row=2, column=0, sticky=E)
+    label_wos.grid(row=2, column=0, sticky=E, pady=10)
     # Entry
     entry_wos = Entry(frame, width=50)
-    entry_wos.grid(row=2, column=1)
+    entry_wos.grid(row=2, column=1, pady=10)
 
     # Label Academia
     label_academia = Label(frame, text='Acceso a ACADEMIA')
@@ -106,13 +106,8 @@ def info_window():
     bt_scopus.config(font=bfont)
     bt_scopus.grid(columnspan=2, sticky=N, pady=20)
 
-    """ 
-    # Label information
-    txt = "Cuando se pulse el botón 'search' se procederá a la búsqueda de los datos referentes al autor introducidos durante el proceso ocurriera algún problema con los datos introducidos podrá introducirlos nuevamente"
-    label_info = Label(window, text=txt, width=48, height=8, wraplength=520, relief=RIDGE)
-    label_info.config(font=font)
-    label_info.place(x=130, y=470)
-    """
+
+
     window.mainloop()
 
 
@@ -157,7 +152,7 @@ def google_search():
             window.destroy()
             scopus_search()
     # Background
-    txt = "Actualmente se está realizando la obtención de los datos desde GOOGLE SCHOLAR.\n Cuando se termine el proceso comenzará automáticamente la búsqueda en Scopus"
+    txt = "Actualmente, se está realizando la obtención de los datos desde GOOGLE SCHOLAR.\n Cuando se termine el proceso, comenzará automáticamente la búsqueda en Scopus."
     bg = Background(window, txt, 'background2.png')
     # Menu
     menu = GuiMenu(window)
@@ -264,7 +259,7 @@ def scopus_search():
     # Menu
     menu = GuiMenu(window)
     # backGround
-    text = "Actualmente se está realizando la obtención de los datos desde SCOPUS.\n Cuando se termine el proceso comenzará automáticamente la búsqueda en Web of Science."
+    text = "Actualmente, se está realizando la obtención de los datos desde SCOPUS.\n Cuando se termine el proceso, comenzará automáticamente la búsqueda en Web of Science."
     bg = Background(window, text, 'background3.png')
 
     # Progress Bar
@@ -383,7 +378,7 @@ def wos_search():
             bt_search_again.place(x=200, y=480)
 
     # Background
-    text = "Actualmente se está realizando la obtención de los datos desde WEB OF SCIENCE.\n Cuando se termine el proceso comenzará automáticamente el tratamiento de datos."
+    text = "Actualmente, se está realizando la obtención de los datos desde WEB OF SCIENCE.\n Cuando se termine el proceso, comenzará automáticamente el tratamiento de datos."
     bg = Background(window, text, 'background4.png')
     # Menu
     menu = GuiMenu(window)
@@ -459,7 +454,7 @@ def group_window():
         aneca_window(au_google)
 
     # backGround
-    text = "Se esta procediendo al tratamiento de los datos, eliminación de elementos duplicados y agrupación en un solo fichero.\n Cuando se termine comenzará el proceso de subida a ACADEMIA"
+    text = "Se está procediendo al tratamiento de los datos, eliminación de elementos duplicados y agrupación en un solo fichero.\n Cuando se termine, comenzará el proceso de subida a ACADEMIA."
     bg = Background(window, text, 'background5.png')
     # Menu
     menu = GuiMenu(window)
@@ -569,7 +564,7 @@ def aneca_window(author):
         completed_window()
 
     # backGround
-    text = "Se está procediendo a la subida de los datos a ACADEMIA.\n Este es el último paso del proceso, cuando termine se mostrará cuantas publicaciones pudieron ser subidas y las que no, habrán sido guardadas en un fichero para su corrección manual."
+    text = "Se está procediendo a la subida de los datos a ACADEMIA.\n Este es el último paso del proceso, cuando termine, se mostrará cuantas publicaciones pudieron ser subidas. Las que no se hayan podido subir, se guardarán en un fichero para su subida manual"
     bg = Background(window, text, 'background7.png')
     # Menu
     menu = GuiMenu(window)
@@ -672,7 +667,7 @@ class Background:
         try:
             self.font = ImageFont.truetype("times.ttf", 22)
         except OSError:
-            self.font = ImageFont.truetype("arial.ttf", 22)
+            self.font = ImageFont.truetype("Times New Roman", 22)
         self.lines = textwrap.wrap(text, width=60)
         self.y = 470
         for line in self.lines:

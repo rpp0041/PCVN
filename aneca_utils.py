@@ -489,12 +489,12 @@ def add_inprocedings(se2, d, headers, final_url, list_pub, db_salida, db_complet
         'Accept-Language': 'es-ES,es;q=0.9'
     }
     cont = 0
-    for x in list_pub:
-        post_data_test = post_inprocedings(x, value_for_post[0])
+    for pub in list_pub:
+        post_data_test = post_inprocedings(pub, value_for_post[0])
         test_request = se2.post(posturl, headers=newheaders, data=post_data_test)
 
         if test_request.text != '':
-            db_salida.entries.append(x)
+            db_salida.entries.append(pub)
         else:
             db_completa.entries.append(pub)
         """ update progress bar GUI"""

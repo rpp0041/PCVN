@@ -18,11 +18,12 @@ import tkinter.messagebox
 
 def info_window():
     window = Tk()
-    window.title('PCVN')
-    window.geometry('750x750')
-    window.resizable(width=False, height=False)
+    window = set_window(window)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
+    def func(event):
+        return_au()
+    window.bind('<Return>', func)
 
     def return_au():
         # rest entry border color
@@ -102,7 +103,7 @@ def info_window():
     label_user.config(font=font)
     label_user.grid(row=5, column=0, sticky=E)
     # Entry User
-    entry_user = Entry(frame, width=40)
+    entry_user = Entry(frame, width=30)
     entry_user.grid(row=5, column=1, sticky=W)
 
     # Label Password
@@ -121,7 +122,82 @@ def info_window():
     bt_scopus.config(font=bfont)
     bt_scopus.grid(columnspan=2, sticky=N, pady=20)
 
+    window, frame = center_frame(window, frame)
 
+    window.mainloop()
+
+
+def get_only_info_window():
+    window = Tk()
+    window = set_window(window)
+    """ Function that make possible push enter keyboard button 
+    and it will work as search button"""
+    def func(event):
+        return_au()
+    window.bind('<Return>', func)
+
+    def return_au():
+        # rest entry border color
+        entry_google_scholar.config(highlightthickness=0)
+        entry_scopus.config(highlightthickness=0)
+        entry_wos.config(highlightthickness=0)
+
+        global au_google, au_scopus, au_wos
+        au_google = entry_google_scholar.get()
+        au_scopus = entry_scopus.get()
+        au_wos = entry_wos.get()
+
+        # Check if entry len is bigger than 0
+        if check_entry(entry_google_scholar, entry_scopus, entry_wos) is False:
+            window.destroy()
+            google_search()
+
+    txt = "Cuando se pulse el botón 'Comenzar', se procederá a la búsqueda de los datos referentes al autor introducido, si durante el proceso ocurriera algún problema con los datos introducidos, podrá introducirlos nuevamente."
+    # Background
+    bg = Background(window, txt, 'background1.png')
+    # Menu #
+    menu = GuiMenu(window)
+
+    # Frame
+    frame = Frame(borderwidth=15)
+    frame.place(x=135, y=50)
+
+    # ///////// Google Scholar Entry /////////#
+    # Label
+    label_google_scholar = Label(frame, text="Google Scholar Author:")
+    font = ('times', 15)
+    label_google_scholar.config(font=font)
+    label_google_scholar.grid(row=0, column=0, sticky=E)
+    # Entry
+    entry_google_scholar = Entry(frame, width=50)
+    entry_google_scholar.grid(row=0, column=1)
+
+    # ///////// Scopus Entry /////////#
+    # Label
+    label_scopus = Label(frame, text="Scopus Author ID:")
+    label_scopus.config(font=font)
+    label_scopus.grid(row=1, column=0, sticky=E)
+    # Entry
+    entry_scopus = Entry(frame, width=50)
+    entry_scopus.grid(row=1, column=1)
+
+    # ///////// WOS Entry /////////#
+    # Label
+    label_wos = Label(frame, text="WOS Author Name:")
+    label_wos.config(font=font)
+    label_wos.grid(row=2, column=0, sticky=E)
+    # Entry
+    entry_wos = Entry(frame, width=50)
+    entry_wos.grid(row=2, column=1, pady=10)
+
+    # //////////////////////////////////////////////
+    # Search Button
+    bt_scopus = Button(frame, text="Comenzar", height=1, width=30, command=return_au)
+    bfont = ('times', 17)
+    bt_scopus.config(font=bfont)
+    bt_scopus.grid(columnspan=2, sticky=N, pady=20)
+
+    window, frame = center_frame(window, frame)
 
     window.mainloop()
 
@@ -131,11 +207,7 @@ def info_window():
 
 def google_search():
     window = Tk()
-    window.title('PCVN')
-    window.geometry('750x750')
-    window.resizable(width=False, height=False)
-    """ Function that make possible push enter keyboard button 
-    and it will work as search button"""
+    window = set_window(window)
 
     def get_scholar_pub():
         # place progressbar in window
@@ -158,7 +230,7 @@ def google_search():
             answer = tkinter.messagebox.askyesno('Error de Conexión', 'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
             if answer:
                 window.destroy()
-                google_window()
+                google_search()
             else:
                 window.destroy()
         else:
@@ -192,9 +264,7 @@ def google_search():
 
 def google_window():
     window = Tk()
-    window.title('PCVN')
-    window.geometry('750x750')
-    window.resizable(width=False, height=False)
+    window = set_window(window)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -214,20 +284,29 @@ def google_window():
 
     # backGround Image
     bg = Background(window, '', 'background2.png')
+    # Menu #
+    menu = GuiMenu(window)
+
+    # Frame
+    frame = Frame(borderwidth=15)
+    frame.place(x=135, y=50)
+
+    # ///////// Google Scholar Entry /////////#
     # Label
-    label_google_scholar = Label(window, text="Google Scholar Author:")
+    label_google_scholar = Label(frame, text="Google Scholar Author:")
     font = ('times', 15)
     label_google_scholar.config(font=font)
-    label_google_scholar.place(x=130, y=320)
+    label_google_scholar.grid(row=0, column=0, sticky=E)
     # Entry
-    entry_google_scholar = Entry(window, width=50)
-    entry_google_scholar.place(x=350, y=325)
+    entry_google_scholar = Entry(frame, width=50)
+    entry_google_scholar.grid(row=0, column=1)
+
+    # //////////////////////////////////////////////
     # Search Button
-    bt_google_scholar = Button(window, text="Search",
-                               command=retry, height=1, width=30)
+    bt_google_scholar = Button(frame, text="Buscar", height=1, width=20, command=retry)
     bfont = ('times', 17)
     bt_google_scholar.config(font=bfont)
-    bt_google_scholar.place(x=200, y=430)
+    bt_google_scholar.grid(columnspan=2, pady=15)
 
     window.mainloop()
 
@@ -237,9 +316,7 @@ def google_window():
 
 def scopus_search():
     window = Tk()
-    window.title('PCVN')
-    window.geometry('750x750')
-    window.resizable(width=False, height=False)
+    window = set_window(window)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -268,7 +345,7 @@ def scopus_search():
             answer = tkinter.messagebox.askyesno('Error de Conexión', 'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
             if answer:
                 window.destroy()
-                scopus_window()
+                scopus_search()
             else:
                 window.destroy()
     # Menu
@@ -291,9 +368,7 @@ def scopus_search():
 
 def scopus_window():
     window = Tk()
-    window.title('PCVN')
-    window.geometry('750x750')
-    window.resizable(width=False, height=False)
+    window = set_window(window)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -305,26 +380,40 @@ def scopus_window():
 
     def retry():
         # author name , will be used later
+        global au_scopus
         au_scopus = entry_scopus.get()
         window.destroy()
         scopus_search()
 
-    # backGround
+    # Frame
+    frame = Frame(borderwidth=15)
+    frame.place(x=135, y=50)
+
+    # backGround Image
     bg = Background(window, '', 'background3.png')
+    # Menu #
+    menu = GuiMenu(window)
+
+    # Frame
+    frame = Frame(borderwidth=15)
+    frame.place(x=135, y=50)
+
+    # ///////// Scopus Entry /////////#
     # Label
-    label_scopus = Label(window, text="Scopus Author ID:")
+    label_scopus = Label(frame, text="Scopus Author ID:")
     font = ('times', 15)
     label_scopus.config(font=font)
-    label_scopus.place(x=185, y=320)
+    label_scopus.grid(row=0, column=0, sticky=E)
     # Entry
-    entry_scopus = Entry(window, width=50)
-    entry_scopus.place(x=350, y=325)
+    entry_scopus = Entry(frame, width=50)
+    entry_scopus.grid(row=0, column=1)
+
+    # //////////////////////////////////////////////
     # Search Button
-    bt_scopus = Button(window, text="Search",
-                       command=retry, height=1, width=30)
+    bt_scopus = Button(frame, text="Buscar", height=1, width=20, command=retry)
     bfont = ('times', 17)
     bt_scopus.config(font=bfont)
-    bt_scopus.place(x=200, y=430)
+    bt_scopus.grid(columnspan=2, pady=15)
 
     window.mainloop()
 
@@ -334,18 +423,9 @@ def scopus_window():
 
 def wos_search():
     window = Tk()
-    window.title('PCVN')
-    window.geometry('750x750')
-    window.resizable(width=False, height=False)
+    window = set_window(window)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
-
-    def re_start():
-        window.destroy()
-        wos_window()
-
-    def skip():
-        window.destroy()
 
     def get_wos_pub():
         # Place progressbar in window
@@ -369,28 +449,12 @@ def wos_search():
                 window.destroy()
                 group_window()
         except ConnectionError:
-
-            # Label that indicates the failure of the function to connect with Scopus API
-            label_fail = Label(window, text="Error en la conexion , compruebe si tiene acceso a internet",
-                               bg='red')
-            font = ('times', 15)
-            label_fail.config(font=font)
-            label_fail.place(x=150, y=200)
-            window.update()
-
-            time.sleep(2)
-
-            # Search Again Button
-            bt_search_again = Button(window, text="Search again",
-                                     command=re_start, height=1, width=30)
-            b_font = ('times', 17)
-            bt_search_again.config(font=b_font)
-            bt_search_again.place(x=200, y=430)
-            # Skip Button
-            bt_search_again = Button(window, text="Skip",
-                                     command=skip, height=1, width=30)
-            bt_search_again.config(font=b_font)
-            bt_search_again.place(x=200, y=480)
+            answer = tkinter.messagebox.askyesno('Error de Conexión', 'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
+            if answer:
+                window.destroy()
+                wos_search()
+            else:
+                window.destroy()
 
     # Background
     text = "Actualmente, se está realizando la obtención de los datos desde WEB OF SCIENCE.\n Cuando se termine el proceso, comenzará automáticamente el tratamiento de datos."
@@ -407,9 +471,7 @@ def wos_search():
 
 def wos_window():
     window = Tk()
-    window.title('PCVN')
-    window.geometry('750x750')
-    window.resizable(width=False, height=False)
+    window = set_window(window)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -421,25 +483,42 @@ def wos_window():
 
     def retry():
         # author name , will be used later
+        global au_wos
         au_wos = entry_wos.get()
         window.destroy()
         wos_search()
 
-    # backGround
+    # backGround Image
     bg = Background(window, '', 'background4.png')
+    # Menu #
+    menu = GuiMenu(window)
+
+    # Frame
+    frame = Frame(borderwidth=15)
+    frame.place(x=135, y=50)
+
+    # Frame
+    frame = Frame(borderwidth=15)
+    frame.place(x=135, y=50)
+
+    # ///////// WOS /////////#
     # Label
-    label_wos = Label(window, text="WOS Author name:")
+    label_wos = Label(frame, text="WOS Author name:")
     font = ('times', 15)
     label_wos.config(font=font)
-    label_wos.place(x=185, y=320)
+    label_wos.grid(row=0, column=0, sticky=E)
     # Entry
-    entry_wos = Entry(window, width=50)
-    entry_wos.place(x=350, y=325)
+    entry_wos = Entry(frame, width=50)
+    entry_wos.grid(row=0, column=1)
+
+    # //////////////////////////////////////////////
     # Search Button
-    bt_wos = Button(window, text="Search", command=retry, height=1, width=30)
+    bt_wos = Button(frame, text="Buscar", height=1, width=20, command=retry)
     bfont = ('times', 17)
     bt_wos.config(font=bfont)
-    bt_wos.place(x=200, y=430)
+    bt_wos.grid(columnspan=2, pady=15)
+
+    window.mainloop()
 
     window.mainloop()
 
@@ -450,9 +529,7 @@ the process of Grouping files and parsing is taking place """
 
 def group_window():
     window = Tk()
-    window.title('PCVN')
-    window.geometry('750x750')
-    window.resizable(width=False, height=False)
+    window = set_window(window)
     """ Function that will place progress bar and start 
     groupfiles process"""
 
@@ -487,15 +564,14 @@ def group_window():
 
 def aneca_login():
     window = Tk()
-    window.title('PCVN')
-    window.geometry('750x750')
-    window.resizable(width=False, height=False)
+    window = set_window(window)
     """ Function that get data from entries """
 
     def get_login():
         # needed global variables for use in other windows process
-        global user
-        global pswd
+        global user, pswd, au_google
+
+        au_google = entry_autor.get()
         user = entry_user.get()
         pswd = entry_pswd.get()
         # Destroy window
@@ -509,37 +585,55 @@ def aneca_login():
         get_login()
 
     window.bind('<Return>', func)
-    # backGround
-    bg = Background(window, '', 'background6.png')
-    # Menu
+
+    # Background
+    bg = Background(window, '', 'background1.png')
+    # Menu #
     menu = GuiMenu(window)
 
+    # Frame
+    frame = Frame(borderwidth=15)
+    frame.place(x=135, y=50)
+
+    # Label Author
+    label_autor = Label(frame, text="Nombre de autor:")
+    font = ('times', 15)
+    label_autor.config(font=font)
+    label_autor.grid(row=0, column=0, sticky=E)
+    # Entry Author
+    entry_autor = Entry(frame, width=30)
+    entry_autor.grid(row=0, column=1, sticky=W)
+
+    # Label Academia
+    label_academia = Label(frame, text='Acceso a ACADEMIA')
+    label_academia.config(font=font)
+    label_academia.grid(columnspan=2, sticky=S)
 
     # Label User
-    label_user = Label(window, text="Usuario")
-    font = ('times', 20)
+    label_user = Label(frame, text="Usuario:")
     label_user.config(font=font)
-    label_user.place(x=220, y=320)
+    label_user.grid(row=2, column=0, sticky=E)
     # Entry User
-    entry_user = Entry(window, width=40)
-    entry_user.place(x=360, y=325)
+    entry_user = Entry(frame, width=30)
+    entry_user.grid(row=2, column=1, sticky=W)
 
     # Label Password
-    label_pswd = Label(window, text="Contraseña")
-    font = ('times', 20)
+    label_pswd = Label(frame, text="Contraseña:")
     label_pswd.config(font=font)
-    label_pswd.place(x=220, y=370)
+    label_pswd.grid(row=3, column=0, sticky=E)
     # Entry Password
-    entry_pswd = Entry(window, width=20)
-    entry_pswd.place(x=360, y=385)
+    entry_pswd = Entry(frame, width=20)
+    entry_pswd.grid(row=3, column=1, sticky=W)
     entry_pswd.config(show="*")  # Make password invisible
 
-    # Login Button
-    bt_login = Button(window, text="Login", height=1,
-                      width=10, command=get_login)
+    # //////////////////////////////////////////////
+    # Search Button
+    bt_scopus = Button(frame, text="Login", height=1, width=20, command=get_login)
     bfont = ('times', 17)
-    bt_login.config(font=bfont)
-    bt_login.place(x=360, y=430)
+    bt_scopus.config(font=bfont)
+    bt_scopus.grid(columnspan=2, sticky=N, pady=20)
+
+    window, frame = center_frame(window, frame)
 
     window.mainloop()
 
@@ -551,10 +645,11 @@ indicating the progress taken """
 
 
 def aneca_window(author):
+    if log_flag is False:
+        completed_window()
+        return()
     window = Tk()
-    window.title('PCVN')
-    window.geometry('750x750')
-    window.resizable(width=False, height=False)
+    window = set_window(window)
     """ Function that will place progress bar and start 
     upload process"""
 
@@ -572,7 +667,6 @@ def aneca_window(author):
             window.destroy()
             aneca_login()
 
-
         pbar_aneca.stop()
         # Destroy Window
         window.destroy()
@@ -583,7 +677,6 @@ def aneca_window(author):
     bg = Background(window, text, 'background7.png')
     # Menu
     menu = GuiMenu(window)
-
 
     # Numb publications label
     num_var = StringVar()
@@ -603,40 +696,53 @@ def aneca_window(author):
 
 def completed_window():
     window = Tk()
-    window.title('PCVN')
-    window.geometry('750x750')
-    window.resizable(width=False, height=False)
+    window = set_window(window)
 
     def end_gui():
         # Destroy Window
         window.destroy()
+
     def open_pub():
         os.startfile('pendientes.bib')
 
+    def open_pub_extract():
+            os.startfile('todas.bib')
+
     # backGround
-    text = 'Número de publicaciones que no pudieron ser subidas:\n' + str(failed) + '/' + str(total)
+    if log_flag:
+        text = 'Número de publicaciones que no pudieron ser subidas:\n' + str(failed) + '/' + str(total)
+    else:
+        text = ''
     bg = Background(window, text, 'background8.png')
-    # Menu
+    # Menu #
     menu = GuiMenu(window)
+
+    # Frame
+    frame = Frame(borderwidth=15)
+    frame.place(x=135, y=100)
+
+    # ///////// Google Scholar Entry /////////#
     # Label
-    label_completed = Label(window, text="Proceso finalizado")
+    label_completed = Label(frame, text="Proceso finalizado")
     font = ('times', 25)
     label_completed.config(font=font)
-    label_completed.place(x=260, y=250)
+    label_completed.grid(row=0, column=0, sticky=E)
 
-    # Close Button
-    bt_close = Button(window, text="Cerrar Aplicación", height=1,
-                      width=18, command=end_gui)
+    # ///////// Close Button /////////#
+    bt_close = Button(frame, text="Cerrar Aplicación", height=1, width=18, command=end_gui)
     bfont = ('times', 17)
     bt_close.config(font=bfont)
-    bt_close.place(x=255, y=350)
-    # Open Button
-    bt_open= Button(window, text="Abrir publicaciones\n Erroneas", height=1,
-                      width=18, command=open_pub)
+    bt_close.grid(columnspan=2, pady=15)
+    # ///////// Open Publications Button /////////#
+    if log_flag:
+        bt_open = Button(frame, text="Abrir publicaciones\n Erroneas", height=1, width=18, command=open_pub)
+    else:
+        bt_open = Button(frame, text="Abrir publicaciones\n Extraídas", height=1, width=18, command=open_pub_extract)
     bfont = ('times', 17)
     bt_open.config(font=bfont)
-    bt_open.place(x=255, y=410)
+    bt_open.grid(columnspan=2, pady=15)
 
+    window, frame = center_frame(window, frame)
     window.mainloop()
 
 
@@ -669,23 +775,53 @@ def reset_entry(entry_google_scholar, entry_scopus, entry_wos, entry_user, entry
     entry_pswd.config(highlightthickness=0)
 
 
+def set_window(window):
+    window.title('PCVN')
+    window.geometry('750x750')
+    window.resizable(width=False, height=False)
+
+    return window
+
+
+def center_frame(window, frame):
+    window.update()
+    window_width = 750
+    frame_width = frame.winfo_width()
+    frame.place(x=(window_width - frame_width) / 2, y=50)
+    return window, frame
+
+
 class GuiMenu:
     def __init__(self, master):
+        self.master = master
         self.menu = Menu(master)
         master.config(menu=self.menu)
 
-        self.submenu_pub = Menu(self.menu)
+        self.submenu = Menu(self.menu)
 
+        # ///////// Sub Menu Max Publications /////////#
+        self.submenu_pub = Menu(self.submenu)
+        # Options of submenu
         self.submenu_pub.add_command(label="10", command=self.set10)
         self.submenu_pub.add_command(label="20", command=self.set20)
         self.submenu_pub.add_command(label="50", command=self.set50)
         self.submenu_pub.add_command(label="Todas", command=self.set_all)
-        self.menu.add_cascade(label="Máx Publicaciones", menu=self.submenu_pub)
+        self.submenu.add_cascade(label="Máx Publicaciones", menu=self.submenu_pub)
 
-        self.menu.add_command(label="Ayuda",command=self.open)
+        # ///////// Sub Menu Steps to Execute /////////#
+        self.submenu_steps = Menu(self.submenu)
+        # Options of submenu
+        self.submenu_steps.add_command(label="Extraer", command=self.extract)
+        self.submenu_steps.add_command(label="Subir", command=self.log)
+        self.submenu_steps.add_command(label="Extraer y subir", command=self.hole_process)
+        self.submenu.add_cascade(label="Pasos a Ejecutar", menu=self.submenu_steps)
+
+        # ///////// Main Options Menu /////////#
+        self.menu.add_cascade(label="Configuración", underline=0, menu=self.submenu)
+        self.menu.add_command(label="Ayuda", command=self.open)
 
     def open(self):
-        os.startfile('ayuda.pdf')
+        os.startfile('anexos.pdf')
 
     def set10(self):
         global max_p
@@ -702,6 +838,20 @@ class GuiMenu:
     def set_all(self):
         global max_p
         max_p = 10000
+
+    def log(self):
+        self.master.destroy()
+        aneca_login()
+
+    def extract(self):
+        self.master.destroy()
+        global log_flag
+        log_flag = False
+        get_only_info_window()
+
+    def hole_process(self):
+        global log_flag
+        log_flag = False
 
 
 class Background:
@@ -724,5 +874,6 @@ class Background:
 if __name__ == '__main__':
     max_p = 10000
     cont = -1
+    log_flag = True
     info_window()
 

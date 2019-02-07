@@ -48,7 +48,7 @@ return : BibTex file
 """
 
 
-def get_publications_scholar(author_input, pbar, label_var, max):
+def get_publications_scholar(author_input, pbar, label_var, maxp):
     """  Call to scholarly functions that will search for the author given
     as a parameter and will return an iterable object with all the 
     publications found for the author given"""
@@ -60,10 +60,10 @@ def get_publications_scholar(author_input, pbar, label_var, max):
     db = BibDatabase()
     # Counter that indicates ID in BibDatabase
     cont = 0
-    if max == 10000:
-        max = len(author_pub)
+    if maxp == 10000:
+        maxp = len(author_pub)
     """ update progress bar GUI"""
-    progress_bar_inc = 100 / max
+    progress_bar_inc = 100 / maxp
     # BibTex writer object
     writer = BibTexWriter()
 
@@ -71,7 +71,7 @@ def get_publications_scholar(author_input, pbar, label_var, max):
     and parse some in order to fit BibTexWriter"""
     for pub in author_pub:
         # Set max of publications
-        if cont >= max:
+        if cont >= maxp:
             break
         # fill all fields possible of that publication
         pub.fill()
@@ -104,7 +104,7 @@ def get_publications_scholar(author_input, pbar, label_var, max):
         """ update progress bar GUI"""
         pbar['value'] += progress_bar_inc
         pbar.update()
-        label_var.set('Número de publicaciones obtenidas:\n'+str(cont)+'/'+str(max))
+        label_var.set('Número de publicaciones obtenidas:\n'+str(cont)+'/'+str(maxp))
     """ Write the extracted data stored in db (BibDatabase) and save it 
     in bibtexScholar.bib for later use """
     with open('bibtexScholar.bib', 'w', encoding='utf-8') as bibfile:

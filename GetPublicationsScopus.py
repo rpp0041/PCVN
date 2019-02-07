@@ -1,6 +1,7 @@
 from selenium.webdriver.firefox.options import Options
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -63,10 +64,13 @@ def get_publications_scopus(author_id, pbar):
     time.sleep(1)
 
     """ Click Export button"""
-    element = WebDriverWait(browser, 20).until(
-        ec.element_to_be_clickable((By.ID, "export_results")))
-    browser.find_element_by_id('export_results').click()
-
+    try:
+        element = WebDriverWait(browser, 10).until(
+            ec.element_to_be_clickable((By.ID, "export_results")))
+        browser.find_element_by_id('export_results').click()
+    except TimeoutException:
+        browser.execute_script("document.getElementById('export_results').style.display = 'block';")
+        browser.find_element_by_id('export_results').click()
     """ update progress bar GUI"""
     pbar['value'] = 70
     pbar.update()

@@ -25,19 +25,34 @@ def info_window():
     and it will work as search button"""
 
     def return_au():
+        # rest entry border color
+        reset_entry(entry_google_scholar, entry_scopus, entry_wos, entry_user, entry_pswd)
+
         global au_google, au_scopus, au_wos, user, pswd
         user = entry_user.get()
         pswd = entry_pswd.get()
         au_google = entry_google_scholar.get()
         au_scopus = entry_scopus.get()
         au_wos = entry_wos.get()
+
+        # Check if entry len is bigger than 0
+        if check_entry(entry_google_scholar, entry_scopus, entry_wos):
+            return
+
         if login(user, pswd) is True:
             error = tkinter.messagebox.showerror(title="Error",
                                                  message="Usuario o Contraseña Incorrectos \nPor favor introduzca los datos de nuevo")
+
+            # delete input and set red border to indicate the user what is wrong
+            entry_user.delete(0, 'end')
+            entry_user.config(highlightbackground="red", highlightthickness=2)
+
+            entry_pswd.delete(0, 'end')
+            entry_pswd.config(highlightbackground="red", highlightthickness=2)
+
+        else:
             window.destroy()
-            info_window()
-        window.destroy()
-        google_search()
+            google_search()
 
     txt = "Cuando se pulse el botón 'Comenzar', se procederá a la búsqueda de los datos referentes al autor introducido, si durante el proceso ocurriera algún problema con los datos introducidos, podrá introducirlos nuevamente."
     # Background
@@ -46,7 +61,7 @@ def info_window():
     menu = GuiMenu(window)
 
     # Frame
-    frame = Frame()
+    frame = Frame(borderwidth=15)
     frame.place(x=135, y=50)
 
     # ///////// Google Scholar Entry /////////#
@@ -54,25 +69,25 @@ def info_window():
     label_google_scholar = Label(frame, text="Google Scholar Author:")
     font = ('times', 15)
     label_google_scholar.config(font=font)
-    label_google_scholar.grid(row=0, column=0, sticky=E, pady=10)
+    label_google_scholar.grid(row=0, column=0, sticky=E)
     # Entry
     entry_google_scholar = Entry(frame, width=50)
-    entry_google_scholar.grid(row=0, column=1, pady=10)
+    entry_google_scholar.grid(row=0, column=1)
 
     # ///////// Scopus Entry /////////#
     # Label
     label_scopus = Label(frame, text="Scopus Author ID:")
     label_scopus.config(font=font)
-    label_scopus.grid(row=1, column=0, sticky=E, pady=10)
+    label_scopus.grid(row=1, column=0, sticky=E)
     # Entry
     entry_scopus = Entry(frame, width=50)
-    entry_scopus.grid(row=1, column=1, pady=10)
+    entry_scopus.grid(row=1, column=1)
 
     # ///////// WOS Entry /////////#
     # Label
     label_wos = Label(frame, text="WOS Author Name:")
     label_wos.config(font=font)
-    label_wos.grid(row=2, column=0, sticky=E, pady=10)
+    label_wos.grid(row=2, column=0, sticky=E)
     # Entry
     entry_wos = Entry(frame, width=50)
     entry_wos.grid(row=2, column=1, pady=10)
@@ -80,7 +95,7 @@ def info_window():
     # Label Academia
     label_academia = Label(frame, text='Acceso a ACADEMIA')
     label_academia.config(font=font)
-    label_academia.grid(columnspan=2, sticky=S, pady=10)
+    label_academia.grid(columnspan=2, sticky=S)
 
     # Label User
     label_user = Label(frame, text="Usuario:")
@@ -447,7 +462,7 @@ def group_window():
         pbar_g_files.update()
         pbar_g_files['maximum'] = 100
         # Call function that group & parse files
-        group_files(pbar_g_files)
+        group_files(pbar_g_files, max_p)
         pbar_g_files.stop()
         # Destroy window
         window.destroy()
@@ -623,6 +638,35 @@ def completed_window():
     bt_open.place(x=255, y=410)
 
     window.mainloop()
+
+
+def check_entry(entry_google_scholar, entry_scopus, entry_wos):
+    flag = False
+    if len(au_google) < 1:
+        # delete input and set red border to indicate the user what is wrong
+        entry_google_scholar.delete(0, 'end')
+        entry_google_scholar.config(highlightbackground="red", highlightthickness=2)
+        flag = True
+    if len(au_scopus) < 1:
+        # delete input and set red border to indicate the user what is wrong
+        entry_scopus.delete(0, 'end')
+        entry_scopus.config(highlightbackground="red", highlightthickness=2)
+        flag = True
+    if len(au_wos) < 1:
+        # delete input and set red border to indicate the user what is wrong
+        entry_wos.delete(0, 'end')
+        entry_wos.config(highlightbackground="red", highlightthickness=2)
+        flag = True
+
+    return flag
+
+
+def reset_entry(entry_google_scholar, entry_scopus, entry_wos, entry_user, entry_pswd):
+    entry_google_scholar.config(highlightthickness=0)
+    entry_scopus.config(highlightthickness=0)
+    entry_wos.config(highlightthickness=0)
+    entry_user.config(highlightthickness=0)
+    entry_pswd.config(highlightthickness=0)
 
 
 class GuiMenu:

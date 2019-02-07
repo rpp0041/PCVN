@@ -13,7 +13,7 @@ return : BibTex file
 """
 
 
-def group_files(pbar):
+def group_files(pbar, maxp):
 
     # Load BibTex files extract from the websites
 
@@ -35,6 +35,10 @@ def group_files(pbar):
             wos.entries.append(x)
     except FileNotFoundError:
         pass
+    # Set Max of publications
+    if maxp < 10000:
+        wos.entries = wos.entries[:maxp]
+        scopus.entries = scopus.entries[:maxp]
 
     """ update progress bar GUI"""
     pbar['value'] = 10

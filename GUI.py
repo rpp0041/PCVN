@@ -154,7 +154,7 @@ def get_only_info_window():
 
     txt = "Cuando se pulse el botón 'Comenzar', se procederá a la búsqueda de los datos referentes al autor introducido, si durante el proceso ocurriera algún problema con los datos introducidos, podrá introducirlos nuevamente."
     # Background
-    bg = Background(window, txt, 'background1.png')
+    bg = Background(window, txt, 'background_ext1.png')
     # Menu #
     menu = GuiMenu(window)
 
@@ -240,7 +240,10 @@ def google_search():
             scopus_search()
     # Background
     txt = "Actualmente, se está realizando la obtención de los datos desde GOOGLE SCHOLAR.\n Cuando se termine el proceso, comenzará automáticamente la búsqueda en Scopus."
-    bg = Background(window, txt, 'background2.png')
+    if log_flag:
+        bg = Background(window, txt, 'background2.png')
+    else:
+        bg = Background(window, txt, 'background_ext2.png')
     # Menu
     menu = GuiMenu(window)
 
@@ -283,7 +286,10 @@ def google_window():
         google_search()
 
     # backGround Image
-    bg = Background(window, '', 'background2.png')
+    if log_flag:
+        bg = Background(window, '', 'background2.png')
+    else:
+        bg = Background(window, '', 'background_ext2.png')
     # Menu #
     menu = GuiMenu(window)
 
@@ -352,7 +358,10 @@ def scopus_search():
     menu = GuiMenu(window)
     # backGround
     text = "Actualmente, se está realizando la obtención de los datos desde SCOPUS.\n Cuando se termine el proceso, comenzará automáticamente la búsqueda en Web of Science."
-    bg = Background(window, text, 'background3.png')
+    if log_flag:
+        bg = Background(window, text, 'background3.png')
+    else:
+        bg = Background(window, text, 'background_ext3.png')
 
     # Progress Bar
     pbar_scopus = ttk.Progressbar(window, mode='determinate', length=400)
@@ -390,7 +399,10 @@ def scopus_window():
     frame.place(x=135, y=50)
 
     # backGround Image
-    bg = Background(window, '', 'background3.png')
+    if log_flag:
+        bg = Background(window, '', 'background3.png')
+    else:
+        bg = Background(window, '', 'background_ext3.png')
     # Menu #
     menu = GuiMenu(window)
 
@@ -458,7 +470,10 @@ def wos_search():
 
     # Background
     text = "Actualmente, se está realizando la obtención de los datos desde WEB OF SCIENCE.\n Cuando se termine el proceso, comenzará automáticamente el tratamiento de datos."
-    bg = Background(window, text, 'background4.png')
+    if log_flag:
+        bg = Background(window, text, 'background4.png')
+    else:
+        bg = Background(window, text, 'background_ext4.png')
     # Menu
     menu = GuiMenu(window)
 
@@ -489,7 +504,10 @@ def wos_window():
         wos_search()
 
     # backGround Image
-    bg = Background(window, '', 'background4.png')
+    if log_flag:
+        bg = Background(window, '', 'background4.png')
+    else:
+        bg = Background(window, '', 'background_ext4.png')
     # Menu #
     menu = GuiMenu(window)
 
@@ -546,8 +564,13 @@ def group_window():
         aneca_window(au_google)
 
     # backGround
-    text = "Se está procediendo al tratamiento de los datos, eliminación de elementos duplicados y agrupación en un solo fichero.\n Cuando se termine, comenzará el proceso de subida a ACADEMIA."
-    bg = Background(window, text, 'background5.png')
+
+    if log_flag:
+        text = "Se está procediendo al tratamiento de los datos, eliminación de elementos duplicados y agrupación en un solo fichero.\n Cuando se termine, comenzará el proceso de subida a ACADEMIA."
+        bg = Background(window, text, 'background5.png')
+    else:
+        text = "Se está procediendo al tratamiento de los datos, eliminación de elementos duplicados y agrupación en un solo fichero.\n Este es el último paso del proceso."
+        bg = Background(window, text, 'background_ext5.png')
     # Menu
     menu = GuiMenu(window)
 
@@ -587,7 +610,7 @@ def aneca_login():
     window.bind('<Return>', func)
 
     # Background
-    bg = Background(window, '', 'background1.png')
+    bg = Background(window, '', 'background_subir2.png')
     # Menu #
     menu = GuiMenu(window)
 
@@ -674,7 +697,10 @@ def aneca_window(author):
 
     # backGround
     text = "Se está procediendo a la subida de los datos a ACADEMIA.\n Este es el último paso del proceso, cuando termine, se mostrará cuantas publicaciones pudieron ser subidas. Las que no se hayan podido subir, se guardarán en un fichero para su subida manual"
-    bg = Background(window, text, 'background7.png')
+    if ext_flag:
+        bg = Background(window, text, 'background6.png')
+    else:
+        bg = Background(window, text, 'background_subir3.png')
     # Menu
     menu = GuiMenu(window)
 
@@ -711,9 +737,13 @@ def completed_window():
     # backGround
     if log_flag:
         text = 'Número de publicaciones que no pudieron ser subidas:\n' + str(failed) + '/' + str(total)
+        if ext_flag:
+            bg = Background(window, text, 'background7.png')
+        else:
+            bg = Background(window, text, 'background_subir4.png')
     else:
         text = ''
-    bg = Background(window, text, 'background8.png')
+        bg = Background(window, text, 'background_ext5.png')
     # Menu #
     menu = GuiMenu(window)
 
@@ -813,7 +843,7 @@ class GuiMenu:
         # Options of submenu
         self.submenu_steps.add_command(label="Extraer", command=self.extract)
         self.submenu_steps.add_command(label="Subir", command=self.log)
-        self.submenu_steps.add_command(label="Extraer y subir", command=self.hole_process)
+        self.submenu_steps.add_command(label="Extraer y subir", command=self.full_process)
         self.submenu.add_cascade(label="Pasos a Ejecutar", menu=self.submenu_steps)
 
         # ///////// Main Options Menu /////////#
@@ -841,17 +871,22 @@ class GuiMenu:
 
     def log(self):
         self.master.destroy()
+        global ext_flag, log_flag
+        ext_flag = False
+        log_flag = True
         aneca_login()
 
     def extract(self):
         self.master.destroy()
-        global log_flag
+        global ext_flag, log_flag
+        ext_flag = True
         log_flag = False
         get_only_info_window()
 
-    def hole_process(self):
-        global log_flag
-        log_flag = False
+    def full_process(self):
+        global ext_flag, log_flag
+        ext_flag = True
+        log_flag = True
 
 
 class Background:
@@ -875,5 +910,6 @@ if __name__ == '__main__':
     max_p = 10000
     cont = -1
     log_flag = True
+    ext_flag = True
     info_window()
 

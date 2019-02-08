@@ -33,9 +33,12 @@ def get_publications_scopus(author_id, pbar):
 
     """ close po up"""
     # Wait for element to be clickable
-    element = WebDriverWait(browser, 10).until(
-        ec.element_to_be_clickable((By.ID, '_pendo-close-guide_')))
-    browser.find_element_by_id('_pendo-close-guide_').click()
+    try:
+        element = WebDriverWait(browser, 10).until(
+            ec.element_to_be_clickable((By.ID, '_pendo-close-guide_')))
+        browser.find_element_by_id('_pendo-close-guide_').click()
+    except TimeoutException:
+        raise NoSuchElementException
 
     """ advnaced search"""
     # Wait for element to be clickable

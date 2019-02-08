@@ -14,6 +14,8 @@ from selenium.common.exceptions import NoSuchElementException
 from requests.exceptions import ConnectionError
 import textwrap
 import tkinter.messagebox
+import sys
+import subprocess
 
 
 def info_window():
@@ -728,10 +730,10 @@ def completed_window():
         window.destroy()
 
     def open_pub():
-        os.startfile('pendientes.bib')
+        open_file('pendientes.bib')
 
     def open_pub_extract():
-            os.startfile('todas.bib')
+            open_file('todas.bib')
 
     # backGround
     if log_flag:
@@ -821,6 +823,14 @@ def center_frame(window, frame):
     return window, frame
 
 
+def open_file(filename):
+    if sys.platform == "win32":
+        os.startfile(filename)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filename])
+
+
 class GuiMenu:
     def __init__(self, master):
         self.master = master
@@ -851,7 +861,7 @@ class GuiMenu:
         self.menu.add_command(label="Ayuda", command=self.open)
 
     def open(self):
-        os.startfile('anexos.pdf')
+        open_file('ayuda.pdf')
 
     def set10(self):
         global max_p

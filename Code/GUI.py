@@ -347,7 +347,6 @@ def scopus_search():
                 wos_search()
 
         except (KeyError, NoSuchElementException, ConnectionError):
-            pbar_scopus.stop()
             answer = tkinter.messagebox.askyesno('Error de Conexión', 'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
             if answer:
                 window.destroy()
@@ -808,6 +807,7 @@ def reset_entry(entry_google_scholar, entry_scopus, entry_wos, entry_user, entry
 def set_window(window):
     window.title('PCVN')
     window.geometry('750x750')
+    window.iconbitmap('logo.ico')
     window.resizable(width=False, height=False)
 
     return window

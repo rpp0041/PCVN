@@ -6,6 +6,9 @@ Selenium: we will use selenium to navegate through WOS web site
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
 import time
 import os
 
@@ -15,13 +18,23 @@ import os
 def select_save_options(browser):
     """ Select save in other format file"""
     browser.find_elements_by_class_name('select2-selection__arrow')[1].click()
+    # Wait for element to be clickable
+    element = WebDriverWait(browser, 10).until(ec.element_to_be_clickable((By.CLASS_NAME, 'select2-results__option')))
+
     browser.find_elements_by_class_name('select2-results__option')[6].click()
 
     """Select register content """
     browser.find_element_by_id('select2-bib_fields-container').click()
+    # Wait for element to be clickable
+    element = WebDriverWait(browser, 10).until(ec.element_to_be_clickable((By.CLASS_NAME, 'select2-results__option')))
+
     browser.find_elements_by_class_name('select2-results__option')[3].click()
+
     """Select file format """
     browser.find_element_by_id('select2-saveOptions-container').click()
+    # Wait for element to be clickable
+    element = WebDriverWait(browser, 10).until(ec.element_to_be_clickable((By.CLASS_NAME, 'select2-results__option')))
+
     browser.find_elements_by_class_name('select2-results__option')[1].click()
 
 
@@ -97,6 +110,8 @@ def get_publications_wos(author, pbar):
 
     """Select *show 50 per page* """
     browser.find_element_by_id('select2-selectPageSize_bottom-container').click()
+    # Wait for element to be clickable
+    element = WebDriverWait(browser, 10).until(ec.element_to_be_clickable((By.CLASS_NAME, 'select2-results__option')))
     browser.find_elements_by_class_name('select2-results__option')[2].click()
 
     # Save results
@@ -148,6 +163,6 @@ def get_publications_wos(author, pbar):
         time.sleep(4)
         browser.find_element_by_class_name('quickoutput-cancel-action').click()
 
-    browser.close()
+    browser.quit()
     pbar['value'] = 100
     pbar.update()

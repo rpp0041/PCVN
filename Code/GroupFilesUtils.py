@@ -45,7 +45,7 @@ def get_impact_index(title):
     try:
         browser.find_elements_by_class_name('x-boundlist-item')[0].click()
     except IndexError:
-        browser.close()
+        browser.quit()
         return 0
     # wait page to load
     time.sleep(5)
@@ -54,7 +54,7 @@ def get_impact_index(title):
     try:
         """  close previous windows open """
         window_after = browser.window_handles[1]
-        browser.close()
+        browser.quit()
         browser.switch_to.window(window_after)
         time.sleep(6)
         """ See all data for every year from 2017-1998"""
@@ -65,9 +65,9 @@ def get_impact_index(title):
     try:
         dic_impact, rank_dic, quartile_dic, tertile_dict, category_dic = get_info(browser)
     except NoSuchElementException:
-        browser.close()
+        browser.quit()
         return
-    browser.close()
+    browser.quit()
     return dic_impact, rank_dic, quartile_dic, tertile_dict, category_dic
 
 

@@ -18,13 +18,14 @@ import sys
 import subprocess
 
 
-def info_window():
+def info_window(x, y):
     window = Tk()
-    window = set_window(window)
+    window = set_window(window, x, y)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
     def func(event):
         return_au()
+
     window.bind('<Return>', func)
 
     def return_au():
@@ -54,8 +55,9 @@ def info_window():
             entry_pswd.config(highlightbackground="red", highlightthickness=2)
 
         else:
+            x, y = get_window_pos(window)
             window.destroy()
-            google_search()
+            google_search(x, y)
 
     txt = "Cuando se pulse el botón 'Comenzar', se procederá a la búsqueda de los datos referentes al autor introducido, si durante el proceso ocurriera algún problema con los datos introducidos, podrá introducirlos nuevamente."
     # Background
@@ -129,13 +131,14 @@ def info_window():
     window.mainloop()
 
 
-def get_only_info_window():
+def get_only_info_window(x, y):
     window = Tk()
-    window = set_window(window)
+    window = set_window(window, x, y)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
     def func(event):
         return_au()
+
     window.bind('<Return>', func)
 
     def return_au():
@@ -151,8 +154,9 @@ def get_only_info_window():
 
         # Check if entry len is bigger than 0
         if check_entry(entry_google_scholar, entry_scopus, entry_wos) is False:
+            x, y = get_window_pos(window)
             window.destroy()
-            google_search()
+            google_search(x, y)
 
     txt = "Cuando se pulse el botón 'Comenzar', se procederá a la búsqueda de los datos referentes al autor introducido, si durante el proceso ocurriera algún problema con los datos introducidos, podrá introducirlos nuevamente."
     # Background
@@ -207,9 +211,9 @@ def get_only_info_window():
 """ Fucntion that will show process of data scrapping in Google Scholar """
 
 
-def google_search():
+def google_search(x, y):
     window = Tk()
-    window = set_window(window)
+    window = set_window(window, x, y)
 
     def get_scholar_pub():
         # place progressbar in window
@@ -221,25 +225,41 @@ def google_search():
             get_publications_scholar(au_google, pbar_google_scholar, num_var, max_p)
         except StopIteration:
             pbar_google_scholar.stop()
-            answer = tkinter.messagebox.askyesno('Sin resultados', 'No se han encontrado resultados \n ¿Desea Volver a buscar?')
+            answer = tkinter.messagebox.askyesno('Sin resultados',
+                                                 'No se han encontrado resultados \n ¿Desea Volver a buscar?')
             if answer:
+                x, y = get_window_pos(window)
                 window.destroy()
-                google_window()
+                google_window(x, y)
             else:
                 window.destroy()
         except ConnectionError:
             pbar_google_scholar.stop()
-            answer = tkinter.messagebox.askyesno('Error de Conexión', 'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
+            answer = tkinter.messagebox.askyesno('Error de Conexión',
+                                                 'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
             if answer:
+                x, y = get_window_pos(window)
                 window.destroy()
-                google_search()
+                google_search(x, y)
+            else:
+                window.destroy()
+        except:
+            pbar_google_scholar.stop()
+            answer = tkinter.messagebox.askyesno(sys.exc_info()[0],
+                                                 'Ha ocurrido un error inesperado\n ¿Desea Volver a intentarlo?')
+            if answer:
+                x, y = get_window_pos(window)
+                window.destroy()
+                google_search(x, y)
             else:
                 window.destroy()
         else:
             pbar_google_scholar.stop()
             # Destroy Window
+            x, y = get_window_pos(window)
             window.destroy()
-            scopus_search()
+            scopus_search(x, y)
+
     # Background
     txt = "Actualmente, se está realizando la obtención de los datos desde GOOGLE SCHOLAR.\n Cuando se termine el proceso, comenzará automáticamente la búsqueda en Scopus."
     if log_flag:
@@ -267,9 +287,9 @@ def google_search():
 """ Function tha will ask again for user input for Google Scholar author, if at first try it does not work"""
 
 
-def google_window():
+def google_window(x, y):
     window = Tk()
-    window = set_window(window)
+    window = set_window(window, x, y)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -283,9 +303,9 @@ def google_window():
         # author name , will be used later
         global au_google
         au_google = entry_google_scholar.get()
-        print(au_google)
+        x, y = get_window_pos(window)
         window.destroy()
-        google_search()
+        google_search(x, y)
 
     # backGround Image
     if log_flag:
@@ -322,9 +342,9 @@ def google_window():
 """ Fucntion that will show process of data scrapping in Scopus"""
 
 
-def scopus_search():
+def scopus_search(x, y):
     window = Tk()
-    window = set_window(window)
+    window = set_window(window, x, y)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -340,21 +360,35 @@ def scopus_search():
                 answer = tkinter.messagebox.askyesno('Sin resultados',
                                                      'No se han encontrado resultados \n ¿Desea Volver a buscar?')
                 if answer:
+                    x, y = get_window_pos(window)
                     window.destroy()
-                    scopus_window()
+                    scopus_window(x, y)
                 else:
                     window.destroy()
             else:
+                x, y = get_window_pos(window)
                 window.destroy()
-                wos_search()
+                wos_search(x, y)
 
         except (KeyError, NoSuchElementException, ConnectionError):
-            answer = tkinter.messagebox.askyesno('Error de Conexión', 'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
+            answer = tkinter.messagebox.askyesno('Error de Conexión',
+                                                 'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
             if answer:
+                x, y = get_window_pos(window)
                 window.destroy()
-                scopus_search()
+                scopus_search(x, y)
             else:
                 window.destroy()
+        except:
+            answer = tkinter.messagebox.askyesno(sys.exc_info()[0],
+                                                 'Ha ocurrido un error inesperado \n ¿Desea Volver a intentarlo?')
+            if answer:
+                x, y = get_window_pos(window)
+                window.destroy()
+                scopus_search(x, y)
+            else:
+                window.destroy()
+
     # Menu
     menu = GuiMenu(window)
     # backGround
@@ -376,9 +410,9 @@ def scopus_search():
 """ Function tha will ask again for user input for Scopus author, if at first try it does not work"""
 
 
-def scopus_window():
+def scopus_window(x, y):
     window = Tk()
-    window = set_window(window)
+    window = set_window(window, x, y)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -392,8 +426,9 @@ def scopus_window():
         # author name , will be used later
         global au_scopus
         au_scopus = entry_scopus.get()
+        x, y = get_window_pos(window)
         window.destroy()
-        scopus_search()
+        scopus_search(x, y)
 
     # Frame
     frame = Frame(borderwidth=15)
@@ -434,9 +469,9 @@ def scopus_window():
 """ Fucntion that will show process of data scrapping in WOS """
 
 
-def wos_search():
+def wos_search(x, y):
     window = Tk()
-    window = set_window(window)
+    window = set_window(window, x, y)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -452,20 +487,33 @@ def wos_search():
                 answer = tkinter.messagebox.askyesno('Sin resultados',
                                                      'No se han encontrado resultados \n ¿Desea Volver a buscar?')
                 if answer:
+                    x, y = get_window_pos(window)
                     window.destroy()
-                    wos_window()
+                    wos_window(x, y)
                 else:
                     window.destroy()
             else:
                 pbar_wos.stop()
                 # Destroy window
+                x, y = get_window_pos(window)
                 window.destroy()
-                group_window()
+                group_window(x, y)
         except ConnectionError:
-            answer = tkinter.messagebox.askyesno('Error de Conexión', 'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
+            answer = tkinter.messagebox.askyesno('Error de Conexión',
+                                                 'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
             if answer:
+                x, y = get_window_pos(window)
                 window.destroy()
-                wos_search()
+                wos_search(x, y)
+            else:
+                window.destroy()
+        except:
+            answer = tkinter.messagebox.askyesno(sys.exc_info()[0],
+                                                 'Ha ocurrido un error inesperado \n ¿Desea Volver a intentarlo?')
+            if answer:
+                x, y = get_window_pos(window)
+                window.destroy()
+                wos_search(x, y)
             else:
                 window.destroy()
 
@@ -485,9 +533,9 @@ def wos_search():
     window.mainloop()
 
 
-def wos_window():
+def wos_window(x, y):
     window = Tk()
-    window = set_window(window)
+    window = set_window(window, x, y)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
 
@@ -501,8 +549,9 @@ def wos_window():
         # author name , will be used later
         global au_wos
         au_wos = entry_wos.get()
+        x, y = get_window_pos(window)
         window.destroy()
-        wos_search()
+        wos_search(x, y)
 
     # backGround Image
     if log_flag:
@@ -546,9 +595,9 @@ def wos_window():
 the process of Grouping files and parsing is taking place """
 
 
-def group_window():
+def group_window(x, y):
     window = Tk()
-    window = set_window(window)
+    window = set_window(window, x, y)
     """ Function that will place progress bar and start 
     groupfiles process"""
 
@@ -557,12 +606,23 @@ def group_window():
         pbar_g_files.place(x=200, y=250)
         pbar_g_files.update()
         pbar_g_files['maximum'] = 100
-        # Call function that group & parse files
-        group_files(pbar_g_files, max_p)
+        try:
+            # Call function that group & parse files
+            group_files(pbar_g_files, max_p)
+        except:
+            answer = tkinter.messagebox.askyesno(sys.exc_info()[0],
+                                                 'Ha ocurrido un error inesperado \n ¿Desea Volver a intentarlo?')
+            if answer:
+                x, y = get_window_pos(window)
+                window.destroy()
+                group_window(x, y)
+            else:
+                window.destroy()
         pbar_g_files.stop()
         # Destroy window
+        x, y = get_window_pos(window)
         window.destroy()
-        aneca_window(au_google)
+        aneca_window(au_google, x, y)
 
     # backGround
 
@@ -575,7 +635,7 @@ def group_window():
     # Menu
     menu = GuiMenu(window)
 
-    # Progress Bar
+    # Progress BarF
     pbar_g_files = ttk.Progressbar(window, mode='determinate', length=400)
 
     groupfiles()
@@ -586,9 +646,9 @@ def group_window():
     these credential will be later use in Aneca() """
 
 
-def aneca_login():
+def aneca_login(x, y):
     window = Tk()
-    window = set_window(window)
+    window = set_window(window, x, y)
     """ Function that get data from entries """
 
     def get_login():
@@ -599,8 +659,9 @@ def aneca_login():
         user = entry_user.get()
         pswd = entry_pswd.get()
         # Destroy window
+        x, y = get_window_pos(window)
         window.destroy()
-        aneca_window(au_google)
+        aneca_window(au_google, x, y)
 
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
@@ -668,12 +729,12 @@ will also show a window for login, and later will show a window
 indicating the progress taken """
 
 
-def aneca_window(author):
+def aneca_window(author, x, y):
     if log_flag is False:
-        completed_window()
-        return()
+        completed_window(x, y)
+        return ()
     window = Tk()
-    window = set_window(window)
+    window = set_window(window, x, y)
     """ Function that will place progress bar and start 
     upload process"""
 
@@ -685,16 +746,29 @@ def aneca_window(author):
         # Call Aneca function to start upload process
         global total, failed
         total = failed = 0
-        total, failed = aneca(author, pbar_aneca, user, pswd, num_var, total, failed)
-        if total is True:
-            error = tkinter.messagebox.showerror("Usuario o Contraseña Incorrectos \n Por favor introduzca los datos de nuevo")
+        try:
+            total, failed = aneca(author, pbar_aneca, user, pswd, num_var, total, failed)
+            if total is True:
+                error = tkinter.messagebox.showerror(title="Error",
+                                                     message="Usuario o Contraseña Incorrectos \nPor favor introduzca los datos de nuevo")
+                x, y = get_window_pos(window)
+                window.destroy()
+                aneca_login(x, y)
+        except FileNotFoundError:
+            answer = tkinter.messagebox.askyesno(title="Archivo no encontrado",
+                                                 message="No se encuentra el archivo 'todas.bib'\n Por favor asegúrese que el archivo \nse encuentra en el directorio y está correctamente nombrado\n¿Desea volver a intentarlo?")
+            if answer:
+                x, y = get_window_pos(window)
+                window.destroy()
+                aneca_window(x, y)
+            else:
+                window.destroy()
+        else:
+            pbar_aneca.stop()
+            x, y = get_window_pos(window)
+            # Destroy Window
             window.destroy()
-            aneca_login()
-
-        pbar_aneca.stop()
-        # Destroy Window
-        window.destroy()
-        completed_window()
+            completed_window(x, y)
 
     # backGround
     text = "Se está procediendo a la subida de los datos a ACADEMIA.\n Este es el último paso del proceso, cuando termine, se mostrará cuantas publicaciones pudieron ser subidas. Las que no se hayan podido subir, se guardarán en un fichero para su subida manual"
@@ -721,9 +795,9 @@ def aneca_window(author):
     window.mainloop()
 
 
-def completed_window():
+def completed_window(x, y):
     window = Tk()
-    window = set_window(window)
+    window = set_window(window, x, y)
 
     def end_gui():
         # Destroy Window
@@ -733,7 +807,7 @@ def completed_window():
         open_file('pendientes.bib')
 
     def open_pub_extract():
-            open_file('todas.bib')
+        open_file('todas.bib')
 
     # backGround
     if log_flag:
@@ -806,9 +880,9 @@ def reset_entry(entry_google_scholar, entry_scopus, entry_wos, entry_user, entry
     entry_pswd.config(highlightthickness=0)
 
 
-def set_window(window):
+def set_window(window, x, y):
     window.title('PCVN')
-    window.geometry('750x750')
+    window.geometry('750x750' + '+' + str(x) + '+' + str(y))
     window.iconbitmap('logo.ico')
     window.resizable(width=False, height=False)
 
@@ -829,6 +903,12 @@ def open_file(filename):
     else:
         opener = "open" if sys.platform == "darwin" else "xdg-open"
         subprocess.call([opener, filename])
+
+
+def get_window_pos(window):
+    x = window.winfo_x()
+    y = window.winfo_y()
+    return x, y
 
 
 class GuiMenu:
@@ -880,28 +960,33 @@ class GuiMenu:
         max_p = 10000
 
     def log(self):
+        x, y = get_window_pos(self.master)
         self.master.destroy()
         global ext_flag, log_flag
         ext_flag = False
         log_flag = True
-        aneca_login()
+        aneca_login(x, y)
 
     def extract(self):
+        x, y = get_window_pos(self.master)
         self.master.destroy()
         global ext_flag, log_flag
         ext_flag = True
         log_flag = False
-        get_only_info_window()
+        get_only_info_window(x, y)
 
     def full_process(self):
+        x, y = get_window_pos(self.master)
+        self.master.destroy()
         global ext_flag, log_flag
         ext_flag = True
         log_flag = True
+        info_window(x, y)
 
 
 class Background:
     def __init__(self, master, text, file):
-        self.image = Image.open('./backgrounds/'+file)
+        self.image = Image.open('./backgrounds/' + file)
         self.draw = ImageDraw.Draw(self.image)
         try:
             self.font = ImageFont.truetype("times.ttf", 22)
@@ -921,5 +1006,4 @@ if __name__ == '__main__':
     cont = -1
     log_flag = True
     ext_flag = True
-    info_window()
-
+    info_window(0, 0)

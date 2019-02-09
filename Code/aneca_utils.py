@@ -55,9 +55,7 @@ def login(user, pswd):
 
     post_req = se.post(url, headers=headers, data=data)
 
-    if re.findall('logueado', post_req.text):
-        print("Logged in!")
-    else:
+    if not re.findall('logueado', post_req.text) :
         return True
 
     return se

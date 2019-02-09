@@ -48,7 +48,7 @@ def group_files(pbar, maxp):
     this will help us in the future comparison (otherwise it will be impossible)
     also look for quality indexes in JCR cites """
     try:
-        with open('test.pkl', 'rb') as input:
+        with open('jcr_cites.pkl', 'rb') as input:
             impact_index_list = pickle.load(input)
             rank_list = pickle.load(input)
             quartile_list = pickle.load(input)
@@ -69,7 +69,7 @@ def group_files(pbar, maxp):
     pbar['value'] = 95
     pbar.update()
 
-    with open('test.pkl', 'wb') as output:
+    with open('jcr_cites.pkl', 'wb') as output:
         pickle.dump(impact_index_list, output, pickle.HIGHEST_PROTOCOL)
         pickle.dump(rank_list, output, pickle.HIGHEST_PROTOCOL)
         pickle.dump(quartile_list, output, pickle.HIGHEST_PROTOCOL)

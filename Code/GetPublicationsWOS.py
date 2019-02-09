@@ -6,6 +6,7 @@ Selenium: we will use selenium to navegate through WOS web site
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -88,7 +89,11 @@ def get_publications_wos(author, pbar):
         browser.find_elements_by_class_name('select2-results__option')[15].click()
         browser.find_element_by_class_name('no-underline').click()
     """ Wait 5 sec to ensure web is loaded,after that insert author´s name"""
-    time.sleep(5)
+    try:
+        element = WebDriverWait(browser, 10).until(
+            ec.presence_of_element_located((By.ID, 'value(input1)')))
+    except TimeoutException:
+        return True
     elem = browser.find_element_by_id('value(input1)')
     elem.send_keys(author)
 
@@ -109,6 +114,7 @@ def get_publications_wos(author, pbar):
         pass
 
     """Select *show 50 per page* """
+    element = WebDriverWait(browser, 10).until(ec.element_to_be_clickable((By.ID, 'select2-selectPageSize_bottom-container')))
     browser.find_element_by_id('select2-selectPageSize_bottom-container').click()
     # Wait for element to be clickable
     element = WebDriverWait(browser, 10).until(ec.element_to_be_clickable((By.CLASS_NAME, 'select2-results__option')))

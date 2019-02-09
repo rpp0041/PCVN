@@ -16,6 +16,8 @@ import textwrap
 import tkinter.messagebox
 import sys
 import subprocess
+import traceback
+import datetime
 
 
 def info_window(x, y):
@@ -27,7 +29,6 @@ def info_window(x, y):
         return_au()
 
     window.bind('<Return>', func)
-
     def return_au():
         # rest entry border color
         reset_entry(entry_google_scholar, entry_scopus, entry_wos, entry_user, entry_pswd)
@@ -136,6 +137,7 @@ def get_only_info_window(x, y):
     window = set_window(window, x, y)
     """ Function that make possible push enter keyboard button 
     and it will work as search button"""
+
     def func(event):
         return_au()
 
@@ -245,8 +247,17 @@ def google_search(x, y):
                 window.destroy()
         except:
             pbar_google_scholar.stop()
-            answer = tkinter.messagebox.askyesno(sys.exc_info()[0],
-                                                 'Ha ocurrido un error inesperado\n ¿Desea Volver a intentarlo?')
+            # Write error to log file
+            logfile = open("log.txt", "a")
+            logfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+'\n')
+            traceback.print_exc(file=logfile)
+            answer = tkinter.messagebox.askyesno('Error inesperado',
+                                                 "Ha ocurrido un error inesperado\n La descripción completa del error ha sido guardad en 'log.txt'\n ¿Desea abrir el archivo?")
+            if answer:
+                open_file('log.txt')
+
+            answer = tkinter.messagebox.askyesno('Error inesperado',
+                                                 '¿Desea volver a intentar el proceso donde\n se produjo el error?')
             if answer:
                 x, y = get_window_pos(window)
                 window.destroy()
@@ -365,11 +376,6 @@ def scopus_search(x, y):
                     scopus_window(x, y)
                 else:
                     window.destroy()
-            else:
-                x, y = get_window_pos(window)
-                window.destroy()
-                wos_search(x, y)
-
         except (KeyError, NoSuchElementException, ConnectionError):
             answer = tkinter.messagebox.askyesno('Error de Conexión',
                                                  'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
@@ -380,14 +386,27 @@ def scopus_search(x, y):
             else:
                 window.destroy()
         except:
-            answer = tkinter.messagebox.askyesno(sys.exc_info()[0],
-                                                 'Ha ocurrido un error inesperado \n ¿Desea Volver a intentarlo?')
+            # Write error to log file
+            logfile = open("log.txt", "a")
+            logfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+'\n')
+            traceback.print_exc(file=logfile)
+            answer = tkinter.messagebox.askyesno('Error inesperado',
+                                                 "Ha ocurrido un error inesperado\n La descripción completa del error ha sido guardad en 'log.txt'\n ¿Desea abrir el archivo?")
+            if answer:
+                open_file('log.txt')
+
+            answer = tkinter.messagebox.askyesno('Error inesperado',
+                                                 '¿Desea volver a intentar el proceso donde\n se produjo el error?')
             if answer:
                 x, y = get_window_pos(window)
                 window.destroy()
                 scopus_search(x, y)
             else:
                 window.destroy()
+        else:
+            x, y = get_window_pos(window)
+            window.destroy()
+            wos_search(x, y)
 
     # Menu
     menu = GuiMenu(window)
@@ -508,8 +527,16 @@ def wos_search(x, y):
             else:
                 window.destroy()
         except:
-            answer = tkinter.messagebox.askyesno(sys.exc_info()[0],
-                                                 'Ha ocurrido un error inesperado \n ¿Desea Volver a intentarlo?')
+            # Write error to log file
+            logfile = open("log.txt", "a")
+            logfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+'\n')
+            traceback.print_exc(file=logfile)
+            answer = tkinter.messagebox.askyesno('Error inesperado',
+                                                 "Ha ocurrido un error inesperado\n La descripción completa del error ha sido guardad en 'log.txt'\n ¿Desea abrir el archivo?")
+            if answer:
+                open_file('log.txt')
+            answer = tkinter.messagebox.askyesno('Error inesperado',
+                                                 '¿Desea volver a intentar el proceso donde\n se produjo el error?')
             if answer:
                 x, y = get_window_pos(window)
                 window.destroy()
@@ -606,18 +633,9 @@ def group_window(x, y):
         pbar_g_files.place(x=200, y=250)
         pbar_g_files.update()
         pbar_g_files['maximum'] = 100
-        try:
-            # Call function that group & parse files
-            group_files(pbar_g_files, max_p)
-        except:
-            answer = tkinter.messagebox.askyesno(sys.exc_info()[0],
-                                                 'Ha ocurrido un error inesperado \n ¿Desea Volver a intentarlo?')
-            if answer:
-                x, y = get_window_pos(window)
-                window.destroy()
-                group_window(x, y)
-            else:
-                window.destroy()
+        # Call function that group & parse files
+        group_files(pbar_g_files, max_p)
+
         pbar_g_files.stop()
         # Destroy window
         x, y = get_window_pos(window)

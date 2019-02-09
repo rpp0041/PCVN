@@ -18,11 +18,13 @@ import os
 
 def select_save_options(browser):
     """ Select save in other format file"""
-    browser.find_elements_by_class_name('select2-selection__arrow')[1].click()
+    browser.find_elements_by_class_name('select2-selection__arrow')[1].click()  # Click arrow menu
+    # Insert search key on dropdown menu
+    browser.find_element_by_class_name('select2-search__field').send_keys('Guardar en otros formatos de archivo')
     # Wait for element to be clickable
     element = WebDriverWait(browser, 10).until(ec.element_to_be_clickable((By.CLASS_NAME, 'select2-results__option')))
 
-    browser.find_elements_by_class_name('select2-results__option')[6].click()
+    browser.find_elements_by_class_name('select2-results__option')[0].click()
 
     """Select register content """
     browser.find_element_by_id('select2-bib_fields-container').click()

@@ -249,8 +249,9 @@ def google_search(x, y):
             pbar_google_scholar.stop()
             # Write error to log file
             logfile = open("log.txt", "a")
-            logfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+'\n')
+            logfile.write('\n\n'+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+'\n')
             traceback.print_exc(file=logfile)
+            logfile.close()
             answer = tkinter.messagebox.askyesno('Error inesperado',
                                                  "Ha ocurrido un error inesperado\n La descripción completa del error ha sido guardad en 'log.txt'\n ¿Desea abrir el archivo?")
             if answer:
@@ -388,8 +389,9 @@ def scopus_search(x, y):
         except:
             # Write error to log file
             logfile = open("log.txt", "a")
-            logfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+'\n')
+            logfile.write('\n\n'+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+'\n')
             traceback.print_exc(file=logfile)
+            logfile.close()
             answer = tkinter.messagebox.askyesno('Error inesperado',
                                                  "Ha ocurrido un error inesperado\n La descripción completa del error ha sido guardad en 'log.txt'\n ¿Desea abrir el archivo?")
             if answer:
@@ -529,8 +531,9 @@ def wos_search(x, y):
         except:
             # Write error to log file
             logfile = open("log.txt", "a")
-            logfile.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+'\n')
+            logfile.write('\n\n'+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+'\n')
             traceback.print_exc(file=logfile)
+            logfile.close()
             answer = tkinter.messagebox.askyesno('Error inesperado',
                                                  "Ha ocurrido un error inesperado\n La descripción completa del error ha sido guardad en 'log.txt'\n ¿Desea abrir el archivo?")
             if answer:

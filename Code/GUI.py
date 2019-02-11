@@ -830,6 +830,14 @@ def completed_window(x, y):
     def open_pub_extract():
         open_file('todas.bib')
 
+    def execute_again():
+        max_p = 10000
+        log_flag = True
+        ext_flag = True
+        x, y = get_window_pos(window)
+        window.destroy()
+        info_window(x, y)
+
     # backGround
     if log_flag:
         text = 'Número de publicaciones que no pudieron ser subidas:\n' + str(failed) + '/' + str(total)
@@ -838,8 +846,7 @@ def completed_window(x, y):
         else:
             bg = Background(window, text, 'background_subir4.png')
     else:
-        text = ''
-        bg = Background(window, text, 'background_ext5.png')
+        bg = Background(window, '', 'background_ext5.png')
     # Menu #
     menu = GuiMenu(window)
 
@@ -847,7 +854,7 @@ def completed_window(x, y):
     frame = Frame(borderwidth=15)
     frame.place(x=135, y=100)
 
-    # ///////// Google Scholar Entry /////////#
+    # ///////// END Label /////////#
     # Label
     label_completed = Label(frame, text="Proceso finalizado")
     font = ('times', 25)
@@ -859,12 +866,15 @@ def completed_window(x, y):
     bfont = ('times', 17)
     bt_close.config(font=bfont)
     bt_close.grid(columnspan=2, pady=15)
+    # ///////// Execute again Button /////////#
+    bt_close = Button(frame, text="Volver a Ejecutar", height=1, width=18, command=execute_again)
+    bt_close.config(font=bfont)
+    bt_close.grid(columnspan=2, pady=15)
     # ///////// Open Publications Button /////////#
     if log_flag:
         bt_open = Button(frame, text="Abrir publicaciones\n Erroneas", height=1, width=18, command=open_pub)
     else:
         bt_open = Button(frame, text="Abrir publicaciones\n Extraídas", height=1, width=18, command=open_pub_extract)
-    bfont = ('times', 17)
     bt_open.config(font=bfont)
     bt_open.grid(columnspan=2, pady=15)
 
@@ -1024,7 +1034,6 @@ class Background:
 
 if __name__ == '__main__':
     max_p = 10000
-    cont = -1
     log_flag = True
     ext_flag = True
     info_window(0, 0)

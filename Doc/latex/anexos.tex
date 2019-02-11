@@ -9,6 +9,12 @@
 \usepackage{microtype}
 \usepackage{placeins}
 
+\usepackage{eurosym}
+\usepackage{longtable,booktabs}
+
+% Bibliography management
+\usepackage[numbers,sort]{natbib}
+
 \RequirePackage{booktabs}
 \RequirePackage[table]{xcolor}
 \RequirePackage{xtab}
@@ -17,7 +23,7 @@
 % Links
 \usepackage[colorlinks]{hyperref}
 \hypersetup{
-	allcolors = {red}
+	allcolors = {blue}
 }
 
 % Ecuaciones
@@ -345,9 +351,9 @@
 
 
 % Datos de portada
-\title{título del TFG \\Documentación Técnica}
-\author{nombre alumno}
-\tutor{nombre tutor}
+\title{PCVN \\Documentación Técnica}
+\author{Roberto Poza Puras}
+\tutor{Dr.César Ignacio García Osorio \\ y Dr. Juan Jose Rodriguez Diez}
 \date{\today}
 
 \begin{document}
@@ -393,7 +399,7 @@
 \include{./tex/E_Manual_usuario}
 
 
-\bibliographystyle{plain}
+\bibliographystyle{plainnat}
 \bibliography{bibliografiaAnexos}
 
 \end{document}

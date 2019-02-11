@@ -4,68 +4,88 @@ En este apartado se van a exponer todas aquellas técnicas y o herramientas que 
 
 \section{Lenguaje de Programación}
 \subsection{Python}
-Como lenguaje de programación se ha utilizado \href {https://www.python.org/}{Python} en la versión más reciente de este. 3.7.1
+Como lenguaje de programación se ha utilizado \href {https://www.python.org/}{Python} en la versión más reciente en la que se encontraba al inicio del proyecto 3.7.1.Actualmente se encuentran en la versión 3.7.2. 
 
-Es uno de los lenguajes más extendido, por su facilidad para aprender a programar, por su simplicidad, su extensa comunidad lo que hace más fácil aún aprender y solucionar los problemas encontrados y por las librearías que han sido creadas para este lenguaje lo que hace muy fácil trabajar con ciertos tipos de datos, importarlos /exportarlos etc. Además, cabe destacar que es de código abierto y multiplataforma.
+Es uno de los lenguajes más extendido, por su facilidad para aprender a programar, por su simplicidad, su extensa comunidad lo que hace más fácil aún aprender y solucionar los problemas encontrados y por las librearías que han sido creadas para este lenguaje lo que hace muy fácil trabajar con ciertos tipos de datos, importarlos /exportarlos etc. Además, cabe destacar que es de código abierto y multiplataforma\cite{python}.
 
-Se eligió este lenguaje para el desarrollo del proyecto, por las librerías que posee, en especial para realizar las labores de \emph{web Scraping} y el tratamiento de los datos Bibliográficos.
+Se eligió este lenguaje para el desarrollo del proyecto, por las librerías que posee, en especial para realizar las labores de \emph{web scraping} y el tratamiento de los datos bibliográficos.
 
 \section{Entornos de Desarrollo}
-\subsection{Jupyter NoteBook}
-\href{https://jupyter.org/}{Juypter} es una aplicación web de código abierto que permite la creación y ejecución de código abierto. Se puede utilizar mediante el navegador sin necesidad de instalar absolutamente nada o bien instalando con \emph{Anaconda} o \emph{pip}.
+\subsection{Jupyter NoteBook} 
 
-Es aplicación es ideal para el marco de pruebas de concepto, pues no necesita un desarrollo muy extenso de la idea, si no que al ser ejecución en vivo permite desarrollar el concepto de una forma ágil e intuitiva
+\href{https://jupyter.org/}{Juypter} es una aplicación web de código abierto que permite la creación y ejecución de código abierto. Se puede utilizar mediante el navegador sin necesidad de instalar absolutamente nada o bien instalando con \emph{Anaconda} o \emph{pip}\ref{pip}.
 
-\subsection{Pycharm}
-\href {https://www.jetbrains.com/pycharm/}{Pycharm} es un entorno de desarrollo (IDE) específico para \emph{Python} desarrollado por la empresa checa JetBrains. El cuál posee un gran número de herramientas y opciones para mejorar el proceso de desarrollo del código (escritura, revisión, comentarios etc.)
+Es aplicación es ideal para el marco de pruebas de concepto, pues no necesita un desarrollo muy extenso de la idea, si no que al ser ejecución en vivo permite desarrollar el concepto de una forma ágil e intuitiva\cite{jupyter}.
+
+\subsection{PyCharm}
+
+\href {https://www.jetbrains.com/pycharm/}{PyCharm} es un entorno de desarrollo (IDE) específico para \emph{Python} desarrollado por la empresa checa JetBrains. El cuál posee un gran número de herramientas y opciones para mejorar el proceso de desarrollo del código (escritura, revisión, comentarios , etc.)\cite{pycharm}
 
 Se eligió este IDE pues es el más completo que existe para el lenguaje elegido y por qué disponía de licencia de estudiante, la cual permite acceder a todas las funcionalidades del entorno sin tener que pagar nada.
 
 Al principio se planteó la idea utilizar \emph{Sublime Text 3} como entorno de desarrollo, pero tras conocer el programa de estudiante para Pycharm, se pasó a utilizar esta herramienta.
 
 \subsection{Sublime Text}
-\href{https://www.sublimetext.com/}{Sublime Text 3} es un editor de código capaz de interpretar un gran número de lenguajes adaptando la interfaz dependiendo del lenguaje, es una herramienta muy versátil, pero no tan completa como un IDE específico, a pesar de que dispone de numerosas herramientas y plugin para ayudar en el desarrollo del proyecto.
+\href{https://www.sublimetext.com/}{Sublime Text 3} es un editor de código capaz de interpretar un gran número de lenguajes adaptando la interfaz dependiendo del lenguaje, es una herramienta muy versátil, pero no tan completa como un IDE específico, a pesar de que dispone de numerosas herramientas y plugin para ayudar en el desarrollo del proyecto.\cite{sublime}
 
 Al principio se utilizó esta herramienta como entorno para el desarrollo del proyecto, pero se cambió a \emph{Pycharm} por las razones ya comentadas anteriormente. Tras Esta decisión, se utilizó sublime para la realización de los ficheros \emph{Markdown} que definen los \emph{Sprints}.
 
 \section{Control de Versiones}
 \subsection{GitHub}
-\href{https://github.com/}{GitHub} es una plataforma web para el hospedaje de repositorios, ha sido siempre la más usada y conocida. A lo largo de la carrera se ha trabajado en varias ocasiones con ella. Esto unido al hecho de que dispongan de licencia para estudiantes fui clave para decidir la herramienta a utilizar. Cabe destacar que es gratuita para proyectos de código abierto.
+\href{https://github.com/}{GitHub} es una plataforma web para el hospedaje de repositorios, ha sido siempre la más usada y conocida. A lo largo de la carrera se ha trabajado en varias ocasiones con ella. Esto unido al hecho de que dispongan de licencia para estudiantes fue clave para decidir la herramienta a utilizar. Cabe destacar que es gratuita para proyectos de código abierto.\cite{github}
 
 Se barajó también la posibilidad de usar \emph{Bitbucket}, pero por comodidad y por la licencia se utilizó GitHub.
-
+\section{Administrador de paquetes}
+\subsection{pip} \label{pip}
+\href{https://pypi.org/project/pip/}{pip} es un sistema de administración de paquetes software para \emph{Python}.En \emph{Pyhton 2.7.9} y posteriores ,así como en \emph{Python 3.4} y posteriores se encuentra incluido por defecto.\cite{pip}\\
+Utiliza una interfaz a través de la linea de comandos , lo que le hace muy sencillo de usar. Las opciones que permite son las siguientes :
+\begin{itemize}
+	\item install \\
+	\emph{pip install nombre-paquete}
+	\item uninstall \\
+	\emph{pip uninstall nombre-paquete}
+	\item instalar lista de requerimientos\\
+	\emph{pip install -r requisitos.txt}
+	\item instalar paquete para una versión de \emph{Python} específica reemplazando \emph{\$\{versión\}} por la versión correspondiente\\
+	\emph{pip\$\{versión\} install nombre-paquete}	
+\end{itemize}
 \section{Documentación}
-\subsection{LaTeX}\label{latex}
+\subsection{Texmaker}
 
-\href {https://es.wikipedia.org/wiki/Texmaker}{Texmaker} es un editor gratuito para LaTeX\label{latex} que contiene la mayoría de las herramientas necesarias para la edición y desarrollo de un documento LaTex, cabe destacar que posee auto corrector y auto-completado.
+\href {https://es.wikipedia.org/wiki/Texmaker}{Texmaker} es un editor gratuito para LaTeX que contiene la mayoría de las herramientas necesarias para la edición y desarrollo de un documento LaTex, cabe destacar que posee auto corrector y auto-completado.\cite{texmaker}
 
-\section{Librerías}
+\section{Bibliotecas}
 
-Aquí vamos a mostrar las distintas librerías que se han usado a lo largo del proyecto y su función. Cabe destacar que todas ellas son para \emph{Python} .
+Aquí vamos a mostrar las distintas Bibliotecas que se han usado a lo largo del proyecto y su función. Cabe destacar que todas ellas son para \emph{Python}.
 \subsection{Scholarly}
 
-\href{https://github.com/OrganicIrradiation/scholarly}{Scholarly} es un módulo que permite recuperar información referente a autores y publicaciones de \emph{Google Scholar}, de una manera sencilla y amigable. Puede ser fácilmente instalada a través de \emph{pi}
+\href{https://github.com/OrganicIrradiation/scholarly}{Scholarly}\cite{scholarly} es un módulo que permite recuperar información referente a autores y publicaciones de \emph{Google Scholar}, de una manera sencilla y amigable. Puede ser fácilmente instalada a través de \emph{pip}\ref{pip}
 \subsection{Python-Scopus}
 
 \href {https://github.com/zhiyzuo/python-scopus}{Python-Scopus} es una librería que interactúa directamente con la \emph{API} de \emph {Scopus}, haciendo esta interacción más sencilla y amigable para el usuario.
-	Finalmente, se tuvo que desestimar el uso de esta librería pues por algún cambio no devolvía en su totalidad los autores correspondientes a un autor.
+	Finalmente, se tuvo que desestimar el uso de esta librería pues por algún cambio no devolvía en su totalidad los autores correspondientes a un autor\cite{pyscopus}.
 
 \subsection{Bibtexparser}
 
-\href{https://bibtexparser.readthedocs.io/en/master/} {Bibtexparser} es una librería dedicada a la carga y tratado de los ficheros con formato BibTeX.Incluye métodos para leer y escribir en fichero los datos almacenados en una lista de diccionarios, en la que cada diccionario es una publicación en la que la \emph{"clave"} es el campo de la publicación (autor, titulo, etc.) y el \emph{"valor"} será el valor de dicho campo.
+\href{https://bibtexparser.readthedocs.io/en/master/} {Bibtexparser} es una librería dedicada a la carga y tratado de los ficheros con formato BibTeX.Incluye métodos para leer y escribir en fichero los datos almacenados en una lista de diccionarios, en la que cada diccionario es una publicación en la que la \emph{``clave''} es el campo de la publicación (autor, titulo, etc.) y el \emph{"valor"} será el valor de dicho campo\cite{bibtexparser}.
 \subsection{Selenium Webdriver}
-\href {https://www.seleniumhq.org/projects/webdriver/}{Selenium Webdriver} es una librería que permite crear una instancia del navegador elegido y controlarlo mediante código, consiguiendo así automatizar el proceso de navegación simulando que fuera un usuario corriente.
+\href {https://www.seleniumhq.org/projects/webdriver/}{Selenium Webdriver} es una librería que permite crear una instancia del navegador elegido y controlarlo mediante código, consiguiendo así automatizar el proceso de navegación simulando que fuera un usuario corriente\cite{selenium}.
 \subsection{re}
 
-\href{https://docs.python.org/3/library/re.html}{Re} es una librería para \emph{Python} que permite el uso de las expresiones regulares, permitiendo una mejor extracción de la información relevante de grandes cadenas de texto. Es una herramienta muy habitual en \emph{"web scraping"}.
+\href{https://docs.python.org/3/library/re.html}{re} es una librería para \emph{Python} que permite el uso de las expresiones regulares, permitiendo una mejor extracción de la información relevante de grandes cadenas de texto. Es una herramienta muy habitual en \emph{"web scraping"}\cite{re}.
 \subsection{Tkinter}
-\href {https://wiki.python.org/moin/TkInter}{Tkinter} es librería repleta de herramientas para el desarrollo de una interfaz gráfica en Python. Está orientada a objeto y aunque no es la única es la más utilizada, por su sencillez de uso y rapidez para dotar a una aplicación de una interfaz gráfica.
-
+\href {https://wiki.python.org/moin/TkInter}{Tkinter} es librería repleta de funcionalidades para el desarrollo de una interfaz gráfica en Python. Está orientada a objeto y aunque no es la única es la más utilizada, por su sencillez de uso y rapidez para dotar a una aplicación de una interfaz gráfica\cite{tkinter}.
+\subsection{Unittest}
+\href{https://docs.python.org/3/library/unittest.html}{Unittest} test es un \emph{framework} para Python que permite el uso y creación de pruebas unitarias\cite{unittest}.
+\subsection{requests} 
+\href{http://docs.python-requests.org/es/latest/}{requests}\cite{requests} es una librería para \emph{HTTP}escrita en \emph{Python} que permite una integración totalmente transparente de los servicios web, permitiendo realizar todo tipo de peticiones \emph{HTTP} y manejando las respuestas recibidas por parte del servidor. Además, permite la reutilización de \emph{keep-alive} y conexión \emph{HTTP}  automática gracias a \href{ https://github.com/urllib3/urllib3}{urlib3} 
+\subsection{Pickle}\label{pickle}
+\href{https://docs.python.org/3/library/pickle.html}{Pickle} es un librería para \emph{Python} que permite serializar mediante protocolos binarios la estructura de un objeto \emph{Python} , el proceso es reciproco es decir , se puede convertir un objeto en un flujo de bytes y se puede reconstruir el objeto a partir de un flujo de bytes\cite{pickle}. 
 \section{Otras Herramientas}
 
-\subsection{Burp}
+\subsection{Burp Suite}\label{Burp}
 
-\href{https://portswigger.net/burp}{Burp} es una herramienta gráfica para probar la seguridad de las aplicaciones web, pero en este proyecto ha sido utiliza para realizar ingeniería inversa a la aplicación web de la \emph{ANECA(ACADEMIA)}. Permitiendo estudiar cómo se realizaban las peticiones \emph{POST} y \emph{GET} al servidor que información enviaban etc. Para ello se utilizó la herramienta \emph{HTTP PROXY}, esta redirige todo el tráfico del navegador a la propia aplicación analizando todo el tráfico y permitiendo analizar que peticiones y respuestas recibe.
+\href{https://portswigger.net/burp}{Burp Suite} es una herramienta gráfica para probar la seguridad de las aplicaciones web, pero en este proyecto ha sido utiliza para realizar ingeniería inversa a la aplicación web de la \emph{ANECA(ACADEMIA)}. Permitiendo estudiar cómo se realizaban las peticiones \emph{POST} y \emph{GET} al servidor que información enviaban etc. Para ello se utilizó la herramienta \emph{HTTP PROXY}, esta redirige todo el tráfico del navegador a la propia aplicación analizando todo el tráfico y permitiendo analizar que peticiones y respuestas recibe.
 
 \subsection{Photoshop}
 \href {https://www.photoshop.com/}{Photoshop} es un editor de gráficos dedicado principalmente para el retoque de fotografías y gráficos, pero en este caso ha sido utilizado para el diseño del logo de este proyecto.
@@ -73,4 +93,8 @@ Aquí vamos a mostrar las distintas librerías que se han usado a lo largo del p
 \subsection{JabRef}
 
 \href {http://www.jabref.org/}{JabRef} es una herramienta software de gestión bibliográfica, la cual utiliza  de formato nativo. 
-Ha sido utilizada para la visualización y edición de los ficheros \emph{BibTex} generados a partir del \emph{Web Scraping}.
+Ha sido utilizada para la visualización y edición de los ficheros \emph{BibTeX} generados a partir del \emph{Web Scraping}.
+
+\subsection{Forticlient}
+
+\href{https://forticlient.com/}{Forticlient} es una herramienta software que permite la conexión \emph{SSLVPN} entre el dispositivo y una red,creando una conexión completamente encriptada y será enviada a través de un túnel seguro. También ofrece herramientas para mantener seguro nuestro equipo. 

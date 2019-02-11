@@ -1,34 +1,34 @@
 \capitulo{3}{Conceptos teóricos}
 
-Para la total compresión del proyecto es necesario tener claros algunos conceptos como son Técnica Web Scraping, formato BibTex, herramienta Selenium y el protocolo HTTP.
+Para la total compresión del proyecto es necesario tener claros algunos conceptos como son Técnica \emph{Web Scraping}, formato \emph{BibTex}, la herramienta \emph{Selenium} y el protocolo \emph{HTTP}.
 
 \section{Web Scraping}
 
-El Web Scraping [cita] es una técnica de extracción de información de una página web utilizando para este propósito programas software, su traducción inmediata al castellano sería algo así como "raspado web".
+El Web Scraping es una técnica de extracción de información de una página web utilizando para este propósito programas software, su traducción inmediata al castellano sería algo así como  ``raspado web".\cite{web_scraping}
 Esta técnica simula la navegación de un ser humano en la red, se puede hacer de varias formas:
 \begin{itemize}
-	\item Utilizar el protocolo HTTP manualmente.
+	\item Utilizar el protocolo \emph{HTTP}\ref{http} manualmente.
 	\item Utilizar un navegador incrustado en el propio software, simulando la navegación tradicional que haría cualquier usuario tradicional.
 \end{itemize}
 
-Usando cualquiera de las dos alternativas arriba planteadas el objetivo es siempre el mismo, transformar los datos contenidos en una página web (normalmente con formato HTTML) en datos relevantes para ser almacenados y tratados con un fin.
+Usando cualquiera de las dos alternativas arriba planteadas el objetivo es siempre el mismo, transformar los datos contenidos en una página web (normalmente con formato \emph{HTTML}) en datos relevantes para ser almacenados y tratados con un fin.
 
 En este proyecto lo que vamos a realizar es extraer la información relevante acerca de las publicaciones de un determinado autor de las principales páginas web del sector (Google Scholar, Scopus y Web of Science)
 
 \section{BibTex}
-BibTex [cita] es una herramienta software que permite dar formato a un texto, tradicionalmente listas de referencias y que es usado habitualmente junto con los documentos en LaTeX.
+\href {http://www.bibtex.org/}{BibTex} es una herramienta software que permite dar formato a un texto, tradicionalmente listas de referencias y que es usado habitualmente junto con los documentos en LaTeX\cite{bibtex}.
 
-Es también un formato de archivo basado en texto, usado para definir datos bibliográficos (articulo,libros, ponencias en congreso etc.) habitualmente terminan en ".bib" y se caracteriza por que los elementos bibliográficos están separados por tipos. A continuación, se van a exponer los tipos más relevantes:
+Es también un formato de archivo basado en texto, usado para definir datos bibliográficos (articulo,libros, ponencias en congreso etc.) habitualmente terminan en .bib y se caracteriza por que los elementos bibliográficos están separados por tipos. A continuación, se van a exponer los tipos más relevantes:
 \begin{itemize}
-	\item @article
+	\item \emph{@article}
 		artículo publicado en una revista.
 		Campos Necesarios: author, title, journal, year, volume
 		Campos Opcionales: number, pages, month, doi, note, key
-	\item @book
+	\item \emph{@book}
 		libro publicado con un editor concreto.
 		Campos Necesarios: author/editor, title, publisher, year
 		Campos Opcionales: volume/number, series, address, edition, month, note, key, url
-	\item @inproceedings
+	\item \emph{@inproceedings}
 		Articulo presentado en una conferencia o congreso.
 		Campos Necesarios: author, title, booktitle, publisher, year
 		Campos Opcionales: editor, volume/number, series, type, chapter, pages, address, edition, month, note, key
@@ -40,36 +40,86 @@ Es también un formato de archivo basado en texto, usado para definir datos bibl
 	 
 \end{itemize}
 
-\imagen{BibTeX}{Imagen de ejemplo de una publicación en formato BibTeX}
-Para saber más sobre los distintos tipos y campos que admite este formato [cita].
+\emph{\\
+@article\{ ISI:000454418300026,\\
+Author = \{Tang, Yufei and Liu, Zhaowei and Zhao, Kang\},\\
+Title = \{Fabrication of hollow and porous polystyrene fibrous membranes by\\
+   electrospinning combined with freeze-drying for oil removal from water\},\\
+Journal = \{JOURNAL OF APPLIED POLYMER SCIENCE\},\\
+Year = \{2019\},\\
+Volume = \{136\},\\
+Number = \{13\},\\
+Month = \{APR 5\},\\
+Publisher = \{WILEY\},\\
+ISSN = \{0021-8995\},\\
+Times-Cited = \{0\},\\
+\}}\\
+Imagen de ejemplo de una publicación en formato BibTeX.\\
+Para saber más sobre los distintos tipos y campos que admite este  \href{https://en.wikipedia.org/wiki/BibTeX}{formato}\cite{bibtexen}.
 
 \section{Selenium}
 
-Selenium [cita] Es una herramienta software de código abierto, que proporciona un entorno de pruebas para aplicaciones web, permitiendo realizar las pruebas en cualquier navegador.
+\href {https://www.seleniumhq.org/projects/}{Selenium Webdriver}Es una herramienta software de código abierto, que proporciona un entorno de pruebas para aplicaciones web, permitiendo realizar las pruebas en cualquier navegador.
 
-A pesar de que tiene un entorno de desarrollo integrado (IDE), también posee librerías para su uso en los lenguajes de programación mas usados (Java, C\#,Ruby,Groovy,Perl,Php y Python).Además es multiplataforma lo  que permite que pueda ser utilizado en los distintos sistemas operativos, a través de la mayor parte de navegadores (Google Chrome, Internet explorer,Firefox,Safari,Opera,HtmlUnit,phanmjs,Android,IOS)[cita1]
+A pesar de que tiene un entorno de desarrollo integrado (IDE), también posee librerías para su uso en los lenguajes de programación mas usados (\emph{Java, C\#,Ruby,Groovy,Perl,Php y Python}).Además es multiplataforma lo  que permite que pueda ser utilizado en los distintos sistemas operativos, a través de la mayor parte de navegadores (\emph{Google Chrome, Internet explorer,Firefox,Safari,Opera,HtmlUnit,phanmjs,Android,IOS})\cite{selenium}
 
 A pesar de que Selenium dispone de varios componentes, el componente que nos interesa es Selenium WebDriver 
 
 \begin{itemize}
-	\item Selenium web driver a diferencia de su antecesor Selenium RC no necesita de un servidor especial para ejecutar las pruebas, si no que 
+	\item \emph{Selenium web driver} a diferencia de su antecesor \emph{Selenium RC} no necesita de un servidor especial para ejecutar las pruebas, si no que 
 iniciará una instancia del navegador elegido y lo controlará, permitiendo al usuario navegar de una forma similar a como lo haría cualquier usuario convencional.
 \end{itemize}
 
 
 
 
-\section{Protocolo HTTP}
+\section{Protocolo HTTP}\label{http}
 
-Protocolo HTTP o protocolo de transferencia de hipertexto [cita] es el protocolo de comunicación que rige las comunicaciones en la red.
+\href {https://es.wikipedia.org/wiki/Protocolo_de_transferencia_de_hipertexto}{Protocolo HTTP} o protocolo de transferencia de hipertexto\cite{http} es el protocolo de comunicación que rige las comunicaciones en la red.
 
-El protocolo HTTP se basa en un modelo de petición y respuesta, en la que el usuario realiza una petición y el servidor responde a la petición realizada, normalmente estas peticiones van acompañadas de parámetros o argumentos necesarios para que el servidor procese la petición y genere una respuesta.
+\emph{El protocolo HTTP} se basa en un modelo de petición y respuesta, en la que el usuario realiza una petición y el servidor responde a la petición realizada, normalmente estas peticiones van acompañadas de parámetros o argumentos necesarios para que el servidor procese la petición y genere una respuesta.
 
-Existen distintos tipos de métodos para interactuar, pero los fundamentales para la comprensión del funcionamiento de este proyecto son GET y POST.
+Existen distintos tipos de métodos para interactuar, pero los fundamentales para la comprensión del funcionamiento de este proyecto son \emph{GET y POST}.
 \begin{itemize}
-	\item	GET El método GET realiza una petición sobre un recurso específico, devolviendo información, en ningún caso debería tener otro efecto.
-\item		POST El método POST envía una serie de datos para que sean procesados por el recurso al cual se le está haciendo la petición, como consecuencia puede resultar en la modificación de los recursos del servidor. Los datos deberán ser incluidos en el cuerpo de la petición.
+	\item	El método \emph{GET} realiza una petición sobre un recurso específico, devolviendo información, en ningún caso debería tener otro efecto.
+	Ejemplo de petición \emph{GET}:
+\emph{ \\
+GET / HTTP/1.1\\
+Host: ubuvirtual.ubu.es\\
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0\\
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\\
+Accept-Language: es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3\\
+Accept-Encoding: gzip, deflate\\
+Referer: https://www.google.com/\\
+DNT: 1\\
+Connection: close\\
+Cookie: MoodleSessionmoodlecurrent=pnscbpi2tuv0anl6s4lciu8181\\
+Upgrade-Insecure-Requests: 1\\
+}	
+
+\item		El método \emph{POST} envía una serie de datos para que sean procesados por el recurso al cual se le está haciendo la petición, como consecuencia puede resultar en la modificación de los recursos del servidor. Los datos deberán ser incluidos en el cuerpo de la petición.\\
+
+Ejemplo de petición \emph{POST}
+
+\emph{\\
+POST /login/index.php HTTP/1.1\\
+Host: ubuvirtual.ubu.es\\
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0\\
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\\
+Accept-Language: es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3\\
+Accept-Encoding: gzip, deflate\\
+Referer: https://ubuvirtual.ubu.es/\\
+Content-Type: application/x-www-form-urlencoded\\
+Content-Length: 33\\
+DNT: 1\\
+Connection: close\\
+Cookie: MoodleSessionmoodlecurrent=8rv7dpjrg9n34dnqmds0aprgb3\\
+Upgrade-Insecure-Requests: 1\\
+\\
+username=example\&password=example\\
+}
+
 \end{itemize}
 
- El protocolo se define como un protocolo sin estado, esto quiere decir que no guarda ninguna información de otras conexiones. Es por esto que surge el concepto de cookies[cita], que es una pequeña cantidad de información que se almacena en el equipo del usuario y que permite recordar si el cliente ya ha accedido al servidor anteriormente, permitiendo mostrar una y otra información o creando el concepto de sesión [cita]. Así cuando iniciamos sesión en una página web con nuestro usuario y contraseña lo que se genera es una cookie, y cada vez que se envié una petición al servidor esta es enviada para indicar que estamos autenticados con eso usuario y contraseña.
+ Se define como un protocolo sin estado, esto quiere decir que no guarda ninguna información de otras conexiones. Es por esto que surge el concepto de \emph{cookies}\cite{cookie}, que es una pequeña cantidad de información que se almacena en el equipo del usuario y que permite recordar si el cliente ya ha accedido al servidor anteriormente, permitiendo mostrar una y otra información o creando el concepto de \emph{sesión} \cite{session}. Así cuando iniciamos sesión en una página web con nuestro usuario y contraseña lo que se genera es una \emph{cookie}, y cada vez que se envíe una petición al servidor esta es enviada para indicar que estamos autenticados con eso usuario y contraseña.
 

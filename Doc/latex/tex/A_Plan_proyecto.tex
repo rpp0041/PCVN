@@ -1,13 +1,390 @@
 \apendice{Plan de Proyecto Software}
 
 \section{Introducción}
-
+La fase de planificación es uno de los pilares fundamentales de cualquier proyecto, en esta fase se determinan los objetivos, el tiempo y el dinero que va a suponer la realización del proyecto. Así pues, vamos a dividir la fase de planificación en:
+\begin{itemize}
+	\item Planificación temporal
+	\item Estudio de viabilidad
+\end{itemize}
 \section{Planificación temporal}
+En el desarrollo del proyecto se planteó utilizar una metodología de trabajo basado en el desarrollo ágil, para ello se utilizó la metodología \emph{Scrum}.
+\begin{itemize}
+	\item Se aplicó una estrategia de desarrollo incremental basada en \emph{sprints}
+	\item La duración de los \emph{sprints} fue de una semana.
+	\item Al inicio del \emph{sprint} se definían los objetivos a alcanzar.
+	\item Al final del \emph{sprint} se revisa los objetivos conseguidos y los problemas encontrados.
+\end{itemize}
+A continuación, se van a describir \emph{sprints} que se han realizado.
+
+\subsection{Sprint 0 (5/11/18 - 11/11/18)}
+En la primera reunión de planificación de proyecto se sentaron las ideas del mismo y se marcaron los objetivos de este \textbf{primer \emph{sprint}}.
+
+Los objetivos concretados de este primer \emph{sprint} fueron:
+\begin{itemize}
+	\item Realizar una toma de contacto con las distintas páginas web, así como con las técnicas de \emph{Web Scarping} y las bibliotecas sugeridas para trabajar.
+	\item La creación formal del repositorio sobre el que se está trabajando actualmente. Para un mejor uso el tutor recomendó la adquisición del \emph{Github Student Developer Pack} ,el cual fue solicitado y ha sido ya recibido, permitiendo entre otras muchas cosas el uso de los repositorios privados.
+\end{itemize}
+Además, proporcionó numerosos enlaces sobre \emph{Web Scarping} que formarán parte de la toma de contacto y un posterior aprendizaje más profundo.
+
+Se estiman 9 horas de trabajo
+\subsection{Sprint 1 (12/11/18 - 18/11/18)}
+Los objetivos determinados para este \textbf{segundo \emph{sprint}} han sido : 
+\begin{itemize}
+\item investigar los tipos de formatos posibles para procesado de los datos extraídos de las distintas fuentes.
+\end{itemize}
+Se sugirieron los siguentes formatos:
+\begin{itemize}
+\item \emph{Bibtex}
+\item \emph{RIS}
+\item \emph{EndNote}
+\end{itemize}
+Se estiman 20 horas de trabajo.
+
+\subsection{Sprint 2 (19/11/18 - 25/11/18)}
+Los objetivos determinados para este \textbf{tercer \emph{sprint}} han sido:
+\begin{itemize}
+	\item Implementación del formato \emph{BibTex}, como forma de devolver los datos. Para un posterior Procesado.
+\end{itemize}
+
+Se estiman 20 horas de trabajo.
+
+\subsection{Sprint 3 (26/11/18 - 1/12/18)}
+Los objetivos determinados para este \textbf{cuarto \emph{sprint}} han sido:
+\begin{itemize}
+	\item La documentación acerca de \LaTeX, con el fin de comenzar con el desarrollo de la memoria del proyecto y poder 
+	 realizar una documentación detallada del desarrollo del proyecto.
+	 \item Solucionar algunos problemas referentes a la obtención de los datos con los scripts publicados en los anteriores \emph{sprints}.
+\end{itemize}
+
+Se estiman 30 horas de trabajo
+\subsection{Sprint 4 (3/12/18 - 9/12/18)}
+
+Los objetivos determinados para este \textbf{quinto \emph{sprint}} han sido:
+\begin{itemize}
+	\item Estudiar el funcionamiento de la aplicación de la \textbf{\emph{ANECA}}, con el fin de realizar un script que permita la automatización de la subida de los datos extraídos del resto de páginas.
+\end{itemize}
+
+Se estiman 30 horas de trabajo
+
+Finalmente se desarrolló la estructura básica para el acceso a la \emph{ANECA} y un script para la eliminación de duplicados y agrupamiento de los ficheros \emph{BibTeX} llamado GroupFiles. 
+
+Con un total de 30.5 horas de trabajo
+\subsection{Sprint 5 (10/12/18 - 16/12/18)}
+
+Los objetivos determinados para este \textbf{sexto \emph{sprint}} han sido:
+\begin{itemize}
+	\item Implementar el script para la automatización de la subida de los datos bibliográficos extraídos.
+\end{itemize}
+
+Se estiman 25 horas de trabajo
+
+Finalmente se tuvieron que realizar cambios en el script dedicado a la eliminación de elementos duplicados
+y agrupación de ficheros, pues se producían errores en el proceso de automatización. Se mejoro el sistema de comparación de publicaciones (añadiendo comparación por ISSN).
+El script de automatización quedo sin terminar, quedando pendiente la depuración de errores.
+
+
+Se emplearon 28.5 horas de trabajo
+\subsection{Sprint 6 (17/12/18 - 23/12/18)}
+Los objetivos determinados para este \textbf{séptimo \emph{sprint}} han sido:
+\begin{itemize}
+	\item Depuración de errores del script de automatización de subida de los datos bibliográficos extraídos.
+	\item Extraer índice de impacto de las publicaciones correspondientes de Web of Science.
+	\item Añadir funcionalidad para identificar y subir los artículos con índice de impacto.
+	\item Introducción a las librerías y métodos más usuales para desarrollar una interfaz Gráfica.
+\end{itemize}
+
+Se estiman 30 horas de trabajo
+
+\textbf{Finalmente se invirtieron 29.5 horas}
+\subsection{Sprint 7 (24/12/18 - 30/12/18)}
+Los objetivos determinados para este \textbf{octavo \emph{sprint}} han sido:
+\begin{itemize}
+	\item Implementar una interfaz gráfica dotando al proyecto de una estructura más sólida y amigable para el usuario final.
+	\item Implementar funcionalidad que notifique al usuario de aquellas publicaciones que no se hayan podido subir a \emph{ANECA} guardándolo en un fichero \emph{BibTeX}, para que sea el propio usuario quien decida qué hacer con ello.
+	\item Adaptar el código a formato \emph{PEP8}
+\end{itemize}
+
+Se estiman 30 horas de trabajo
+
+Finalmente se emplearon 32.5 horas de trabajo pendiente de terminar la adaptación al formato \emph{PEP8} del código, así como algunos errores de poca importancia
+\subsection{Sprint 8 (31/12/18 - 6/1/19)}
+
+Los objetivos determinados para este \textbf{noveno \emph{sprint}} han sido:
+\begin{itemize}
+	\item Finalizar las tareas pendientes del \emph{sprint 7.}
+	\item Implementar Unit Test, para mejorar la robustez del código.
+\end{itemize}
+Se estiman 15 horas de trabajo.
+
+Se finalizaron las tareas pendientes de realizar del \emph{sprint 7}, además se añadieron nuevas herramientas para permitir la extracción de nuevos indicios de calidad de las publicaciones.
+Empleando un Total de 26.5 horas y quedando pendiente la implementación de los Unit Test
+\subsection{Sprint 9 (7/1/19 - 13/1/19)}
+Los objetivos determinados para este \textbf{décimo \emph{sprint}} han sido:
+\begin{itemize}
+	\item Finalizar las tareas pendientes del sprint 8.
+	\item Tratar las excepciones generadas y permitiendo la recuperación del programa cuando una ocurra.
+\end{itemize}
+Se estiman 25 horas de Trabajo.
+
+\begin{itemize}
+	\item Tras un error en la \emph{API} que proporcionaba acceso a los datos de \emph{Scopus} y que hace inviable seguir utilizando este método (pues no devolvía los autores de las publicaciones), se decide cambiar el actual método para pasar a utilizar la herramienta \emph{Selenium} (tras una previa investigación). Mejorando los tiempos de ejecución.
+	\item Numerosas excepciones generadas y errores de carga por parte de \emph{Selenium} han ralentizado el desarrollo de los objetivos marcados para este \emph{sprint}, se comienza el domingo 13/1/19 a evaluar posibles alternativas a \emph{Selenium}.
+\end{itemize}
+
+Empleadas 25 horas de trabajo sin avance en los objetivos iniciales del \emph{sprint}, los nuevos objetivos fueron finalizados con éxito.
+\begin{itemize}
+	\item Implementar la extracción de datos de  \emph{Scopus} mediante el uso de \emph{Selenium}.
+	\item Investigar una nueva forma de acceder a ACADEMIA para realizar la subida de las publicaciones sin necesidad de usar \emph{Selenium}
+\end{itemize}
+
+\subsection{Sprint 10 (14/1/19 - 20/1/19)}
+Los objetivos determinados para este \textbf{undécimo \emph{sprint}} han sido:
+\begin{itemize}
+	\item Finalizar las tareas pendientes del \emph{sprint 9}.
+		\begin{itemize}
+			\item Implementar Unit Test, para mejorar la robustez del código.
+			\item Tratar las excepciones generadas y permitiendo la recuperación del programa cuando una ocurra.
+		\end{itemize}
+	\item Encontrar alternativa al uso de \emph{Selenium} para la inyección de datos en ACADEMIA.
+	\item Probar la robustez de la aplicación.
+\end{itemize}
+
+\emph{Se estiman 30 horas de Trabajo.}
+
+El martes se toma la decisión, de manejar las peticiones \emph{GET} y \emph{POST} directamente mediante el uso de la librería para Python: \emph{requests}.
+\subsection{Sprint 11 (21/1/19 - 27/1/19)}
+Los objetivos determinados para este \emph{duodécimo sprint} han sido:
+\begin{itemize}
+	\item Seguir con las labores de documentación iniciadas el sprint 3.
+	\item Probar la robustez de la aplicación y corregir errores encontrados.
+	\item Mejorar la interacción del usuario con la interfaz gráfica.
+\end{itemize}
+Se estiman 20 horas de trabajo.
+
+\subsection{Sprint 12 (28/1/19 - 3/2/19)}
+Los objetivos determinados para este \emph{decimotercer sprint} han sido:
+\begin{itemize}
+	\item Continuar con las labores iniciadas en el sprint anterior, con el fin mejorar la experiencia del usuario y la funcionalidad de la aplicación.
+\end{itemize}
+Se estiman 18 horas de trabajo.
+
+\subsection{Sprint 13 (4/2/19 - 10/2/19)}
+Los objetivos determinados para este \emph{decimocuarto sprint} han sido:
+\begin{itemize}
+	\item Corregir errores de funcionalidad descubiertos en el anterior sprint.
+	\item Implementar esperas adaptativas para los ficheros en los que se usa Selenium.
+	\item Mejorar el uso de manejadores de Layouts.
+	\item Capturar todas las excepciones para que la aplicación pueda recuperarse e informar al usuario de lo ocurrido.
+	\item Implementar ventanas emergentes para informar al usuario de los errores en lugar de los cuadros de texto que hasta ahora se estaban utilizando.
+\end{itemize}
+Se estima 35 horas de trabajo. \\
+Durante el trascurso de este sprint se han implementado los objetivos arriba descritos y corregido algunos errores encontrados durante las pruebas que se han realizado. Además, se ha implementado las siguientes funcionalidades:
+\begin{itemize}
+	\item Funcionalidad que permite elegir que partes del proceso se desean llevar a cabo.
+	\item Funcionalidad que permite limitar el número de publicaciones a recuperar.
+	\item Funcionalidad que permite guardar los errores en fichero para los usuarios avanzados.
+	\item Funcionalidad que permite ver los archivos con las publicaciones extraídas o las subidas.
+	\item Finalmente se han invertido un total de 37 horas.
+\end{itemize}
+Se estiman 20 horas de trabajo.
+
+\subsection{Gráficos y Estadísticas}
+Basándonos en los datos ofrecidos por GitHub se va a mostrar una serie de imágenes acerca del desarrollo del proyecto.
+\begin{itemize}
+	\item Commits: en la siguiente gráfica de barras se muestra por semanas la cantidad de commits que se han realizado.
+	\item Añadidos y eliminados: En la siguiente gráfica se muestra la cantidad de líneas añadidas (entre todos los ficheros) y la cantidad de líneas eliminadas. Como podemos observar existe una gran cantidad de líneas eliminadas y esto se debe a los cambios de herramienta y/o procedimiento que han sido necesario llevar a cabo.\\En esta última fotografía vemos el total de líneas añadidas y eliminadas.
+	[FOTO líneas de code]
+
+\end{itemize}
 
 \section{Estudio de viabilidad}
+\subsection{Viabilidad Económica}
+En este apartado vamos a realizar un supuesto de los costes y beneficios que hubiera tenido el desarrollo de este proyecto en un entorno empresarial real.\\
+\textbf{Costes}\\
+Podemos dividir la estructura de costes en dos categorías 
+\begin{itemize}
+	\item \textbf{Coste Material}
+	En este apartado vamos a hacer dos diferencias:
+	\begin{itemize}
+		\item \emph{Hardware}: Para la realización del proyecto, se ha utilizado exclusivamente un ordenador portátil valorado en 850 \euro{} al cual se le estima un tiempo de amortización de cinco años y el tiempo que ha sido utilizado tres meses.
+		
+\begin{longtable}[]{@{}lrr@{}}
+\toprule
+\begin{minipage}[b]{0.29\columnwidth}\raggedright\strut
+\textbf{Concepto}\strut
+\end{minipage} & \begin{minipage}[b]{0.18\columnwidth}\raggedright\strut
+\textbf{Coste}\strut
+\end{minipage} & \begin{minipage}[b]{0.32\columnwidth}\raggedright\strut
+\textbf{Coste amortizado}\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.29\columnwidth}\raggedright\strut
+Ordenador portátil\strut
+\end{minipage} & \begin{minipage}[t]{0.18\columnwidth}\raggedright\strut
+850\euro{}\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+42.5\euro{}\strut
+\end{minipage}\tabularnewline
+\midrule
+\begin{minipage}[t]{0.29\columnwidth}\raggedright\strut
+\end{minipage}\tabularnewline
 
-\subsection{Viabilidad económica}
+\caption{Costes de \emph{hardware}.}
+\end{longtable}
+		\item \emph{Software}: Para la realización del proyecto se han utilizado casi en su totalidad herramientas de uso libre y gratuito, la única herramienta de software no gratuita es el IDE de \emph{JetBrains}, el cual se ha utilizado con licencia de estudiante, pero dado que se trata de un supuesto de entorno empresarial se necesitaría una licencia adecuada para ello. El coste de la licencia es anual por ello se considera el tiempo de amortización de un año y el tiempo de uso de 3 meses. 
+	\end{itemize}
+	\begin{longtable}[]{@{}lrr@{}}
+\toprule
+\begin{minipage}[b]{0.29\columnwidth}\raggedright\strut
+\textbf{Concepto}\strut
+\end{minipage} & \begin{minipage}[b]{0.18\columnwidth}\raggedright\strut
+\textbf{Coste}\strut
+\end{minipage} & \begin{minipage}[b]{0.32\columnwidth}\raggedright\strut
+\textbf{Coste amortizado}\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.29\columnwidth}\raggedright\strut
+\emph{JetBrains PyCharm}\strut
+\end{minipage} & \begin{minipage}[t]{0.18\columnwidth}\raggedright\strut
+89\euro{}\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright\strut
+22,25\euro{}\strut
+\end{minipage}\tabularnewline
+\midrule
+\begin{minipage}[t]{0.29\columnwidth}\raggedright\strut
+\end{minipage}\tabularnewline
 
-\subsection{Viabilidad legal}
+\caption{Costes de \emph{software}.}
+\end{longtable}
 
+	\item \textbf{Coste Personal}
+	El proyecto ha sido llevado a cabo por un desarrollador junior a tiempo completo durante un total de 3 meses. Se considera así los siguientes costes:
+	\begin{longtable}[]{@{}lr@{}}
+\toprule
+\begin{minipage}[b]{0.38\columnwidth}\raggedright\strut
+\textbf{Concepto}\strut
+\end{minipage} & \begin{minipage}[b]{0.20\columnwidth}\raggedright\strut
+\textbf{Coste}\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.38\columnwidth}\raggedright\strut
+Salario mensual neto\strut
+\end{minipage} & \begin{minipage}[t]{0.20\columnwidth}\raggedright\strut
+1.000\euro{}\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.38\columnwidth}\raggedright\strut
+Retención IRPF (15\%)\strut
+\end{minipage} & \begin{minipage}[t]{0.20\columnwidth}\raggedright\strut
+272,23\euro{}\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.38\columnwidth}\raggedright\strut
+Seguridad Social (29,9\%)\strut
+\end{minipage} & \begin{minipage}[t]{0.20\columnwidth}\raggedright\strut
+542,65\euro{}\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.38\columnwidth}\raggedright\strut
+Salario mensual bruto\strut
+\end{minipage} & \begin{minipage}[t]{0.20\columnwidth}\raggedright\strut
+1.814,88\euro{}\strut
+\end{minipage}\tabularnewline
+\midrule
+\begin{minipage}[t]{0.38\columnwidth}\raggedright\strut
+\textbf{Total 3 meses}\strut
+\end{minipage} & \begin{minipage}[t]{0.20\columnwidth}\raggedright\strut
+2.900,18 \euro{}\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\caption{Costes de personal.}
+\end{longtable}
 
+Se ha calculado la retribución a la Seguridad Social como un 29,9\% : 
+\begin{itemize}
+	\item 23,6\% por contingencias comunes.
+	\item 5,5\% desempleo de tipo general.
+	\item 0,6\% formación profesional.
+	\item 0,2\% fondo de garantía salarial.
+\end{itemize}
+\item \textbf{Costes Totales}:
+El sumatorio de todos los costes es el siguiente:
+
+\begin{longtable}[]{@{}lr@{}}
+\toprule
+\begin{minipage}[b]{0.22\columnwidth}\raggedright\strut
+\textbf{Concepto}\strut
+\end{minipage} & \begin{minipage}[b]{0.22\columnwidth}\raggedright\strut
+\textbf{Coste}\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.22\columnwidth}\raggedright\strut
+\emph{Hardware}\strut
+\end{minipage} & \begin{minipage}[t]{0.22\columnwidth}\raggedright\strut
+42,5\euro{}\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.22\columnwidth}\raggedright\strut
+\emph{Software}\strut
+\end{minipage} & \begin{minipage}[t]{0.22\columnwidth}\raggedright\strut
+22,25\euro{}\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.22\columnwidth}\raggedright\strut
+Personal\strut
+\end{minipage} & \begin{minipage}[t]{0.22\columnwidth}\raggedright\strut
+2.900,18\euro{}\strut
+\end{minipage}\tabularnewline
+\midrule
+\begin{minipage}[t]{0.22\columnwidth}\raggedright\strut
+Total\strut
+\end{minipage} & \begin{minipage}[t]{0.22\columnwidth}\raggedright\strut
+2.964,93\euro{}\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\caption{Costes totales.}
+\end{longtable}
+\item \textbf{Beneficios}
+La forma en la que se podría monetizar esta aplicación sería mediante la venta de licencias de uso. Basado en un análisis del mercado software y de los costes que se han tenido para desarrollar esta aplicación, se estima un precio de licencia de 20\euro{} /año.
+\end{itemize}
+
+\newpage
+
+\subsection{Viabilidad Legal}
+A continuación, se va a estudiar la viabilidad del proyecto en el ámbito legal. Para ello debemos analizar cuál de las licencias software se ajusta más a nuestro proyecto, así que vamos a analizar los recursos utilizados y sus licencias.
+\begin{table}[htb]
+	\begin{center}
+		\begin{tabular}{p{4cm} p{1.5cm} p{3.5cm}}
+			\toprule
+			\textbf{Librería} & \textbf{Versión} & \textbf{Licencia} \\
+			\otoprule
+			Python and modules integrated & 3.7.1 & PSFL\cite{psfl} \\
+			Scholarly & 1.0 & Unlicense\cite{unlicense} \\
+			Bibtexparser & 1.0.1 & LGPL v3\cite{lgplv3} or BSD\cite{bsd} \\
+			Seleium &  	3.14.0 & Apache 2.0\cite{apache}\\
+			\bottomrule
+		\end{tabular}
+		\caption{Licencias de los recursos software usados}
+		\label{licenses}
+	\end{center}
+\end{table}
+
+Como vemos en la tabla \ref{licenses} son todas en general licencias muy flexibles y permisivas que abogan por el \emph{open source}.
+
+Finalmente se ha decidido publicar este proyecto bajo la licencia \emph{Apache 2.0}, que establece lo siguiente: 
+
+\begin{table}[htb]
+	\begin{center}
+		\begin{tabular}{p{4cm} p{3cm} p{5cm}}
+			\toprule
+			\textbf{Permissions} & \textbf{Limitations} & \textbf{Conditions} \\
+			\otoprule
+			Commercial use  &  Trademark  &  License and copyright notice  \\
+			Modification &  Liability  &  State changes  \\
+			Distribution &  Warranty  &  \\
+			Patent use &   &  \\
+			Private  use &   &  \\
+			\bottomrule
+		\end{tabular}
+		\caption{Resumen de la licencia \emph{Apache 2.0}}
+	\end{center}
+\end{table}

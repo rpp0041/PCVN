@@ -9,15 +9,21 @@
 \usepackage{microtype}
 \usepackage{placeins}
 
+\usepackage{float}
+\usepackage{wrapfig}
+
 \RequirePackage{booktabs}
 \RequirePackage[table]{xcolor}
 \RequirePackage{xtab}
 \RequirePackage{multirow}
 
+% Bibliography management
+\usepackage[numbers,sort]{natbib}
+
 % Links
 \usepackage[colorlinks]{hyperref}
 \hypersetup{
-	allcolors = {red}
+	allcolors = {blue}
 }
 
 % Ecuaciones
@@ -358,7 +364,7 @@
 % Datos de portada
 \title{PCVN}
 \author{\nombre}
-\tutor{César Ignacio García Osorio}
+\tutor{Dr.César Ignacio García Osorio \\ y Dr. Juan Jose Rodriguez Diez}
 \date{\today}
 
 \begin{document}
@@ -375,9 +381,9 @@
 
 \noindent\includegraphics[width=\textwidth]{cabecera}\vspace{1cm}
 
-\noindent D. César Ignacio García Osorio, profesor del departamento de nombre departamento, área de nombre área.
+\noindent D.César Ignacio García Osorio y D. Juan Jose Rodriguez Diez, profesores del departamento de Ingeniería Civil,  Área de Lenguajes y Sistemas Informáticos.
 
-\noindent Expone:
+\noindent Exponen:
 
 \noindent Que el alumno D. \nombre, con DNI 71291761H, ha realizado el Trabajo final de Grado en Ingeniería Informática titulado PCVN. 
 
@@ -393,7 +399,7 @@ En Burgos, {\large \today}
 \begin{minipage}{0.45\textwidth}
 \begin{flushleft} %\large
 Vº. Bº. del Tutor:\\[2cm]
-César Ignacio García Osorio
+D. César Ignacio García Osorio
 \end{flushleft}
 \end{minipage}
 \hfill
@@ -431,7 +437,7 @@ PCVN lo que pretende es automatizar y simplificar de cara al usuario este proces
 
 \renewcommand*\abstractname{Descriptores}
 \begin{abstract}
-Web-Scrapping, Investigacion , Scopus,Web of Science, Google Scholar , ANECA , ACADEMIA \ldots
+Web-Scrapping, Investigacion , Scopus, Web of Science, Google Scholar , ANECA , ACADEMIA \ldots
 \end{abstract}
 
 \clearpage
@@ -439,12 +445,13 @@ Web-Scrapping, Investigacion , Scopus,Web of Science, Google Scholar , ANECA , A
 % Abstract en inglés
 \renewcommand*\abstractname{Abstract}
 \begin{abstract}
-A \textbf{brief} presentation of the topic addressed in the project.
+The research work of teachers is a difficult task that requires a lot of effort and not always receive the value it deserves. After all this work, there is one more step, the accreditation process made by the competent institutions, a process that requires a new effort to group all the investigations made from the different sites where they were published to submit them to the accreditation process.
+PCVN aims to automate and simplify this process for the user, offering a simple tool, but at the same time effective. Obtaining information from the main research databases and uploading all this information directly to the competent institutions. In this case ANECA in its application ACADEMIA
 \end{abstract}
 
 \renewcommand*\abstractname{Keywords}
 \begin{abstract}
-keywords separated by commas.
+Web-Scrapping, Investigation , Scopus, Web of Science, Google Scholar , ANECA , ACADEMIA \ldots
 \end{abstract}
 
 \clearpage
@@ -470,8 +477,7 @@ keywords separated by commas.
 \include{./tex/6_Trabajos_relacionados}
 \include{./tex/7_Conclusiones_Lineas_de_trabajo_futuras}
 
-
-\bibliographystyle{plain}
+\bibliographystyle{plainnat}
 \bibliography{bibliografia}
 
 \end{document}

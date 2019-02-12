@@ -5,6 +5,7 @@ from GroupFilesUtils import *
 class Testgroupfilesutils(unittest.TestCase):
 
     def test_check_issn(self):
+        # Test if comparision of 2 issn works
         dic1 = {'issn': '1234567'}
         dic2 = {'issn': '1234567'}
         dic3 = {'issn': '1594786'}
@@ -15,6 +16,7 @@ class Testgroupfilesutils(unittest.TestCase):
         self.assertEqual(check_issn(dic1, dic4), False)
 
     def test_check_title(self):
+        # Test if comparision of 2 strings works
         dic1 = {'title': 'test_title'}
         dic2 = {'title': 'testtitle'}
         dic3 = {'title': 'this title is not equal'}
@@ -25,6 +27,7 @@ class Testgroupfilesutils(unittest.TestCase):
         self.assertEqual(check_title(dic1, dic4), False)
 
     def test_remove_duplicates(self):
+        # Test if removing of duplicates works
         dic1 = {'issn': '1234567', 'title': 'test_title'}
         dic2 = {'issn': '1234567', 'title': 'this title is not equal'}
         dic3 = {'issn': '1594786', 'title': 'test_title'}
@@ -38,6 +41,7 @@ class Testgroupfilesutils(unittest.TestCase):
         self.assertNotEqual(l1, list1)
 
     def test_parse_volume(self):
+        # Test if parsing of volume field data is correct
         dic1 = {'volume': '7906 LNAI', 'title': 'test_title'}
         dic2 = {'volume': '1234567', 'title': 'this title is not equal'}
         dic3 = {'volume': '1', 'title': 'test_title'}
@@ -50,6 +54,7 @@ class Testgroupfilesutils(unittest.TestCase):
         self.assertEqual(pub3['volume'], '1')
 
     def test_parse_impact_index(self):
+        # Test if parsing of impact index field data is correct
         dic1 = {'impactIndex': 5}
         dic2 = {'impactIndex': '5'}
         dic3 = {'impactIndex': '0'}
@@ -59,6 +64,7 @@ class Testgroupfilesutils(unittest.TestCase):
         self.assertEqual('impactIndex' in parse_impact_index(dic3), False)
 
     def test_parse_string(self):
+        # Test if parse string remove spaces and no desired characters
         str1 = 'asd___ this is a test'
         str2 = 'asd--- %THi$s is a T_e_sT'
         str3 = 'asd  %7            this          is a   t e s t'
@@ -68,6 +74,7 @@ class Testgroupfilesutils(unittest.TestCase):
         self.assertEqual(parse_string(str2), parse_string(str3))
 
     def test_calculate_tertile(self):
+        # Test if tertile calculation is correct
         rank1 = '1/20'
         rank2 = '50/50'
         rank3 = 100

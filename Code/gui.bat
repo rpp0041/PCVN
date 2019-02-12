@@ -1,0 +1,2 @@
+@python GUI.py
+exit

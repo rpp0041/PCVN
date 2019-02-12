@@ -19,6 +19,10 @@ import subprocess
 import traceback
 import datetime
 
+""" Function that will show window to ask for user information to start the search process, will place window on the
+ x and y position given as a parameter
+ """
+
 
 def info_window(x, y):
     window = Tk()
@@ -29,10 +33,11 @@ def info_window(x, y):
         return_au()
 
     window.bind('<Return>', func)
+
     def return_au():
         # rest entry border color
         reset_entry(entry_google_scholar, entry_scopus, entry_wos, entry_user, entry_pswd)
-
+        # get information from entries
         global au_google, au_scopus, au_wos, user, pswd
         user = entry_user.get()
         pswd = entry_pswd.get()
@@ -56,12 +61,13 @@ def info_window(x, y):
             entry_pswd.config(highlightbackground="red", highlightthickness=2)
 
         else:
+            # Get window position, destroy and open new window
             x, y = get_window_pos(window)
             window.destroy()
             google_search(x, y)
 
     txt = "Cuando se pulse el botón 'Comenzar', se procederá a la búsqueda de los datos referentes al autor introducido, si durante el proceso ocurriera algún problema con los datos introducidos, podrá introducirlos nuevamente."
-    # Background
+    # Background #
     bg = Background(window, txt, 'background1.png')
     # Menu #
     menu = GuiMenu(window)
@@ -98,6 +104,7 @@ def info_window(x, y):
     entry_wos = Entry(frame, width=50)
     entry_wos.grid(row=2, column=1, pady=10)
 
+    # ///////// Academia Entry /////////#
     # Label Academia
     label_academia = Label(frame, text='Acceso a ACADEMIA')
     label_academia.config(font=font)
@@ -132,6 +139,9 @@ def info_window(x, y):
     window.mainloop()
 
 
+""" Function that will ask for user input about author credentials to start author search process"""
+
+
 def get_only_info_window(x, y):
     window = Tk()
     window = set_window(window, x, y)
@@ -148,7 +158,7 @@ def get_only_info_window(x, y):
         entry_google_scholar.config(highlightthickness=0)
         entry_scopus.config(highlightthickness=0)
         entry_wos.config(highlightthickness=0)
-
+        # get information from entries
         global au_google, au_scopus, au_wos
         au_google = entry_google_scholar.get()
         au_scopus = entry_scopus.get()
@@ -225,23 +235,29 @@ def google_search(x, y):
         # Call function to retrieve publications
         try:
             get_publications_scholar(au_google, pbar_google_scholar, num_var, max_p)
+        # Exception returned from the api that indicates there are no results found
         except StopIteration:
             pbar_google_scholar.stop()
             answer = tkinter.messagebox.askyesno('Sin resultados',
                                                  'No se han encontrado resultados \n ¿Desea Volver a buscar?')
+            # Check answer from popup
             if answer:
                 x, y = get_window_pos(window)
                 window.destroy()
+                # ask again for author data
                 google_window(x, y)
             else:
                 window.destroy()
+        # No connection to internet
         except ConnectionError:
             pbar_google_scholar.stop()
             answer = tkinter.messagebox.askyesno('Error de Conexión',
                                                  'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
+            # Check answer from popup
             if answer:
                 x, y = get_window_pos(window)
                 window.destroy()
+                # try again search process
                 google_search(x, y)
             else:
                 window.destroy()
@@ -254,11 +270,13 @@ def google_search(x, y):
             logfile.close()
             answer = tkinter.messagebox.askyesno('Error inesperado',
                                                  "Ha ocurrido un error inesperado\n La descripción completa del error ha sido guardad en 'log.txt'\n ¿Desea abrir el archivo?")
+            # Check answer from popup for open file
             if answer:
                 open_file('log.txt')
 
             answer = tkinter.messagebox.askyesno('Error inesperado',
                                                  '¿Desea volver a intentar el proceso donde\n se produjo el error?')
+            # Check answer from popup for re try process
             if answer:
                 x, y = get_window_pos(window)
                 window.destroy()
@@ -267,7 +285,7 @@ def google_search(x, y):
                 window.destroy()
         else:
             pbar_google_scholar.stop()
-            # Destroy Window
+            # Get window position , destroy window & launch new window
             x, y = get_window_pos(window)
             window.destroy()
             scopus_search(x, y)
@@ -312,9 +330,10 @@ def google_window(x, y):
     """ Function to be executed when click search button"""
 
     def retry():
-        # author name , will be used later
+        # get information from entrie
         global au_google
         au_google = entry_google_scholar.get()
+        # Get window position , destroy window & launch new window
         x, y = get_window_pos(window)
         window.destroy()
         google_search(x, y)
@@ -367,25 +386,30 @@ def scopus_search(x, y):
         pbar_scopus['maximum'] = 100
         # Call function to retrieve publications
         try:
+            # if there are no results function will return True , so we can check it and send alert to user
             if get_publications_scopus(au_scopus, pbar_scopus):
                 pbar_scopus.stop()
                 answer = tkinter.messagebox.askyesno('Sin resultados',
                                                      'No se han encontrado resultados \n ¿Desea Volver a buscar?')
+                # Check answer from popup and ask again for data or close app
                 if answer:
                     x, y = get_window_pos(window)
                     window.destroy()
                     scopus_window(x, y)
                 else:
                     window.destroy()
+        # Connection error
         except (KeyError, NoSuchElementException, ConnectionError):
             answer = tkinter.messagebox.askyesno('Error de Conexión',
                                                  'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
+            # Check answer and re try search or close app
             if answer:
                 x, y = get_window_pos(window)
                 window.destroy()
                 scopus_search(x, y)
             else:
                 window.destroy()
+        # Other exception , will inform user and save data in file
         except:
             # Write error to log file
             logfile = open("log.txt", "a")
@@ -394,11 +418,13 @@ def scopus_search(x, y):
             logfile.close()
             answer = tkinter.messagebox.askyesno('Error inesperado',
                                                  "Ha ocurrido un error inesperado\n La descripción completa del error ha sido guardad en 'log.txt'\n ¿Desea abrir el archivo?")
+            # If answer is yes open file
             if answer:
                 open_file('log.txt')
 
             answer = tkinter.messagebox.askyesno('Error inesperado',
                                                  '¿Desea volver a intentar el proceso donde\n se produjo el error?')
+            # Check answer and retry search or close app
             if answer:
                 x, y = get_window_pos(window)
                 window.destroy()
@@ -406,6 +432,7 @@ def scopus_search(x, y):
             else:
                 window.destroy()
         else:
+            # Get window position , close window & launch new window
             x, y = get_window_pos(window)
             window.destroy()
             wos_search(x, y)
@@ -421,7 +448,6 @@ def scopus_search(x, y):
 
     # Progress Bar
     pbar_scopus = ttk.Progressbar(window, mode='determinate', length=400)
-    # Label information
 
     # get publications
     get_scopus_pub()
@@ -444,9 +470,10 @@ def scopus_window(x, y):
     """ Function to be executed when click on search button"""
 
     def retry():
-        # author name , will be used later
+        # Get data from entries
         global au_scopus
         au_scopus = entry_scopus.get()
+        # Get window position , close window & launch new window
         x, y = get_window_pos(window)
         window.destroy()
         scopus_search(x, y)
@@ -507,6 +534,7 @@ def wos_search(x, y):
                 pbar_wos.stop()
                 answer = tkinter.messagebox.askyesno('Sin resultados',
                                                      'No se han encontrado resultados \n ¿Desea Volver a buscar?')
+                # Check answer from popup and ask again for data or close app
                 if answer:
                     x, y = get_window_pos(window)
                     window.destroy()
@@ -515,19 +543,23 @@ def wos_search(x, y):
                     window.destroy()
             else:
                 pbar_wos.stop()
-                # Destroy window
+                # Get window position , close window & launch new window
                 x, y = get_window_pos(window)
                 window.destroy()
                 group_window(x, y)
+        # Connection Except
         except ConnectionError:
             answer = tkinter.messagebox.askyesno('Error de Conexión',
                                                  'Ha ocurrido un error con la conexión \n ¿Desea Volver a intentarlo?')
+            # Check answer from popup and re try or close app
             if answer:
+                # Get window position , close window & launch new window
                 x, y = get_window_pos(window)
                 window.destroy()
                 wos_search(x, y)
             else:
                 window.destroy()
+        # Other exception , will inform user and save data in file
         except:
             # Write error to log file
             logfile = open("log.txt", "a")
@@ -536,11 +568,14 @@ def wos_search(x, y):
             logfile.close()
             answer = tkinter.messagebox.askyesno('Error inesperado',
                                                  "Ha ocurrido un error inesperado\n La descripción completa del error ha sido guardad en 'log.txt'\n ¿Desea abrir el archivo?")
+            # Check answer for open file
             if answer:
                 open_file('log.txt')
             answer = tkinter.messagebox.askyesno('Error inesperado',
                                                  '¿Desea volver a intentar el proceso donde\n se produjo el error?')
+            # check answer for retry process
             if answer:
+                # Get window position , close window & launch new window
                 x, y = get_window_pos(window)
                 window.destroy()
                 wos_search(x, y)
@@ -576,9 +611,10 @@ def wos_window(x, y):
     """ Function to be executed when click on search button"""
 
     def retry():
-        # author name , will be used later
+        # Get data from entries
         global au_wos
         au_wos = entry_wos.get()
+        # Get window position , close window & launch new window
         x, y = get_window_pos(window)
         window.destroy()
         wos_search(x, y)
@@ -667,19 +703,24 @@ def group_window(x, y):
     these credential will be later use in Aneca() """
 
 
+""" Function that will ask for Author , User & Password to log in ACADEMIA , just in case we have asked for only
+upload files 
+"""
+
+
 def aneca_login(x, y):
     window = Tk()
     window = set_window(window, x, y)
     """ Function that get data from entries """
 
     def get_login():
-        # needed global variables for use in other windows process
+        # Get data from entries
         global user, pswd, au_google
 
         au_google = entry_autor.get()
         user = entry_user.get()
         pswd = entry_pswd.get()
-        # Destroy window
+        # Get window position , close window & launch new window
         x, y = get_window_pos(window)
         window.destroy()
         aneca_window(au_google, x, y)
@@ -751,6 +792,7 @@ indicating the progress taken """
 
 
 def aneca_window(author, x, y):
+    # Check if user wants to upload files to ACADEMIA , if not go to las window of app.
     if log_flag is False:
         completed_window(x, y)
         return ()
@@ -772,22 +814,26 @@ def aneca_window(author, x, y):
             if total is True:
                 error = tkinter.messagebox.showerror(title="Error",
                                                      message="Usuario o Contraseña Incorrectos \nPor favor introduzca los datos de nuevo")
+                # Get window position , close window & launch new window
                 x, y = get_window_pos(window)
                 window.destroy()
                 aneca_login(x, y)
+        # Error on file try to read , todas.bib is missing
         except FileNotFoundError:
             answer = tkinter.messagebox.askyesno(title="Archivo no encontrado",
                                                  message="No se encuentra el archivo 'todas.bib'\n Por favor asegúrese que el archivo \nse encuentra en el directorio y está correctamente nombrado\n¿Desea volver a intentarlo?")
+            # Check answer from popup and re try close app
             if answer:
+                # Get window position , close window & launch new window
                 x, y = get_window_pos(window)
                 window.destroy()
                 aneca_window(x, y)
             else:
                 window.destroy()
         else:
+            # Get window position , close window & launch new window
             pbar_aneca.stop()
             x, y = get_window_pos(window)
-            # Destroy Window
             window.destroy()
             completed_window(x, y)
 
@@ -814,6 +860,10 @@ def aneca_window(author, x, y):
     start_aneca()
 
     window.mainloop()
+
+
+""" Function that will indicate the user the process is finished and offer posibility to Close, Search again +
+or open pub file"""
 
 
 def completed_window(x, y):
@@ -882,6 +932,10 @@ def completed_window(x, y):
     window.mainloop()
 
 
+""" Function that will check if the data taken from the entrie is bigger than 0 
+return True > 0 or false if not"""
+
+
 def check_entry(entry_google_scholar, entry_scopus, entry_wos):
     flag = False
     if len(au_google) < 1:
@@ -903,12 +957,18 @@ def check_entry(entry_google_scholar, entry_scopus, entry_wos):
     return flag
 
 
+""" Function that will reset border from entries that indicates that input is missing"""
+
+
 def reset_entry(entry_google_scholar, entry_scopus, entry_wos, entry_user, entry_pswd):
     entry_google_scholar.config(highlightthickness=0)
     entry_scopus.config(highlightthickness=0)
     entry_wos.config(highlightthickness=0)
     entry_user.config(highlightthickness=0)
     entry_pswd.config(highlightthickness=0)
+
+
+""" Function that will set general window parameters such as title, icon , size , position or resizable."""
 
 
 def set_window(window, x, y):
@@ -920,12 +980,18 @@ def set_window(window, x, y):
     return window
 
 
+""" Function that will center frame on window given"""
+
+
 def center_frame(window, frame):
     window.update()
     window_width = 750
     frame_width = frame.winfo_width()
     frame.place(x=(window_width - frame_width) / 2, y=50)
     return window, frame
+
+
+""" Function that will open file depending on OS used by the user """
 
 
 def open_file(filename):
@@ -936,10 +1002,16 @@ def open_file(filename):
         subprocess.call([opener, filename])
 
 
+""" Function that will return x and y position of a given window """
+
+
 def get_window_pos(window):
     x = window.winfo_x()
     y = window.winfo_y()
     return x, y
+
+
+""" Classs to create menu for set app parameters and hel file"""
 
 
 class GuiMenu:
@@ -1015,25 +1087,37 @@ class GuiMenu:
         info_window(x, y)
 
 
+""" Class that will set background of the window with informative text """
+
+
 class Background:
     def __init__(self, master, text, file):
+        # insert image
         self.image = Image.open('./backgrounds/' + file)
         self.draw = ImageDraw.Draw(self.image)
+        # set font for text
         try:
             self.font = ImageFont.truetype("times.ttf", 22)
         except OSError:
             self.font = ImageFont.truetype("Times New Roman", 22)
+        # insert text on image
         self.lines = textwrap.wrap(text, width=60)
         self.y = 470
         for line in self.lines:
             self.draw.text((140, self.y), line, fill="white", font=self.font)
             self.y += 25
         self.photoimage = ImageTk.PhotoImage(self.image)
+
+        # insert image + text on label to be display in the window
         Label(master, image=self.photoimage).place(x=0, y=0)
 
 
 if __name__ == '__main__':
+    # Max of publications
     max_p = 10000
+    # Flag to upload files
     log_flag = True
+    # Flag to extract Data
     ext_flag = True
+    # Start process on 1st window
     info_window(0, 0)

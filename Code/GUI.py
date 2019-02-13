@@ -974,7 +974,12 @@ def reset_entry(entry_google_scholar, entry_scopus, entry_wos, entry_user, entry
 def set_window(window, x, y):
     window.title('PCVN')
     window.geometry('750x750' + '+' + str(x) + '+' + str(y))
-    window.iconbitmap('logo.ico')
+    try:
+        window.iconbitmap('logo.ico')
+    except TclError:
+        img = PhotoImage(file='logo_150.png')
+        window.tk.call('wm', 'iconphoto', window._w, img)
+
     window.resizable(width=False, height=False)
 
     return window

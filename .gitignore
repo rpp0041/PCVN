@@ -8,3 +8,5 @@ geckodriver.log
 .idea/encodings.xml
 .idea/dictionaries/ruper.xml
 .idea/inspectionProfiles/Project_Default.xml
+.scannerwork/report-task.txt
+.scannerwork/.sonar_lock

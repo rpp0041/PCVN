@@ -54,7 +54,7 @@ def get_impact_index(title):
     try:
         """  close previous windows open """
         window_after = browser.window_handles[1]
-        browser.quit()
+        browser.close()
         browser.switch_to.window(window_after)
         time.sleep(6)
         """ See all data for every year from 2017-1998"""

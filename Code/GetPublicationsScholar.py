@@ -104,7 +104,7 @@ def get_publications_scholar(author_input, pbar, label_var, maxp):
         """ update progress bar GUI"""
         pbar['value'] += progress_bar_inc
         pbar.update()
-        label_var.set('Número de publicaciones obtenidas:\n'+str(cont)+'/'+str(maxp))
+        label_var.set('Número de publicaciones obtenidas:\n'+str(cont+1)+'/'+str(maxp))
     """ Write the extracted data stored in db (BibDatabase) and save it 
     in bibtexScholar.bib for later use """
     with open('bibtexScholar.bib', 'w', encoding='utf-8') as bibfile:
